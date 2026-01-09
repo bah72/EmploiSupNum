@@ -465,10 +465,26 @@ export default function App() {
         const draggingCourse = assignmentRows.find(r => r.id === courseId);
         if (!draggingCourse) return null;
 
-        // Utiliser sharedGroups pour déterminer dans quels groupes vérifier les conflits
-        const groupsToCheck = draggingCourse.sharedGroups && draggingCourse.sharedGroups.length > 0 
-            ? draggingCourse.sharedGroups 
-            : [draggingCourse.mainGroup];
+        // Trouver tous les cours similaires (même matière, même type, même enseignant, même salle, même semestre)
+        const similarCourses = assignmentRows.filter(r => 
+            r.id !== courseId &&
+            r.subject === draggingCourse.subject &&
+            r.type === draggingCourse.type &&
+            r.teacher === draggingCourse.teacher &&
+            r.room === draggingCourse.room &&
+            r.semester === draggingCourse.semester
+        );
+
+        // Utiliser sharedGroups, ou détecter automatiquement les groupes concernés
+        let groupsToCheck: string[] = [];
+        if (draggingCourse.sharedGroups && draggingCourse.sharedGroups.length > 0) {
+            groupsToCheck = draggingCourse.sharedGroups;
+        } else {
+            // Si pas de sharedGroups défini, utiliser les groupes des cours similaires + le groupe principal
+            const groupsSet = new Set<string>([draggingCourse.mainGroup]);
+            similarCourses.forEach(c => groupsSet.add(c.mainGroup));
+            groupsToCheck = Array.from(groupsSet);
+        }
 
         // 1. Vérifier les conflits dans le créneau pour tous les groupes concernés
         for (const group of groupsToCheck) {
@@ -799,6 +815,30 @@ export default function App() {
         if (!originalCourse) return;
         const targetTimeSlot = over.id as string;
         const [tDay, tTime] = targetTimeSlot.split('|');
+        
+        // Trouver tous les cours similaires (même matière, même type, même enseignant, même salle, même semestre)
+        // qui devraient être synchronisés dans le planning
+        const similarCourses = assignmentRows.filter(r => 
+            r.id !== sourceId &&
+            r.subject === originalCourse.subject &&
+            r.type === originalCourse.type &&
+            r.teacher === originalCourse.teacher &&
+            r.room === originalCourse.room &&
+            r.semester === originalCourse.semester
+        );
+        
+        // Utiliser sharedGroups, ou détecter automatiquement les groupes concernés
+        let groupsToPlace: string[] = [];
+        if (originalCourse.sharedGroups && originalCourse.sharedGroups.length > 0) {
+            groupsToPlace = originalCourse.sharedGroups;
+        } else {
+            // Si pas de sharedGroups défini, utiliser les groupes des cours similaires + le groupe principal
+            const groupsSet = new Set<string>([originalCourse.mainGroup]);
+            similarCourses.forEach(c => groupsSet.add(c.mainGroup));
+            groupsToPlace = Array.from(groupsSet);
+        }
+        
+        // Vérifier les conflits pour tous les groupes concernés
         const conflictMsg = checkInstantConflict(sourceId, tDay, tTime);
         if (conflictMsg) {
             playConflictSound();
@@ -808,11 +848,6 @@ export default function App() {
 
         // Vérifier si Ctrl est pressé pour copier au lieu de déplacer
         const isCtrlPressed = (e as any).activatorEvent?.ctrlKey || (e as any).activatorEvent?.metaKey;
-
-        // Utiliser sharedGroups pour déterminer dans quels groupes placer le cours
-        const groupsToPlace = originalCourse.sharedGroups && originalCourse.sharedGroups.length > 0 
-            ? originalCourse.sharedGroups 
-            : [originalCourse.mainGroup];
 
         if (isCtrlPressed) {
             // Créer une copie du cours
@@ -842,35 +877,41 @@ export default function App() {
 
             setToastMessage({ msg: `Copie de ${originalCourse.subject} créée`, type: 'success' });
         } else {
-            // Comportement normal : déplacer la carte
+            // Comportement normal : déplacer la carte et tous les cours similaires
+            const allSimilarCourseIds = [sourceId, ...similarCourses.map(c => c.id)];
+            
             setSchedule(prev => {
                 const next = { ...prev as Record<string, string | null | string[]> };
-                // Retirer le cours de tous les créneaux de cette semaine pour tous les groupes concernés
+                // Retirer tous les cours similaires de tous les créneaux de cette semaine pour tous les groupes concernés
                 groupsToPlace.forEach(group => {
                     Object.keys(next).forEach(k => {
                         if (k.startsWith(`${semester}|w${currentWeek}|${group}|`)) {
                             const value = next[k];
                             // Normaliser la valeur pour gérer les cas string | null | string[]
                             if (Array.isArray(value)) {
-                                const filtered = value.filter(id => id !== sourceId);
+                                const filtered = value.filter(id => !allSimilarCourseIds.includes(id));
                                 next[k] = filtered.length > 0 ? filtered : null;
-                            } else if (value === sourceId) {
+                            } else if (allSimilarCourseIds.includes(value as string)) {
                                 next[k] = null;
                             }
                         }
                     });
                 });
-                // Ajouter le cours au nouveau créneau pour tous les groupes concernés
+                // Ajouter tous les cours similaires au nouveau créneau pour tous les groupes concernés
                 groupsToPlace.forEach(group => {
                     const targetSlotKey = `${semester}|w${currentWeek}|${group}|${targetTimeSlot}`;
                     const existingValue = next[targetSlotKey];
                     const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
-                    // Ajouter le cours au tableau s'il n'est pas déjà présent
-                    if (!existingIds.includes(sourceId)) {
-                        next[targetSlotKey] = [...existingIds, sourceId];
+                    
+                    // Trouver le cours approprié pour ce groupe (le cours dont le mainGroup correspond)
+                    const courseForGroup = [originalCourse, ...similarCourses].find(c => c.mainGroup === group) || originalCourse;
+                    
+                    // Ajouter le cours approprié pour ce groupe s'il n'est pas déjà présent
+                    if (!existingIds.includes(courseForGroup.id)) {
+                        next[targetSlotKey] = [...existingIds, courseForGroup.id];
                     } else {
                         // Si déjà présent, utiliser le tableau existant
-                        next[targetSlotKey] = existingIds.length > 0 ? existingIds : sourceId;
+                        next[targetSlotKey] = existingIds.length > 0 ? existingIds : courseForGroup.id;
                     }
                 });
                 return next;
