@@ -465,42 +465,50 @@ export default function App() {
         const draggingCourse = assignmentRows.find(r => r.id === courseId);
         if (!draggingCourse) return null;
 
-        // 1. Vérifier les conflits dans le créneau du groupe actuel
-        const currentSlotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
-        const existingLocalValue = schedule[currentSlotKey];
-        // Normaliser la valeur (gérer les cas string | null | string[])
-        const existingLocalIds = Array.isArray(existingLocalValue) ? existingLocalValue : (existingLocalValue ? [existingLocalValue] : []);
-        
-        // Si le cours est déjà dans ce créneau, permettre le déplacement/remplacement
-        if (existingLocalIds.includes(courseId as string)) {
-            return null; // Pas de conflit si c'est le même cours
-        }
+        // Utiliser sharedGroups pour déterminer dans quels groupes vérifier les conflits
+        const groupsToCheck = draggingCourse.sharedGroups && draggingCourse.sharedGroups.length > 0 
+            ? draggingCourse.sharedGroups 
+            : [draggingCourse.mainGroup];
 
-        // Vérifier les conflits avec les autres cours dans le même créneau (même salle ou même prof)
-        for (const existingCourseId of existingLocalIds) {
-            const existingCourse = assignmentRows.find(r => r.id === existingCourseId);
-            if (!existingCourse) continue;
-
-            // Vérifier conflit de salle (même salle non vide)
-            if (draggingCourse.room && existingCourse.room &&
-                draggingCourse.room !== '?' && existingCourse.room !== '?' &&
-                draggingCourse.room !== '' && existingCourse.room !== '' &&
-                draggingCourse.room === existingCourse.room) {
-                return `CONFLIT SALLE : ${draggingCourse.room} déjà utilisée dans ce créneau (${existingCourse.subject})`;
+        // 1. Vérifier les conflits dans le créneau pour tous les groupes concernés
+        for (const group of groupsToCheck) {
+            const currentSlotKey = `${semester}|w${currentWeek}|${group}|${day}|${time}`;
+            const existingLocalValue = schedule[currentSlotKey];
+            // Normaliser la valeur (gérer les cas string | null | string[])
+            const existingLocalIds = Array.isArray(existingLocalValue) ? existingLocalValue : (existingLocalValue ? [existingLocalValue] : []);
+            
+            // Si le cours est déjà dans ce créneau, permettre le déplacement/remplacement
+            if (existingLocalIds.includes(courseId as string)) {
+                continue; // Pas de conflit si c'est le même cours, passer au groupe suivant
             }
 
-            // Vérifier conflit de prof (même prof)
-            const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-            const existingTeachers = existingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-            const commonTeacher = draggingTeachers.find(t => existingTeachers.includes(t));
-            if (commonTeacher) {
-                return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà dans ce créneau (${existingCourse.subject})`;
+            // Vérifier les conflits avec les autres cours dans le même créneau (même salle ou même prof)
+            for (const existingCourseId of existingLocalIds) {
+                const existingCourse = assignmentRows.find(r => r.id === existingCourseId);
+                if (!existingCourse) continue;
+
+                // Vérifier conflit de salle (même salle non vide)
+                if (draggingCourse.room && existingCourse.room &&
+                    draggingCourse.room !== '?' && existingCourse.room !== '?' &&
+                    draggingCourse.room !== '' && existingCourse.room !== '' &&
+                    draggingCourse.room === existingCourse.room) {
+                    return `CONFLIT SALLE : ${draggingCourse.room} déjà utilisée dans ce créneau (${existingCourse.subject}) - ${group}`;
+                }
+
+                // Vérifier conflit de prof (même prof)
+                const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                const existingTeachers = existingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                const commonTeacher = draggingTeachers.find(t => existingTeachers.includes(t));
+                if (commonTeacher) {
+                    return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà dans ce créneau (${existingCourse.subject}) - ${group}`;
+                }
             }
         }
 
         // 2. Vérifier les conflits globaux (entre groupes)
         for (const otherGroup of dynamicGroups) {
-            if (otherGroup === activeMainGroup) continue;
+            // Ne pas vérifier les conflits avec les groupes qui partagent déjà ce cours
+            if (groupsToCheck.includes(otherGroup)) continue;
 
             const otherSlotKey = `${semester}|w${currentWeek}|${otherGroup}|${day}|${time}`;
             const otherCourseValue = schedule[otherSlotKey];
@@ -801,7 +809,10 @@ export default function App() {
         // Vérifier si Ctrl est pressé pour copier au lieu de déplacer
         const isCtrlPressed = (e as any).activatorEvent?.ctrlKey || (e as any).activatorEvent?.metaKey;
 
-        const targetSlotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${targetTimeSlot}`;
+        // Utiliser sharedGroups pour déterminer dans quels groupes placer le cours
+        const groupsToPlace = originalCourse.sharedGroups && originalCourse.sharedGroups.length > 0 
+            ? originalCourse.sharedGroups 
+            : [originalCourse.mainGroup];
 
         if (isCtrlPressed) {
             // Créer une copie du cours
@@ -813,16 +824,19 @@ export default function App() {
             // Ajouter la nouvelle carte aux assignmentRows
             setAssignmentRows(prev => [...prev, newCourse]);
 
-            // Ajouter la copie au créneau (sans remplacer les cours existants)
+            // Placer la copie dans tous les groupes concernés
             setSchedule(prev => {
                 const next = { ...prev as Record<string, string | null | string[]> };
-                const existingValue = next[targetSlotKey];
-                // Normaliser la valeur existante en tableau
-                const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
-                // Ajouter le nouveau cours au tableau s'il n'est pas déjà présent
-                if (!existingIds.includes(newCourse.id)) {
-                    next[targetSlotKey] = [...existingIds, newCourse.id];
-                }
+                groupsToPlace.forEach(group => {
+                    const targetSlotKey = `${semester}|w${currentWeek}|${group}|${targetTimeSlot}`;
+                    const existingValue = next[targetSlotKey];
+                    // Normaliser la valeur existante en tableau
+                    const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
+                    // Ajouter le nouveau cours au tableau s'il n'est pas déjà présent
+                    if (!existingIds.includes(newCourse.id)) {
+                        next[targetSlotKey] = [...existingIds, newCourse.id];
+                    }
+                });
                 return next;
             });
 
@@ -831,29 +845,34 @@ export default function App() {
             // Comportement normal : déplacer la carte
             setSchedule(prev => {
                 const next = { ...prev as Record<string, string | null | string[]> };
-                // Retirer le cours de tous les créneaux de cette semaine/group
-                Object.keys(next).forEach(k => {
-                    if (k.startsWith(`${semester}|w${currentWeek}|${activeMainGroup}|`)) {
-                        const value = next[k];
-                        // Normaliser la valeur pour gérer les cas string | null | string[]
-                        if (Array.isArray(value)) {
-                            const filtered = value.filter(id => id !== sourceId);
-                            next[k] = filtered.length > 0 ? filtered : null;
-                        } else if (value === sourceId) {
-                            next[k] = null;
+                // Retirer le cours de tous les créneaux de cette semaine pour tous les groupes concernés
+                groupsToPlace.forEach(group => {
+                    Object.keys(next).forEach(k => {
+                        if (k.startsWith(`${semester}|w${currentWeek}|${group}|`)) {
+                            const value = next[k];
+                            // Normaliser la valeur pour gérer les cas string | null | string[]
+                            if (Array.isArray(value)) {
+                                const filtered = value.filter(id => id !== sourceId);
+                                next[k] = filtered.length > 0 ? filtered : null;
+                            } else if (value === sourceId) {
+                                next[k] = null;
+                            }
                         }
+                    });
+                });
+                // Ajouter le cours au nouveau créneau pour tous les groupes concernés
+                groupsToPlace.forEach(group => {
+                    const targetSlotKey = `${semester}|w${currentWeek}|${group}|${targetTimeSlot}`;
+                    const existingValue = next[targetSlotKey];
+                    const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
+                    // Ajouter le cours au tableau s'il n'est pas déjà présent
+                    if (!existingIds.includes(sourceId)) {
+                        next[targetSlotKey] = [...existingIds, sourceId];
+                    } else {
+                        // Si déjà présent, utiliser le tableau existant
+                        next[targetSlotKey] = existingIds.length > 0 ? existingIds : sourceId;
                     }
                 });
-                // Ajouter le cours au nouveau créneau (sans remplacer les cours existants)
-                const existingValue = next[targetSlotKey];
-                const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
-                // Ajouter le cours au tableau s'il n'est pas déjà présent
-                if (!existingIds.includes(sourceId)) {
-                    next[targetSlotKey] = [...existingIds, sourceId];
-                } else {
-                    // Si déjà présent, utiliser le tableau existant
-                    next[targetSlotKey] = existingIds.length > 0 ? existingIds : sourceId;
-                }
                 return next;
             });
         }
@@ -907,14 +926,39 @@ export default function App() {
     if (!isClient) return null;
 
     const groupCourses = assignmentRows.filter(r => r.mainGroup === activeMainGroup && r.semester === semester);
+    // Récupérer tous les cours placés cette semaine dans n'importe quel groupe
     const placedIdsThisWeek = Object.keys(schedule)
-        .filter(k => k.startsWith(`${semester}|w${currentWeek}|${activeMainGroup}|`) && schedule[k])
+        .filter(k => {
+            // Vérifier si la clé correspond à cette semaine et ce semestre
+            const parts = k.split('|');
+            if (parts.length < 3) return false;
+            const [sem, week, group] = parts;
+            return sem === semester && week === `w${currentWeek}` && schedule[k];
+        })
         .flatMap(k => {
             const value = schedule[k];
             // Normaliser la valeur (gérer les cas string | null | string[])
             return Array.isArray(value) ? value : (value ? [value] : []);
         });
-    const sidebarCourses = groupCourses.filter(c => !placedIdsThisWeek.includes(c.id));
+    // Filtrer les cours: un cours est considéré comme "placé" s'il est placé dans n'importe lequel de ses sharedGroups
+    const sidebarCourses = groupCourses.filter(c => {
+        // Si le cours n'a pas de sharedGroups défini, utiliser mainGroup
+        const groupsToCheck = c.sharedGroups && c.sharedGroups.length > 0 ? c.sharedGroups : [c.mainGroup];
+        // Vérifier si le cours est placé dans n'importe lequel de ses groupes
+        const isPlaced = Object.keys(schedule)
+            .filter(k => {
+                const parts = k.split('|');
+                if (parts.length < 3) return false;
+                const [sem, week, group] = parts;
+                return sem === semester && week === `w${currentWeek}` && groupsToCheck.includes(group) && schedule[k];
+            })
+            .some(k => {
+                const value = schedule[k];
+                const courseIds = Array.isArray(value) ? value : (value ? [value] : []);
+                return courseIds.includes(c.id);
+            });
+        return !isPlaced;
+    });
 
     const gridTemplate = `40px repeat(${config.timeSlots.length}, minmax(0, 1fr))`;
     const gridBaseClasses = "grid w-full";
