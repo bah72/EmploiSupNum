@@ -1,0 +1,1510 @@
+"use client";
+
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { DndContext, DragEndEvent, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
+import { 
+  LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, FileDown, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database
+} from 'lucide-react';
+import { toPng } from 'html-to-image';
+import jsPDF from 'jspdf';
+import { AssignmentRow, CourseType } from './types';
+import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
+
+// Composant séparé pour le champ de recherche pour éviter les re-rendus
+const SearchInput = React.memo(({ searchQuery, setSearchQuery }: { searchQuery: string, setSearchQuery: (value: string) => void }) => {
+    return (
+        <div className="relative group">
+            <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
+            <input 
+                key="stable-search-input"
+                id="stable-search-input"
+                type="text" 
+                value={searchQuery} 
+                onChange={(e) => setSearchQuery(e.target.value)} 
+                placeholder="Chercher..." 
+                className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" 
+            />
+        </div>
+    );
+});
+
+// --- HEADER BANNER (déplacé en dehors du composant App) ---
+const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, setSearchQuery, handleExportPDF, isExporting, dynamicGroups, config }: any) => {
+    const [isClient, setIsClient] = useState(false);
+    const [semester, setSemester] = useState<string>('S1');
+    const [activeTab, setActiveTab] = useState<'manage' | 'planning' | 'config' | 'data'>('planning'); 
+    const [activeMainGroup, setActiveMainGroup] = useState("Groupe 1");
+    const [currentWeek, setCurrentWeek] = useState(1);
+    const [searchQuery, setSearchQuery] = useState("");
+    
+    // Stabiliser la fonction de changement de recherche pour éviter les re-rendus
+    const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchQuery(e.target.value);
+    }, []);
+
+    // Mémoriser les callbacks pour éviter les re-rendus du HeaderBanner
+    const handleSemesterChange = useCallback((value: string) => setSemester(value), []);
+    const handleGroupChange = useCallback((value: string) => setActiveMainGroup(value), []);
+    const handleWeekChange = useCallback((value: number) => setCurrentWeek(value), []);
+    const [isExporting, setIsExporting] = useState(false);
+    const [toastMessage, setToastMessage] = useState<{msg: string, type: 'error' | 'success'} | null>(null);
+    const [manageFilterCode, setManageFilterCode] = useState<string>("");
+    
+    // États pour la gestion des données
+    const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
+    const [dataFilterSemester, setDataFilterSemester] = useState<string>("");
+    const [dataFilterSubject, setDataFilterSubject] = useState<string>("");
+    const [showDataMenu, setShowDataMenu] = useState(false);
+    
+    // État principal pour les cours et le planning
+    const [assignmentRows, setAssignmentRows] = useState<AssignmentRow[]>([]);
+    const [schedule, setSchedule] = useState<Record<string, string | null>>({});
+    const [activeDragItem, setActiveDragItem] = useState<AssignmentRow | null>(null);
+    const [refreshKey, setRefreshKey] = useState(0); // Pour forcer le re-rendu des listes
+    const [isCtrlPressed, setIsCtrlPressed] = useState(false);
+    
+    // Données modifiables (initialisées depuis les constantes)
+    const [customRooms, setCustomRooms] = useState<string[]>([...ALL_ROOMS]);
+    const [customSubjects, setCustomSubjects] = useState(() => {
+        // Convertir la structure existante pour séparer CM et TD/TP
+        const converted = JSON.parse(JSON.stringify(MASTER_DB)).map((semester: any) => ({
+            ...semester,
+            matieres: semester.matieres.map((matiere: any) => ({
+                ...matiere,
+                enseignantsCM: matiere.enseignants, // Enseignants CM
+                enseignantsTD: matiere.enseignants  // Intervenants TD/TP (initialement les mêmes)
+            }))
+        }));
+        return converted;
+    });
+    
+    // Configuration
+    const [config, setConfig] = useState({
+        startDate: '2024-09-02',
+        totalWeeks: 16,
+        numberOfGroups: 4,
+        vacationPeriods: [] as Array<{startDate: string, endDate: string}>, // Périodes de vacances
+        timeSlots: ['08:00-09:30', '09:45-11:15', '11:30-13:00', '14:00-15:30', '15:45-17:15']
+    });
+
+    // Initialisation côté client
+    useEffect(() => {
+        setIsClient(true);
+        // Charger la configuration depuis localStorage
+        const savedConfig = localStorage.getItem('supnum_config_v67');
+        if (savedConfig) {
+            try {
+                setConfig(JSON.parse(savedConfig));
+            } catch (e) {
+                console.error('Erreur lors du chargement de la configuration:', e);
+            }
+        }
+        
+        // Charger les données personnalisées depuis localStorage
+        const savedRooms = localStorage.getItem('supnum_custom_rooms');
+        if (savedRooms) {
+            try {
+                setCustomRooms(JSON.parse(savedRooms));
+            } catch (e) {
+                console.error('Erreur lors du chargement des salles:', e);
+            }
+        }
+        
+        const savedSubjects = localStorage.getItem('supnum_custom_subjects');
+        if (savedSubjects) {
+            try {
+                setCustomSubjects(JSON.parse(savedSubjects));
+            } catch (e) {
+                console.error('Erreur lors du chargement des matières:', e);
+            }
+        }
+        
+        // Charger les assignmentRows sauvegardés
+        const savedAssignmentRows = localStorage.getItem('supnum_assignment_rows');
+        if (savedAssignmentRows) {
+            try {
+                setAssignmentRows(JSON.parse(savedAssignmentRows));
+            } catch (e) {
+                console.error('Erreur lors du chargement des cours:', e);
+            }
+        }
+        
+        // Charger le planning sauvegardé
+        const savedSchedule = localStorage.getItem('supnum_schedule');
+        if (savedSchedule) {
+            try {
+                setSchedule(JSON.parse(savedSchedule));
+            } catch (e) {
+                console.error('Erreur lors du chargement du planning:', e);
+            }
+        }
+        
+        // Charger les données initiales seulement si pas de sauvegarde d'assignmentRows
+        if (!savedAssignmentRows) {
+            const newRows: AssignmentRow[] = [];
+            const subjectsToUse = savedSubjects ? JSON.parse(savedSubjects) : customSubjects;
+            subjectsToUse.forEach((semData: any) => {
+                semData.matieres.forEach((matiere: any) => {
+                    // Utiliser un nombre fixe de groupes pour l'instant
+                    const groups = ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"];
+                    groups.forEach(group => {
+                        // Utiliser les enseignants CM pour les cours CM
+                        const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
+                        // Utiliser les enseignants TD pour les cours TD
+                        const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+                        
+                        let defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
+                        
+                        // Ligne CM pour chaque matière/groupe
+                        newRows.push({ 
+                            id: Math.random().toString(36).substr(2, 9), 
+                            subject: matiere.code, 
+                            subjectLabel: matiere.libelle, 
+                            type: 'CM', 
+                            mainGroup: group, 
+                            sharedGroups: [group], 
+                            subLabel: 'CM', 
+                            teacher: teachersCM.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+                            room: 'Amphi A', 
+                            semester: semData.semestre 
+                        });
+                        
+                        // Ligne TD pour chaque matière/groupe
+                        newRows.push({ 
+                            id: Math.random().toString(36).substr(2, 9), 
+                            subject: matiere.code, 
+                            subjectLabel: matiere.libelle, 
+                            type: 'TD', 
+                            mainGroup: group, 
+                            sharedGroups: [group], 
+                            subLabel: 'TD', 
+                            teacher: teachersTD.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+                            room: defaultRoom, 
+                            semester: semData.semestre 
+                        });
+                    });
+                });
+            });
+            setAssignmentRows(newRows);
+        }
+        
+        if (!savedSchedule) {
+            setSchedule({});
+        }
+    }, []);
+
+    const UNIQUE_TEACHERS = useMemo(() => {
+        const set = new Set<string>();
+        customSubjects.forEach((sem: any) => 
+            sem.matieres.forEach((m: any) => {
+                // Ajouter les enseignants CM
+                if (m.enseignantsCM) {
+                    m.enseignantsCM.split('/').forEach((t: any) => { 
+                        if(t.trim()) set.add(t.trim()); 
+                    });
+                }
+                // Ajouter les enseignants TD
+                if (m.enseignantsTD) {
+                    m.enseignantsTD.split('/').forEach((t: any) => { 
+                        if(t.trim()) set.add(t.trim()); 
+                    });
+                }
+                // Fallback vers l'ancien champ pour compatibilité
+                if (m.enseignants && !m.enseignantsCM && !m.enseignantsTD) {
+                    m.enseignants.split('/').forEach((t: any) => { 
+                        if(t.trim()) set.add(t.trim()); 
+                    });
+                }
+            })
+        );
+        return Array.from(set).sort();
+    }, [customSubjects]);
+
+    const SUBJECT_NAMES: Record<string, string> = useMemo(() => {
+        const names: Record<string, string> = {};
+        customSubjects.forEach((sem: any) => sem.matieres.forEach((m: any) => { names[m.code] = m.libelle; }));
+        return names;
+    }, [customSubjects]);
+
+    // Génération dynamique des groupes basée sur la configuration
+    const dynamicGroups = useMemo(() => {
+        return Array.from({ length: config.numberOfGroups }, (_, i) => `Groupe ${i + 1}`);
+    }, [config.numberOfGroups]);
+
+    const loadFullDataset = (confirmAction = true) => {
+        if (confirmAction && !confirm("Réinitialiser ?")) return;
+        const newRows: AssignmentRow[] = [];
+        
+        customSubjects.forEach((semData: any) => {
+            semData.matieres.forEach((matiere: any) => {
+                dynamicGroups.forEach(group => {
+                    // Utiliser les enseignants CM pour les cours CM
+                    const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
+                    // Utiliser les enseignants TD pour les cours TD
+                    const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+                    
+                    let defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
+                    
+                    // Ligne CM pour chaque matière/groupe
+                    newRows.push({ 
+                        id: Math.random().toString(36).substr(2, 9), 
+                        subject: matiere.code, 
+                        subjectLabel: matiere.libelle, 
+                        type: 'CM', 
+                        mainGroup: group, 
+                        sharedGroups: [group], 
+                        subLabel: 'CM', 
+                        teacher: teachersCM.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+                        room: 'Amphi A', 
+                        semester: semData.semestre 
+                    });
+                    
+                    // Ligne TD pour chaque matière/groupe
+                    newRows.push({ 
+                        id: Math.random().toString(36).substr(2, 9), 
+                        subject: matiere.code, 
+                        subjectLabel: matiere.libelle, 
+                        type: 'TD', 
+                        mainGroup: group, 
+                        sharedGroups: [group], 
+                        subLabel: 'TD', 
+                        teacher: teachersTD.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+                        room: defaultRoom, 
+                        semester: semData.semestre 
+                    });
+                });
+            });
+        });
+        
+        setAssignmentRows(newRows);
+        setSchedule({});
+    };
+
+    // Fonction pour vérifier si une date est en période de vacances
+    const isDateInVacation = (date: Date, vacationPeriods: Array<{startDate: string, endDate: string}>) => {
+        return vacationPeriods.some(period => {
+            const start = new Date(period.startDate);
+            const end = new Date(period.endDate);
+            return date >= start && date <= end;
+        });
+    };
+
+    // Calcul des dates de la semaine (en excluant les vacances)
+    const weekDates = useMemo(() => {
+        const startDate = new Date(config.startDate);
+        const vacationPeriods = config.vacationPeriods || [];
+        
+        // Trouver la vraie semaine de cours (en excluant les vacances)
+        let actualWeekCount = 0;
+        let currentDate = new Date(startDate);
+        
+        // Compter les semaines jusqu'à atteindre la semaine de cours désirée
+        while (actualWeekCount < currentWeek) {
+            // Vérifier si cette semaine est en vacances
+            const weekStart = new Date(currentDate);
+            const weekEnd = new Date(currentDate);
+            weekEnd.setDate(weekStart.getDate() + 6);
+            
+            // Si la semaine n'est pas entièrement en vacances, on la compte
+            let isWeekInVacation = true;
+            for (let d = new Date(weekStart); d <= weekEnd; d.setDate(d.getDate() + 1)) {
+                if (!isDateInVacation(d, vacationPeriods)) {
+                    isWeekInVacation = false;
+                    break;
+                }
+            }
+            
+            if (!isWeekInVacation) {
+                actualWeekCount++;
+            }
+            
+            if (actualWeekCount < currentWeek) {
+                currentDate.setDate(currentDate.getDate() + 7);
+            }
+        }
+        
+        const weekEnd = new Date(currentDate);
+        weekEnd.setDate(currentDate.getDate() + 4); // Vendredi
+        
+        return {
+            startStr: currentDate.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+            endStr: weekEnd.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+        };
+    }, [config.startDate, config.vacationPeriods, currentWeek]);
+
+    // Détection des conflits
+    const conflicts = useMemo(() => {
+        const conflictSet = new Set<string>();
+        const timeSlotMap: Record<string, string[]> = {};
+        
+        Object.entries(schedule).forEach(([key, courseId]) => {
+            if (!courseId) return;
+            const [sem, week, group, day, time] = key.split('|');
+            if (sem !== semester || week !== `w${currentWeek}` || group !== activeMainGroup) return;
+            
+            const slotKey = `${day}|${time}`;
+            if (!timeSlotMap[slotKey]) timeSlotMap[slotKey] = [];
+            timeSlotMap[slotKey].push(courseId);
+        });
+        
+        Object.values(timeSlotMap).forEach(courseIds => {
+            if (courseIds.length > 1) {
+                courseIds.forEach(id => conflictSet.add(id));
+            }
+        });
+        
+        return conflictSet;
+    }, [schedule, semester, currentWeek, activeMainGroup]);
+
+    // Fonction de vérification des conflits
+    const checkInstantConflict = (courseId: string, day: string, time: string): string | null => {
+        const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
+        const existingCourse = schedule[slotKey];
+        
+        if (existingCourse && existingCourse !== courseId) {
+            const existing = assignmentRows.find(r => r.id === existingCourse);
+            return `Conflit détecté avec ${existing?.subject || 'un autre cours'}`;
+        }
+        
+        return null;
+    };
+
+    // Fermer le menu données quand on clique ailleurs
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (showDataMenu && !(event.target as Element)?.closest('.data-menu-container')) {
+                setShowDataMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [showDataMenu]);
+
+    // Sauvegarde automatique des assignmentRows
+    useEffect(() => {
+        if (isClient && assignmentRows.length > 0) {
+            localStorage.setItem('supnum_assignment_rows', JSON.stringify(assignmentRows));
+        }
+    }, [assignmentRows, isClient]);
+
+    // Sauvegarde automatique des customSubjects
+    useEffect(() => {
+        if (isClient && customSubjects.length > 0) {
+            localStorage.setItem('supnum_custom_subjects', JSON.stringify(customSubjects));
+        }
+    }, [customSubjects, isClient]);
+
+    // Sauvegarde automatique du planning
+    useEffect(() => {
+        if (isClient && Object.keys(schedule).length > 0) {
+            localStorage.setItem('supnum_schedule', JSON.stringify(schedule));
+        }
+    }, [schedule, isClient]);
+
+    // Sauvegarde automatique de la configuration
+    useEffect(() => {
+        if (isClient) {
+            localStorage.setItem('supnum_config_v67', JSON.stringify(config));
+        }
+    }, [config, isClient]);
+
+    // Sauvegarde automatique des salles personnalisées
+    useEffect(() => {
+        if (isClient && customRooms.length > 0) {
+            localStorage.setItem('supnum_custom_rooms', JSON.stringify(customRooms));
+        }
+    }, [customRooms, isClient]);
+
+    // Masquer automatiquement les messages toast
+    useEffect(() => {
+        if (toastMessage) {
+            const timer = setTimeout(() => {
+                setToastMessage(null);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [toastMessage]);
+
+    // Gestion des touches Ctrl pour la copie
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Control' || e.key === 'Meta') {
+                setIsCtrlPressed(true);
+            }
+        };
+
+        const handleKeyUp = (e: KeyboardEvent) => {
+            if (e.key === 'Control' || e.key === 'Meta') {
+                setIsCtrlPressed(false);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, []);
+
+// --- SOUND UTILS ---
+const playConflictSound = () => {
+        try {
+                const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = "sawtooth";
+                osc.frequency.setValueAtTime(600, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.2);
+                gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.2);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+        } catch (e) {
+                console.error("Audio error", e);
+        }
+};
+// --- HEADER BANNER ---
+const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, setSearchQuery, handleExportPDF, isExporting, dynamicGroups, config }: any) => {
+    return (
+        <div className="flex flex-col bg-white shrink-0 shadow-sm z-40" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+            <div className="flex items-center justify-between w-full h-14 md:h-16 bg-green-700 px-3 md:px-6 overflow-hidden">
+                <div className="shrink-0 pr-2 md:pr-4 h-full flex items-center">
+                    <img src="/rim.png" alt="RIM" className="h-8 md:h-10 w-auto object-contain" />
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
+                    <h1 className="text-base md:text-lg font-semibold text-white leading-tight tracking-wide">Institut Supérieur du Numérique</h1>
+                    <h2 className="text-[11px] md:text-xs font-medium text-green-100 uppercase tracking-widest">Emploi du temps</h2>
+                </div>
+                <div className="shrink-0 pl-2 md:pl-4 h-full flex items-center">
+                    <img src="/supnum.png" alt="SupNum" className="h-8 md:h-10 w-auto object-contain" />
+                </div>
+            </div>
+            <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200 gap-2 w-full">
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+                        <span className="mr-1 text-black-800 font-bold text-[10px]">Semestre:</span>
+                        <select value={semester} onChange={(e) => setSemester(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+                            {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+                        <span className="mr-1 text-black-800 font-bold text-[10px]">Groupe:</span>
+                        <select value={group} onChange={(e) => setGroup(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+                            {dynamicGroups.map((g: string) => <option key={g} value={g}>{g.replace("Groupe ","G")}</option>)}
+                        </select>
+                    </div>
+                    <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+                        <span className="mr-1 text-black-800 font-bold text-[10px]">Semaine:</span>
+                        <select value={week} onChange={(e) => setWeek(parseInt(e.target.value))} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+                            {Array.from({ length: totalWeeks }, (_, i) => {
+                                const weekNum = i + 1;
+                                return (
+                                    <option key={weekNum} value={weekNum}>
+                                         {weekNum}
+                                    </option>
+                                );
+                            })}
+                        </select>
+                    </div>
+                </div>
+                <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
+                    Du&nbsp;&nbsp;<span className="text-blue-700 font-bold">{startStr}</span>&nbsp;&nbsp;au&nbsp;&nbsp;<span className="text-blue-700 font-bold">{endStr}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                    <div className="relative group">
+                        <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
+                        <input type="text" value={searchQuery} onChange={handleSearchChange} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
+                    </div>
+                    <button onClick={handleExportPDF} disabled={isExporting} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all" title="Exporter PDF"><FileDown size={14} /></button>
+                </div>
+            </div>
+        </div>
+    );
+});
+
+  const handleExportPDF = async () => {
+    const element = document.getElementById('calendar-capture-zone');
+    if (!element) return;
+    setIsExporting(true);
+    try {
+        const dataUrl = await toPng(element, { quality: 1.0, pixelRatio: 2, backgroundColor: "#ffffff" });
+        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const imgProps = pdf.getImageProperties(dataUrl);
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        pdf.addImage(dataUrl, 'PNG', 0, 10, pdfWidth, pdfHeight);
+        pdf.save(`Planning_${semester}_${activeMainGroup}.pdf`);
+    } catch (err) { alert("Erreur export PDF"); } finally { setIsExporting(false); }
+  };
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    setActiveDragItem(null);
+    const { active, over } = e;
+    if (!over) return;
+    const sourceId = active.id as string;
+    const originalCourse = assignmentRows.find(r => r.id === sourceId);
+    if (!originalCourse) return;
+    const targetTimeSlot = over.id as string; 
+    const [tDay, tTime] = targetTimeSlot.split('|');
+    const conflictMsg = checkInstantConflict(sourceId, tDay, tTime);
+    if (conflictMsg) {
+        playConflictSound();
+        setToastMessage({ msg: conflictMsg, type: 'error' });
+        return; // Annuler le placement en cas de conflit
+    }
+    
+    // Vérifier si Ctrl est pressé pour copier au lieu de déplacer
+    const isCtrlPressed = (e as any).activatorEvent?.ctrlKey || (e as any).activatorEvent?.metaKey;
+    
+    if (isCtrlPressed) {
+        // Créer une copie du cours
+        const newCourse: AssignmentRow = {
+            ...originalCourse,
+            id: Math.random().toString(36).substr(2, 9), // Nouvel ID unique
+        };
+        
+        // Ajouter la nouvelle carte aux assignmentRows
+        setAssignmentRows(prev => [...prev, newCourse]);
+        
+        // Placer la copie dans le planning
+        setSchedule(prev => ({
+            ...prev,
+            [`${semester}|w${currentWeek}|${activeMainGroup}|${targetTimeSlot}`]: newCourse.id
+        }));
+        
+        setToastMessage({ msg: `Copie de ${originalCourse.subject} créée`, type: 'success' });
+    } else {
+        // Comportement normal : déplacer la carte
+        setSchedule(prev => {
+            const next = { ...prev };
+            Object.keys(next).forEach(k => { if (k.startsWith(`${semester}|w${currentWeek}|${activeMainGroup}|`) && next[k] === sourceId) next[k] = null; });
+            next[`${semester}|w${currentWeek}|${activeMainGroup}|${targetTimeSlot}`] = sourceId;
+            return next;
+        });
+    }
+  };
+
+  const handleUnassign = (courseId: string) => {
+    setSchedule(prev => {
+        const next = { ...prev };
+        Object.keys(next).forEach(k => { if (next[k] === courseId) next[k] = null; });
+        return next;
+    });
+  };
+
+  // CRITICAL FIX: updateRow function that properly updates both type and subLabel
+  const updateRow = (id: string, field: keyof AssignmentRow, value: any) => {
+    setAssignmentRows(prev => {
+        return prev.map(r => {
+            if (r.id === id) {
+                // CORRECTION: Si on change le type, on change aussi le subLabel pour maintenir la cohérence
+                if (field === 'type') {
+                    return { ...r, type: value, subLabel: value };
+                }
+                return { ...r, [field]: value };
+            }
+            return r;
+        });
+    });
+    // Forcer le re-rendu des cartes
+    setRefreshKey(prev => prev + 1);
+  };
+
+  // Fonction pour calculer les sessions réalisées/totales
+  const getSessionsInfo = (subject: string, semester: string) => {
+    const subjectData = customSubjects
+        .find((sem: any) => sem.semestre === semester)
+        ?.matieres.find((mat: any) => mat.code === subject);
+    
+    if (!subjectData) return { realized: 0, total: 0 };
+    
+    const credit = subjectData.credit || 0;
+    const totalSessions = credit * 8;
+    
+    // Compter les sessions réalisées (cours placés dans le planning)
+    const realizedSessions = Object.values(schedule).filter(courseId => {
+        if (!courseId) return false;
+        const course = assignmentRows.find(r => r.id === courseId);
+        return course && course.subject === subject && course.semester === semester;
+    }).length;
+    
+    return { realized: realizedSessions, total: totalSessions };
+  };
+
+  // Fonction pour obtenir les couleurs selon le type de cours
+  const getCourseColors = (type: CourseType) => {
+    switch (type) {
+        case 'CM':
+            return {
+                bg: 'bg-blue-50',
+                border: 'border-blue-200',
+                borderLeft: 'border-l-blue-500',
+                badge: 'bg-blue-500',
+                text: 'text-blue-900'
+            };
+        case 'TD':
+            return {
+                bg: 'bg-green-50',
+                border: 'border-green-200',
+                borderLeft: 'border-l-green-500',
+                badge: 'bg-green-500',
+                text: 'text-green-900'
+            };
+        case 'TP':
+            return {
+                bg: 'bg-orange-50',
+                border: 'border-orange-200',
+                borderLeft: 'border-l-orange-500',
+                badge: 'bg-orange-500',
+                text: 'text-orange-900'
+            };
+        default:
+            return {
+                bg: 'bg-gray-50',
+                border: 'border-gray-200',
+                borderLeft: 'border-l-gray-500',
+                badge: 'bg-gray-500',
+                text: 'text-gray-900'
+            };
+    }
+  };
+
+  // Composant pour les cartes draggables
+  const DraggableCard = ({ course, isDragging = false }: { course: AssignmentRow, isDragging?: boolean }) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging: dragState } = useDraggable({
+        id: course.id,
+        data: course
+    });
+
+    const style = transform ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    } : undefined;
+
+    const colors = getCourseColors(course.type);
+    const sessionsInfo = getSessionsInfo(course.subject, course.semester);
+    const compactClasses = "p-2 min-h-[80px] w-full";
+
+    // Déterminer l'enseignant à afficher selon le type de cours
+    let teacher = '';
+    if (course.type === 'CM') {
+        // Pour les CM, toujours prendre seulement le premier enseignant
+        teacher = (course.teacher || '').split('/')[0]?.trim() || '';
+    } else {
+        // Pour TD/TP, afficher tous les enseignants
+        teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    }
+
+    return (
+        <div ref={setNodeRef} style={style} {...listeners} {...attributes}
+            className={`relative rounded-lg border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow transition-all shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
+            {isDragging && isCtrlPressed && (
+                <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
+                    COPIE
+                </div>
+            )}
+            <div className="flex justify-between items-start mb-1">
+                <div className="flex flex-col">
+                    <span className="font-bold text-[11px] text-slate-800 leading-tight">{course.subject}</span>
+                    <span className="text-[8px] text-slate-600 leading-tight">
+                        {sessionsInfo.realized}/{sessionsInfo.total}
+                    </span>
+                </div>
+                {/* CRITICAL FIX: Use course.type instead of course.subLabel */}
+                <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${colors.badge}`}>{course.type}</span>
+            </div>
+            <div className="flex justify-between items-start mb-1">
+                <div className="text-[9px] font-medium text-slate-700 leading-tight">
+                    {teacher || 'Non assigné'}
+                </div>
+            </div>
+            <div className="flex justify-between items-center">
+                <span className="text-[8px] text-slate-500 font-medium">{course.room}</span>
+                <span className="text-[8px] text-slate-500">{course.mainGroup.replace("Groupe ", "G")}</span>
+            </div>
+        </div>
+    );
+  };
+
+  // Composant pour les badges de cours dans le planning
+  const CourseBadge = ({ course, onUnassign, updateRow, uniqueTeachers, customRooms }: any) => {
+    const colors = getCourseColors(course.type);
+    const sessionsInfo = getSessionsInfo(course.subject, course.semester);
+    const compactClasses = "p-1.5 min-h-[60px] w-full text-left";
+
+    // Déterminer l'enseignant à afficher selon le type de cours
+    let teacher = '';
+    if (course.type === 'CM') {
+        teacher = (course.teacher || '').split('/')[0]?.trim() || '';
+    } else {
+        teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    }
+
+    return (
+        <div className={`relative rounded border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} ${compactClasses} group hover:shadow-md transition-all`}>
+            <div className="flex justify-between items-start mb-1">
+                <div className="flex flex-col">
+                    <span className="font-bold text-[10px] text-slate-800 leading-tight">{course.subject}</span>
+                    <span className="text-[7px] text-slate-600 leading-tight">
+                        {sessionsInfo.realized}/{sessionsInfo.total}
+                    </span>
+                </div>
+                {/* CRITICAL FIX: Use course.type instead of course.subLabel */}
+                <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.type}</span>
+            </div>
+            <div className="text-[8px] font-normal text-slate-700 truncate whitespace-nowrap overflow-hidden" style={{ maxWidth: '10rem' }}>
+                {teacher || 'Non assigné'}
+            </div>
+            <div className="flex justify-between items-center mt-1">
+                <span className="text-[7px] text-slate-500 font-medium">{course.room}</span>
+                <button onClick={onUnassign} className="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-all p-1">
+                    <X size={10}/>
+                </button>
+            </div>
+        </div>
+    );
+  };
+
+  // Composant pour les cartes compactes dans la sidebar
+  const CompactCourseBadge = ({ course }: { course: AssignmentRow }) => {
+    const colors = getCourseColors(course.type);
+    const sessionsInfo = getSessionsInfo(course.subject, course.semester);
+
+    // Déterminer l'enseignant à afficher selon le type de cours
+    let teacher = '';
+    if (course.type === 'CM') {
+        teacher = (course.teacher || '').split('/')[0]?.trim() || '';
+    } else {
+        teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    }
+
+    return (
+        <div className={`rounded border ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} p-1.5 text-left hover:shadow-sm transition-all cursor-grab active:cursor-grabbing`}>
+            <div className="flex justify-between items-start mb-0.5">
+                <div className="flex flex-col">
+                    <span className="font-bold text-[9px] text-slate-800 leading-tight">{course.subject}</span>
+                    <span className="text-[7px] text-slate-600 leading-tight">
+                        {sessionsInfo.realized}/{sessionsInfo.total}
+                    </span>
+                </div>
+                {/* CRITICAL FIX: Use course.type instead of course.subLabel */}
+                <span className={`text-[7px] font-black px-1 rounded text-white ${colors.badge}`}>{course.type}</span>
+            </div>
+            <div className="flex flex-col gap-0.5 mt-auto">
+                <div className="text-[7px] font-normal text-slate-700 truncate" style={{ maxWidth: '8rem' }}>
+                    {teacher || 'Non assigné'}
+                </div>
+                <div className="flex justify-between items-center">
+                    <span className="text-[6px] text-slate-500 font-medium">{course.room}</span>
+                    <span className="text-[6px] text-slate-500">{course.mainGroup.replace("Groupe ", "G")}</span>
+                </div>
+            </div>
+        </div>
+    );
+  };
+  // Composants pour le drag and drop
+  const DroppableCell = ({ children, id, isOccupied }: { children: React.ReactNode, id: string, isOccupied: boolean }) => {
+    const { isOver, setNodeRef } = useDroppable({ id });
+    
+    return (
+        <div ref={setNodeRef} className={`border-r border-slate-100 min-h-[100px] p-1 transition-colors ${isOver ? 'bg-blue-50 border-blue-200' : ''} ${isOccupied ? '' : 'hover:bg-slate-50'}`}>
+            {children}
+        </div>
+    );
+  };
+
+  const DraggableSourceItem = ({ course }: { course: AssignmentRow }) => {
+    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+        id: course.id,
+        data: course
+    });
+
+    const style = transform ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+    } : undefined;
+
+    if (isDragging) {
+        setActiveDragItem(course);
+    }
+
+    return (
+        <div ref={setNodeRef} style={style} {...listeners} {...attributes}>
+            <CompactCourseBadge course={course} />
+        </div>
+    );
+  };
+
+  // Navigation components
+  const NavButton = ({ active, onClick, icon, label }: { active: boolean, onClick: () => void, icon: React.ReactNode, label: string }) => (
+    <button onClick={onClick} className={`p-3 rounded-lg transition-all ${active ? 'bg-blue-600 text-white' : 'hover:bg-slate-800 hover:text-slate-200'}`} title={label}>
+        {icon}
+    </button>
+  );
+
+  const MenuOption = ({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) => (
+    <button onClick={onClick} className={`w-full text-left px-4 py-2 text-sm hover:bg-slate-50 transition-colors ${active ? 'bg-blue-50 text-blue-600 font-medium' : 'text-slate-700'}`}>
+        {label}
+    </button>
+  );
+
+  // Fonction pour ajouter un enseignant à une matière
+  const addTeacherToSubject = (semesterCode: string, subjectCode: string, teacherName: string, type: 'CM' | 'TD') => {
+    setCustomSubjects(prev => {
+        return prev.map(sem => {
+            if (sem.semestre === semesterCode) {
+                return {
+                    ...sem,
+                    matieres: sem.matieres.map(mat => {
+                        if (mat.code === subjectCode) {
+                            const field = type === 'CM' ? 'enseignantsCM' : 'enseignantsTD';
+                            const currentTeachers = mat[field] || '';
+                            const teachersList = currentTeachers.split('/').map(t => t.trim()).filter(t => t);
+                            
+                            if (!teachersList.includes(teacherName)) {
+                                teachersList.push(teacherName);
+                            }
+                            
+                            return {
+                                ...mat,
+                                [field]: teachersList.join('/')
+                            };
+                        }
+                        return mat;
+                    })
+                };
+            }
+            return sem;
+        });
+    });
+  };
+
+  // Fonction pour ajouter une nouvelle ligne de cours
+  const addCourseRow = (semesterCode: string, subjectCode: string) => {
+    const subjectData = customSubjects
+        .find(sem => sem.semestre === semesterCode)
+        ?.matieres.find(mat => mat.code === subjectCode);
+    
+    if (!subjectData) return;
+
+    const newRow: AssignmentRow = {
+        id: Math.random().toString(36).substr(2, 9),
+        subject: subjectCode,
+        subjectLabel: subjectData.libelle,
+        type: 'TD',
+        mainGroup: 'Groupe 1',
+        sharedGroups: ['Groupe 1'],
+        subLabel: 'TD',
+        teacher: '',
+        room: '101',
+        semester: semesterCode
+    };
+
+    setAssignmentRows(prev => [...prev, newRow]);
+  };
+
+  if (!isClient) {
+    return <div className="h-screen flex items-center justify-center bg-slate-50">
+        <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-slate-600">Chargement...</p>
+        </div>
+    </div>;
+  }
+
+  // Filtrer les cours pour la sidebar et le planning
+  const groupCourses = assignmentRows.filter(r => 
+    r.mainGroup === activeMainGroup && 
+    r.semester === semester &&
+    (searchQuery === '' || r.subject.toLowerCase().includes(searchQuery.toLowerCase()) || r.subjectLabel?.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  const placedIdsThisWeek = Object.keys(schedule)
+    .filter(k => k.startsWith(`${semester}|w${currentWeek}|${activeMainGroup}|`) && schedule[k])
+    .map(k => schedule[k] as string);
+
+  const sidebarCourses = groupCourses.filter(c => !placedIdsThisWeek.includes(c.id));
+
+  return (
+    <div className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+      {/* Toast Messages */}
+      {toastMessage && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 z-[9999]">
+          <div className={`px-4 py-2 rounded-lg shadow-xl font-bold text-white flex items-center gap-2 ${toastMessage.type === 'error' ? 'bg-red-600' : 'bg-green-600'}`}>
+            <AlertTriangle size={18}/>
+            <span className="text-sm">{toastMessage.msg}</span>
+            <button onClick={() => setToastMessage(null)} className="ml-2">
+              <X size={16}/>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <HeaderBanner 
+        semester={semester} setSemester={setSemester}
+        group={activeMainGroup} setGroup={setActiveMainGroup}
+        week={currentWeek} setWeek={setCurrentWeek}
+        totalWeeks={config.totalWeeks}
+        startStr={weekDates.startStr} endStr={weekDates.endStr}
+        searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+        handleExportPDF={handleExportPDF} isExporting={isExporting}
+        dynamicGroups={dynamicGroups}
+        config={config}
+      />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar Navigation */}
+        <aside className="w-14 bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-6 shrink-0 z-30">
+          <NavButton active={activeTab === 'planning'} onClick={() => setActiveTab('planning')} icon={<Calendar size={20}/>} label="Planning" />
+          <NavButton active={activeTab === 'manage'} onClick={() => setActiveTab('manage')} icon={<LayoutDashboard size={20}/>} label="Gestion" />
+          
+          <div className="relative data-menu-container">
+            <NavButton active={activeTab === 'data'} onClick={() => setShowDataMenu(!showDataMenu)} icon={<Database size={20}/>} label="Données" />
+            {showDataMenu && (
+              <div className="absolute left-14 top-0 bg-white rounded-lg shadow-xl border border-slate-200 py-2 w-48 flex flex-col gap-1 z-50">
+                <MenuOption label="Matières & Enseignants" active={dataSubTab === 'subjects'} onClick={() => { setDataSubTab('subjects'); setActiveTab('data'); setShowDataMenu(false); }} />
+                <MenuOption label="Salles de cours" active={dataSubTab === 'rooms'} onClick={() => { setDataSubTab('rooms'); setActiveTab('data'); setShowDataMenu(false); }} />
+                <MenuOption label="Avancement des cours" active={dataSubTab === 'progress'} onClick={() => { setDataSubTab('progress'); setActiveTab('data'); setShowDataMenu(false); }} />
+              </div>
+            )}
+          </div>
+          
+          <div className="flex-1" />
+          <NavButton active={activeTab === 'config'} onClick={() => setActiveTab('config')} icon={<Settings size={20}/>} label="Configuration" />
+        </aside>
+
+        <main className="flex-1 overflow-hidden relative bg-slate-100/50">
+          <DndContext onDragEnd={handleDragEnd}>
+            
+            {/* Planning Tab */}
+            {activeTab === 'planning' && (
+              <div className="h-full flex">
+                {/* Sidebar avec cours à placer */}
+                <div className="w-64 bg-white border-r border-slate-200 flex flex-col shadow-sm z-20">
+                  <div className="p-4 border-b border-slate-100 bg-slate-50/50">
+                    <h3 className="font-bold text-slate-700 text-sm flex items-center gap-2">
+                      <Split size={16} className="text-blue-500"/>
+                      À placer <span className="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full text-[10px]">{sidebarCourses.length}</span>
+                    </h3>
+                    {isCtrlPressed && (
+                      <div className="mt-2 text-xs text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                        💡 Ctrl+Glisser pour copier
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 overflow-y-auto p-3 space-y-2">
+                    {sidebarCourses.map(course => (
+                      <DraggableSourceItem key={`${course.id}-${refreshKey}`} course={course} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Grille de planning */}
+                <div className="flex-1 overflow-auto bg-slate-50/30 p-4" id="calendar-capture-zone">
+                  <div className="min-w-[800px] bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    {/* En-tête avec les créneaux horaires */}
+                    <div className="grid border-b border-slate-200 bg-slate-50" style={{ gridTemplateColumns: `120px repeat(${config.timeSlots.length}, minmax(0, 1fr))` }}>
+                      <div className="p-3 border-r border-slate-200 bg-slate-100"></div>
+                      {config.timeSlots.map((slot, i) => (
+                        <div key={i} className="p-2 text-center border-r border-slate-100 font-bold text-slate-700 text-xs">
+                          {slot}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Lignes des jours */}
+                    {DAYS.map((day) => (
+                      <div key={day} className="grid border-b border-slate-100 min-h-[100px]" style={{ gridTemplateColumns: `120px repeat(${config.timeSlots.length}, minmax(0, 1fr))` }}>
+                        <div className="p-2 border-r border-slate-200 bg-slate-50 flex items-center justify-center">
+                          <div className="text-sm font-bold text-slate-600 uppercase tracking-wide">
+                            {day}
+                          </div>
+                        </div>
+                        {config.timeSlots.map((time) => {
+                          const slotId = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
+                          const courseId = schedule[slotId];
+                          const course = courseId ? assignmentRows.find(r => r.id === courseId) : null;
+                          return (
+                            <DroppableCell key={slotId} id={slotId} isOccupied={!!course}>
+                              {course && (
+                                <CourseBadge 
+                                  course={course} 
+                                  onUnassign={() => handleUnassign(course.id)}
+                                  updateRow={updateRow}
+                                  uniqueTeachers={UNIQUE_TEACHERS}
+                                  customRooms={customRooms}
+                                />
+                              )}
+                            </DroppableCell>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <DragOverlay>
+              {activeDragItem ? <DraggableCard course={activeDragItem} isDragging /> : null}
+            </DragOverlay>
+          </DndContext>
+
+          {/* Manage Tab */}
+          {activeTab === 'manage' && (
+            <div className="h-full flex flex-col p-6 overflow-hidden">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-slate-800">Gestion des cours</h2>
+                <div className="flex gap-2">
+                  <input 
+                    type="text" 
+                    placeholder="Filtrer par matière..." 
+                    className="px-4 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={manageFilterCode} 
+                    onChange={(e) => setManageFilterCode(e.target.value)}
+                  />
+                  <button 
+                    onClick={() => loadFullDataset(true)} 
+                    className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 size={16}/> Réinitialiser
+                  </button>
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 overflow-auto">
+                <table className="w-full text-left text-sm">
+                  <thead className="bg-slate-50 border-b sticky top-0 z-10">
+                    <tr>
+                      <th className="p-4 text-slate-600 font-medium">Matière</th>
+                      <th className="p-4 text-slate-600 font-medium">Groupe</th>
+                      <th className="p-4 text-slate-600 font-medium">Type</th>
+                      <th className="p-4 text-slate-600 font-medium">Enseignant</th>
+                      <th className="p-4 text-slate-600 font-medium">Salle</th>
+                      <th className="p-4 text-slate-600 font-medium text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {assignmentRows
+                      .filter(r => r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) || r.subjectLabel?.toLowerCase().includes(manageFilterCode.toLowerCase()))
+                      .map(row => (
+                      <tr key={row.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="p-4">
+                          <div className="font-medium text-slate-800">{row.subject}</div>
+                          <div className="text-xs text-slate-500">{row.subjectLabel}</div>
+                        </td>
+                        <td className="p-4 text-slate-600">{row.mainGroup}</td>
+                        <td className="p-4">
+                          <select 
+                            value={row.type} 
+                            onChange={(e) => updateRow(row.id, 'type', e.target.value)}
+                            className="bg-transparent font-medium text-blue-600 outline-none cursor-pointer border border-slate-200 rounded px-2 py-1 hover:border-blue-300 focus:border-blue-500"
+                          >
+                            <option value="CM">CM</option>
+                            <option value="TD">TD</option>
+                            <option value="TP">TP</option>
+                          </select>
+                        </td>
+                        <td className="p-4">
+                          <select 
+                            value={row.teacher} 
+                            onChange={(e) => updateRow(row.id, 'teacher', e.target.value)}
+                            className="w-full bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none py-1"
+                          >
+                            <option value="">(Non assigné)</option>
+                            {UNIQUE_TEACHERS.map(t => <option key={t} value={t}>{t}</option>)}
+                          </select>
+                        </td>
+                        <td className="p-4">
+                          <select 
+                            value={row.room} 
+                            onChange={(e) => updateRow(row.id, 'room', e.target.value)}
+                            className="w-24 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none py-1"
+                          >
+                            {customRooms.map(r => <option key={r} value={r}>{r}</option>)}
+                          </select>
+                        </td>
+                        <td className="p-4 text-right">
+                          <button 
+                            onClick={() => setAssignmentRows(prev => prev.filter(r => r.id !== row.id))} 
+                            className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition-colors"
+                            title="Supprimer"
+                          >
+                            <Trash2 size={16}/>
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* Configuration Tab */}
+          {activeTab === 'config' && (
+            <div className="p-8 max-w-4xl mx-auto h-full overflow-auto">
+              <h2 className="text-2xl font-bold text-slate-800 mb-8 flex items-center gap-2">
+                <Settings className="text-blue-600"/> Configuration
+              </h2>
+              
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                  <h3 className="font-bold text-lg mb-4 text-slate-700">Paramètres Généraux</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Date de début</label>
+                      <input 
+                        type="date" 
+                        value={config.startDate} 
+                        onChange={(e) => setConfig({...config, startDate: e.target.value})} 
+                        className="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Nombre total de semaines</label>
+                      <input 
+                        type="number" 
+                        value={config.totalWeeks} 
+                        onChange={(e) => setConfig({...config, totalWeeks: parseInt(e.target.value)})} 
+                        className="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-600 mb-2">Nombre de groupes</label>
+                      <input 
+                        type="number" 
+                        value={config.numberOfGroups} 
+                        onChange={(e) => setConfig({...config, numberOfGroups: parseInt(e.target.value)})} 
+                        className="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                  <h3 className="font-bold text-lg mb-4 text-slate-700">Créneaux Horaires</h3>
+                  <div className="space-y-3">
+                    {config.timeSlots.map((slot, idx) => (
+                      <div key={idx} className="flex gap-3 items-center">
+                        <input 
+                          value={slot} 
+                          onChange={(e) => {
+                            const newSlots = [...config.timeSlots];
+                            newSlots[idx] = e.target.value;
+                            setConfig({...config, timeSlots: newSlots});
+                          }} 
+                          className="flex-1 p-3 border border-slate-300 rounded-lg font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="HH:MM-HH:MM"
+                        />
+                        <button 
+                          onClick={() => setConfig({...config, timeSlots: config.timeSlots.filter((_, i) => i !== idx)})} 
+                          className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition-colors"
+                          title="Supprimer ce créneau"
+                        >
+                          <X size={16}/>
+                        </button>
+                      </div>
+                    ))}
+                    <button 
+                      onClick={() => setConfig({...config, timeSlots: [...config.timeSlots, "00:00-00:00"]})} 
+                      className="text-blue-600 font-medium text-sm flex items-center gap-2 hover:text-blue-700 transition-colors"
+                    >
+                      <Plus size={16}/> Ajouter un créneau
+                    </button>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                  <h3 className="font-bold text-lg mb-4 text-slate-700">Périodes de Vacances</h3>
+                  <div className="space-y-3">
+                    {config.vacationPeriods.map((period, idx) => (
+                      <div key={idx} className="flex gap-3 items-center">
+                        <input 
+                          type="date"
+                          value={period.startDate} 
+                          onChange={(e) => {
+                            const newPeriods = [...config.vacationPeriods];
+                            newPeriods[idx] = {...newPeriods[idx], startDate: e.target.value};
+                            setConfig({...config, vacationPeriods: newPeriods});
+                          }} 
+                          className="flex-1 p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <span className="text-slate-500">au</span>
+                        <input 
+                          type="date"
+                          value={period.endDate} 
+                          onChange={(e) => {
+                            const newPeriods = [...config.vacationPeriods];
+                            newPeriods[idx] = {...newPeriods[idx], endDate: e.target.value};
+                            setConfig({...config, vacationPeriods: newPeriods});
+                          }} 
+                          className="flex-1 p-3 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <button 
+                          onClick={() => setConfig({...config, vacationPeriods: config.vacationPeriods.filter((_, i) => i !== idx)})} 
+                          className="text-red-400 hover:text-red-600 p-2 rounded hover:bg-red-50 transition-colors"
+                          title="Supprimer cette période"
+                        >
+                          <X size={16}/>
+                        </button>
+                      </div>
+                    ))}
+                    <button 
+                      onClick={() => setConfig({...config, vacationPeriods: [...config.vacationPeriods, {startDate: '', endDate: ''}]})} 
+                      className="text-blue-600 font-medium text-sm flex items-center gap-2 hover:text-blue-700 transition-colors"
+                    >
+                      <Plus size={16}/> Ajouter une période de vacances
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Data Tab */}
+          {activeTab === 'data' && (
+            <div className="p-6 h-full flex flex-col">
+              <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <Database className="text-blue-600"/> 
+                Données: {dataSubTab === 'rooms' ? 'Salles' : dataSubTab === 'subjects' ? 'Matières & Enseignants' : 'Avancement des cours'}
+              </h2>
+              
+              {dataSubTab === 'rooms' && (
+                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex-1 overflow-auto">
+                  <div className="flex flex-wrap gap-3">
+                    {customRooms.map((room, idx) => (
+                      <div key={idx} className="bg-slate-50 border border-slate-200 px-4 py-2 rounded-lg flex items-center gap-2 group hover:bg-slate-100 transition-colors">
+                        <span className="font-medium text-slate-700">{room}</span>
+                        <button 
+                          onClick={() => setCustomRooms(prev => prev.filter((_, i) => i !== idx))} 
+                          className="text-slate-400 hover:text-red-500 transition-colors"
+                          title="Supprimer cette salle"
+                        >
+                          <X size={14}/>
+                        </button>
+                      </div>
+                    ))}
+                    <button 
+                      onClick={() => { 
+                        const roomName = prompt("Nom de la nouvelle salle ?"); 
+                        if(roomName && roomName.trim()) {
+                          setCustomRooms(prev => [...prev, roomName.trim()]); 
+                        }
+                      }} 
+                      className="px-4 py-2 border-2 border-dashed border-slate-300 rounded-lg text-blue-600 hover:bg-blue-50 hover:border-blue-400 flex items-center gap-2 transition-colors"
+                    >
+                      <Plus size={16}/> Ajouter une salle
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {dataSubTab === 'subjects' && (
+                <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 overflow-auto">
+                  <div className="p-6">
+                    {customSubjects.map((semesterData: any) => (
+                      <div key={semesterData.semestre} className="mb-8">
+                        <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">{semesterData.semestre}</span>
+                        </h3>
+                        <div className="space-y-4">
+                          {semesterData.matieres.map((matiere: any) => (
+                            <div key={matiere.code} className="border border-slate-200 rounded-lg p-4">
+                              <div className="flex justify-between items-start mb-3">
+                                <div>
+                                  <h4 className="font-bold text-slate-800">{matiere.code}</h4>
+                                  <p className="text-sm text-slate-600">{matiere.libelle}</p>
+                                  <p className="text-xs text-slate-500">Crédits: {matiere.credit}</p>
+                                </div>
+                                <button 
+                                  onClick={() => addCourseRow(semesterData.semestre, matiere.code)}
+                                  className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-sm font-medium hover:bg-green-200 transition-colors flex items-center gap-1"
+                                  title="Ajouter une ligne de cours"
+                                >
+                                  <Plus size={14}/> Cours
+                                </button>
+                              </div>
+                              
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                  <div className="flex justify-between items-center mb-2">
+                                    <label className="text-sm font-medium text-slate-600">Enseignants CM</label>
+                                    <button 
+                                      onClick={() => {
+                                        const teacherName = prompt("Nom de l'enseignant CM ?");
+                                        if (teacherName && teacherName.trim()) {
+                                          addTeacherToSubject(semesterData.semestre, matiere.code, teacherName.trim(), 'CM');
+                                        }
+                                      }}
+                                      className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-medium hover:bg-blue-200 transition-colors flex items-center gap-1"
+                                      title="Ajouter un enseignant CM"
+                                    >
+                                      <Plus size={12}/> CM
+                                    </button>
+                                  </div>
+                                  <input 
+                                    type="text" 
+                                    value={matiere.enseignantsCM || ''} 
+                                    onChange={(e) => {
+                                      setCustomSubjects(prev => prev.map(sem => 
+                                        sem.semestre === semesterData.semestre 
+                                          ? {
+                                              ...sem,
+                                              matieres: sem.matieres.map(mat => 
+                                                mat.code === matiere.code 
+                                                  ? {...mat, enseignantsCM: e.target.value}
+                                                  : mat
+                                              )
+                                            }
+                                          : sem
+                                      ));
+                                    }}
+                                    className="w-full p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                    placeholder="Enseignants CM (séparés par /)"
+                                  />
+                                </div>
+                                
+                                <div>
+                                  <div className="flex justify-between items-center mb-2">
+                                    <label className="text-sm font-medium text-slate-600">Intervenants TD/TP</label>
+                                    <button 
+                                      onClick={() => {
+                                        const teacherName = prompt("Nom de l'intervenant TD/TP ?");
+                                        if (teacherName && teacherName.trim()) {
+                                          addTeacherToSubject(semesterData.semestre, matiere.code, teacherName.trim(), 'TD');
+                                        }
+                                      }}
+                                      className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs font-medium hover:bg-purple-200 transition-colors flex items-center gap-1"
+                                      title="Ajouter un intervenant TD/TP"
+                                    >
+                                      <Plus size={12}/> TD
+                                    </button>
+                                  </div>
+                                  <input 
+                                    type="text" 
+                                    value={matiere.enseignantsTD || ''} 
+                                    onChange={(e) => {
+                                      setCustomSubjects(prev => prev.map(sem => 
+                                        sem.semestre === semesterData.semestre 
+                                          ? {
+                                              ...sem,
+                                              matieres: sem.matieres.map(mat => 
+                                                mat.code === matiere.code 
+                                                  ? {...mat, enseignantsTD: e.target.value}
+                                                  : mat
+                                              )
+                                            }
+                                          : sem
+                                      ));
+                                    }}
+                                    className="w-full p-2 border border-slate-300 rounded focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+                                    placeholder="Intervenants TD/TP (séparés par /)"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {dataSubTab === 'progress' && (
+                <div className="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 overflow-auto">
+                  <div className="p-6">
+                    <div className="flex gap-4 mb-6">
+                      <select 
+                        value={dataFilterSemester} 
+                        onChange={(e) => setDataFilterSemester(e.target.value)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Tous les semestres</option>
+                        {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                      <input 
+                        type="text"
+                        placeholder="Filtrer par matière..."
+                        value={dataFilterSubject}
+                        onChange={(e) => setDataFilterSubject(e.target.value)}
+                        className="px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
+
+                    {customSubjects
+                      .filter((sem: any) => !dataFilterSemester || sem.semestre === dataFilterSemester)
+                      .map((semesterData: any) => (
+                      <div key={semesterData.semestre} className="mb-8">
+                        <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">{semesterData.semestre}</span>
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {semesterData.matieres
+                            .filter((mat: any) => !dataFilterSubject || mat.code.toLowerCase().includes(dataFilterSubject.toLowerCase()) || mat.libelle.toLowerCase().includes(dataFilterSubject.toLowerCase()))
+                            .map((matiere: any) => {
+                            const sessionsInfo = getSessionsInfo(matiere.code, semesterData.semestre);
+                            const progressPercent = sessionsInfo.total > 0 ? (sessionsInfo.realized / sessionsInfo.total) * 100 : 0;
+                            const isComplete = progressPercent >= 100;
+                            const isInProgress = progressPercent > 0 && progressPercent < 100;
+                            
+                            return (
+                              <div key={matiere.code} className="border border-slate-200 rounded-lg p-4">
+                                <div className="flex justify-between items-start mb-2">
+                                  <div>
+                                    <h4 className="font-bold text-slate-800">{matiere.code}</h4>
+                                    <p className="text-sm text-slate-600">{matiere.libelle}</p>
+                                  </div>
+                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                    isComplete ? 'bg-green-100 text-green-700' : 
+                                    isInProgress ? 'bg-orange-100 text-orange-700' : 
+                                    'bg-gray-100 text-gray-700'
+                                  }`}>
+                                    {sessionsInfo.realized}/{sessionsInfo.total}
+                                  </span>
+                                </div>
+                                
+                                <div className="mb-3">
+                                  <div className="flex justify-between text-xs text-slate-600 mb-1">
+                                    <span>Progression</span>
+                                    <span>{Math.round(progressPercent)}%</span>
+                                  </div>
+                                  <div className="w-full bg-slate-200 rounded-full h-2">
+                                    <div 
+                                      className={`h-2 rounded-full transition-all ${
+                                        isComplete ? 'bg-green-500' : 
+                                        isInProgress ? 'bg-orange-500' : 
+                                        'bg-gray-400'
+                                      }`}
+                                      style={{ width: `${Math.min(progressPercent, 100)}%` }}
+                                    ></div>
+                                  </div>
+                                </div>
+
+                                <div className="text-xs text-slate-500">
+                                  <div>Crédits: {matiere.credit}</div>
+                                  <div>Sessions prévues: {sessionsInfo.total}</div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}

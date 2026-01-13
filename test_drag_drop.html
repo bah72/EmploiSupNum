@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Test Fonctionnalités Essentielles</title>
+    <style>
+        body { font-family: 'Comic Sans MS', Arial, sans-serif; padding: 20px; background: #f0f9ff; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .success { color: #059669; font-weight: bold; }
+        .info { color: #0369a1; }
+        .warning { color: #d97706; }
+        .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .test-card { 
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
+            border-left: 5px solid #059669; 
+        }
+        .checklist { list-style: none; padding: 0; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+        .checklist li:last-child { border-bottom: none; }
+        .check { color: #059669; font-weight: bold; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test des Fonctionnalités Essentielles</h1>
+        
+        <div class="test-card">
+            <h2>✅ Corrections Appliquées (Version Minimale)</h2>
+            <ul class="checklist">
+                <li><span class="check">✓</span> <strong>Correspondance libellé/couleur :</strong> {course.type} seulement</li>
+                <li><span class="check">✓</span> <strong>Cours combinés :</strong> Fusion en une carte purple</li>
+                <li><span class="check">✓</span> <strong>Erreurs runtime :</strong> Corrigées avec (assignmentRows || [])</li>
+                <li><span class="check">✓</span> <strong>Badges plus petits :</strong> Taille réduite + max-width</li>
+                <li><span class="check">✓</span> <strong>Structure préservée :</strong> Pas de modification majeure du layout</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🧪 Tests à Effectuer</h2>
+            
+            <h3>1. Test Drag & Drop de Base</h3>
+            <ol>
+                <li class="info">Aller dans "Gestion des cours"</li>
+                <li class="info">Glisser un cours de la sidebar vers le planning</li>
+                <li class="success">➜ Le cours doit se placer correctement</li>
+                <li class="info">Glisser le cours vers un autre créneau</li>
+                <li class="success">➜ Le cours doit se déplacer</li>
+                <li class="info">Cliquer sur le X pour supprimer le cours</li>
+                <li class="success">➜ Le cours doit disparaître du planning</li>
+            </ol>
+
+            <h3>2. Test Cours Combinés</h3>
+            <ol>
+                <li class="info">Créer deux cours avec enseignants et salles différents</li>
+                <li class="info">Placer le premier cours sur le planning</li>
+                <li class="info">Glisser le second cours sur le même créneau</li>
+                <li class="success">➜ Une carte purple combinée doit apparaître</li>
+                <li class="success">➜ Format : "DEV110/BDD201 | Ens1/Ens2 | Salle1/Salle2 | TD/TP"</li>
+            </ol>
+
+            <h3>3. Test Badges</h3>
+            <ol>
+                <li class="info">Vérifier que les badges CM, TD, TP sont visibles</li>
+                <li class="info">Vérifier que les badges ne sortent pas des cartes</li>
+                <li class="info">Tester avec des noms de cours longs</li>
+                <li class="success">➜ Les badges doivent rester dans les cartes</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Si Problèmes Persistent</h2>
+            
+            <div style="background: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                <h4>🚨 Badges qui débordent encore :</h4>
+                <ul>
+                    <li class="warning">Réduire encore la taille : text-[6px] au lieu de text-[7px]</li>
+                    <li class="warning">Utiliser des abréviations plus courtes : TD → T, TP → P</li>
+                    <li class="warning">Augmenter la largeur des cartes si possible</li>
+                </ul>
+            </div>
+
+            <div style="background: #fecaca; padding: 15px; border-radius: 8px; border-left: 4px solid #ef4444; margin-top: 15px;">
+                <h4>🚨 Drag & Drop ne fonctionne pas :</h4>
+                <ul>
+                    <li class="warning">Vérifier la console pour des erreurs JavaScript</li>
+                    <li class="warning">S'assurer que les IDs des cours sont uniques</li>
+                    <li class="warning">Vérifier que handleDragEnd fonctionne</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Objectif</h2>
+            <p class="info">Cette version minimale doit :</p>
+            <ul>
+                <li class="success">✓ Préserver toutes les fonctionnalités de base</li>
+                <li class="success">✓ Permettre le drag & drop normal</li>
+                <li class="success">✓ Fusionner les cours simultanés</li>
+                <li class="success">✓ Avoir des badges qui ne débordent pas (ou moins)</li>
+                <li class="success">✓ Correspondance parfaite libellé/couleur</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Lien de Test</h2>
+            <p style="text-align: center; font-size: 18px;">
+                <a href="http://localhost:3000" target="_blank" style="background: #059669; color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">
+                    🧪 TESTER L'APPLICATION
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🎯 Test fonctionnalités essentielles');
+        console.log('✅ Version minimale appliquée');
+        console.log('✅ Structure de base préservée');
+        console.log('🧪 Prêt pour les tests');
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Git
+
+
+Faites un commit AVANT chaque grosse demande à l'IA.
+
+Scénario : Vous allez demander à Kiro : "Refais tout le design de la page d'accueil en bleu".
+
+Risque : L'IA peut casser votre code ou produire un résultat moche.
+
+Action :
+
+git add .
+
+git commit -m "Avant redesign par IA"
+
+Lancer l'IA.
+
+Résultat : Si l'IA se plante, vous faites un git reset --hard HEAD (comme vu avant) et hop, vous revenez à la seconde avant l'erreur.

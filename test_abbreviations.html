@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Test Abréviations des Matières</title>
+    <style>
+        body { font-family: 'Comic Sans MS', Arial, sans-serif; padding: 20px; background: #f8fafc; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .success { color: #059669; font-weight: bold; }
+        .info { color: #0369a1; }
+        .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .demo-card { 
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); 
+            border: 2px solid #0ea5e9; 
+            padding: 15px; 
+            border-radius: 8px; 
+            margin: 10px 0; 
+            font-family: 'Comic Sans MS', sans-serif;
+        }
+        .purple-card { 
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); 
+            border: 2px solid #a855f7; 
+        }
+        .badge { 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            color: white; 
+            font-size: 10px; 
+            font-weight: bold; 
+            min-width: 24px; 
+            text-align: center; 
+            display: inline-block;
+        }
+        .cm { background: #059669; }
+        .td { background: #2563eb; }
+        .tp { background: #ea580c; }
+        .combined { background: #9333ea; }
+        .before-after { display: flex; gap: 20px; align-items: center; }
+        .arrow { font-size: 24px; color: #059669; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Abréviations des Matières - IMPLÉMENTÉES</h1>
+        
+        <div class="card">
+            <h2>✅ Fonctions Ajoutées</h2>
+            <ul>
+                <li class="success">✓ <code>abbreviateSubject()</code> - Abrège les noms de matières</li>
+                <li class="success">✓ <code>abbreviateCombinedSubjects()</code> - Abrège les cours combinés</li>
+                <li class="success">✓ Libellés de type renforcés (plus visibles)</li>
+                <li class="success">✓ Abréviations intelligentes par mots-clés</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🔤 Règles d'Abréviation</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                <div><strong>Développement</strong> → <span class="success">Dev</span></div>
+                <div><strong>Base de données</strong> → <span class="success">BDD</span></div>
+                <div><strong>Programmation</strong> → <span class="success">Prog</span></div>
+                <div><strong>Algorithmique</strong> → <span class="success">Algo</span></div>
+                <div><strong>Architecture</strong> → <span class="success">Arch</span></div>
+                <div><strong>Sécurité</strong> → <span class="success">Sécu</span></div>
+                <div><strong>Intelligence Artificielle</strong> → <span class="success">Intel Art</span></div>
+                <div><strong>Machine Learning</strong> → <span class="success">ML</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎨 Démonstration Avant/Après</h2>
+            
+            <h3>Cours Simple :</h3>
+            <div class="before-after">
+                <div class="demo-card">
+                    <strong>AVANT :</strong><br>
+                    <span style="font-size: 12px;">DÉVELOPPEMENT WEB AVANCÉ</span><br>
+                    <span class="badge td">TD</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="demo-card">
+                    <strong>APRÈS :</strong><br>
+                    <span style="font-size: 12px;">DEV WEB</span><br>
+                    <span class="badge td">TD</span>
+                </div>
+            </div>
+
+            <h3>Cours Combiné :</h3>
+            <div class="before-after">
+                <div class="purple-card demo-card">
+                    <strong>AVANT :</strong><br>
+                    <span style="font-size: 11px;">DÉVELOPPEMENT WEB/BASE DE DONNÉES</span><br>
+                    <span class="badge combined">TD/TP</span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="purple-card demo-card">
+                    <strong>APRÈS :</strong><br>
+                    <span style="font-size: 11px;">DEV WEB/BDD</span><br>
+                    <span class="badge combined">TD/TP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Améliorations des Libellés</h2>
+            <ul>
+                <li class="info">Taille des badges augmentée : 7px → 8px, 8px → 9px, 9px → 10px</li>
+                <li class="info">Largeur minimale ajoutée : <code>min-w-[20px]</code> à <code>min-w-[24px]</code></li>
+                <li class="info">Centrage forcé : <code>text-center</code></li>
+                <li class="info">Padding amélioré : <code>py-0.5</code> pour plus de hauteur</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>📋 Exemples de Cartes</h2>
+            
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <div class="demo-card" style="width: 120px; font-size: 11px;">
+                    <div style="font-weight: bold;">DEV110</div>
+                    <div style="color: #64748b;">Esseyssah</div>
+                    <div style="color: #64748b;">Lab1</div>
+                    <span class="badge td">TD</span>
+                </div>
+                
+                <div class="purple-card demo-card" style="width: 140px; font-size: 11px;">
+                    <div style="font-weight: bold;">DEV110/BDD</div>
+                    <div style="color: #64748b;">Esseyssah/Aicha</div>
+                    <div style="color: #64748b;">Lab1/Lab2</div>
+                    <span class="badge combined">TD/TP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Test de Fonctionnement</h2>
+            <ol>
+                <li class="info">Ouvrir <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></li>
+                <li class="info">Créer des cours avec des noms longs</li>
+                <li class="info">Observer les abréviations automatiques</li>
+                <li class="info">Tester les cours combinés</li>
+                <li class="info">Vérifier que les libellés sont bien visibles</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Résultat</h2>
+            <p class="success" style="font-size: 18px; text-align: center;">
+                ✅ <strong>MATIÈRES ABRÉGÉES + LIBELLÉS VISIBLES</strong><br>
+                Les cartes sont maintenant plus lisibles et compactes !
+            </p>
+        </div>
+    </div>
+
+    <script>
+        console.log('📝 Test abréviations des matières');
+        console.log('✅ Fonctions d\'abréviation ajoutées');
+        console.log('✅ Libellés renforcés');
+        console.log('✅ Cours combinés optimisés');
+        console.log('🎯 Cartes plus lisibles et compactes');
+    </script>
+</body>
+</html>

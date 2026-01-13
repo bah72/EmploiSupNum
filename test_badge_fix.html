@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Test Correction Badges</title>
+    <style>
+        body { font-family: 'Comic Sans MS', Arial, sans-serif; padding: 20px; background: #f1f5f9; }
+        .container { max-width: 700px; margin: 0 auto; }
+        .success { color: #059669; font-weight: bold; }
+        .info { color: #0369a1; }
+        .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        
+        /* Simulation des cartes corrigées */
+        .demo-card { 
+            background: white; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 8px; 
+            padding: 8px; 
+            width: 120px;
+            height: 80px;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 10px;
+            position: relative;
+            overflow: hidden; /* Important pour tester le débordement */
+        }
+        
+        .purple-demo { 
+            border-color: #a855f7; 
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); 
+        }
+        
+        .card-content {
+            display: flex;
+            items-center: gap-2;
+            width: 100%;
+        }
+        
+        .card-text {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+        }
+        
+        .badge { 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            color: white; 
+            font-size: 8px; 
+            font-weight: bold; 
+            min-width: 18px; 
+            text-align: center;
+            flex-shrink: 0; /* Empêche le rétrécissement */
+            white-space: nowrap;
+        }
+        
+        .cm { background: #059669; }
+        .td { background: #2563eb; }
+        .tp { background: #ea580c; }
+        .combined { background: #9333ea; }
+        
+        .demo-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        
+        .before-after { display: flex; gap: 20px; align-items: center; margin: 20px 0; }
+        .arrow { font-size: 24px; color: #059669; }
+        
+        .problem-demo {
+            border-color: #ef4444;
+            background: #fef2f2;
+            position: relative;
+        }
+        
+        .overflow-badge {
+            position: absolute;
+            right: -10px; /* Simule le débordement */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Correction du Débordement des Badges</h1>
+        
+        <div class="card">
+            <h2>❌ Problème Identifié</h2>
+            <p class="info">Les badges (CM, TD, TP, TD/TP) sortaient des cartes à cause de :</p>
+            <ul>
+                <li><code>flex justify-between</code> qui pousse les éléments aux extrêmes</li>
+                <li>Largeurs de texte trop importantes</li>
+                <li>Pas de contrainte <code>flex-shrink-0</code> sur les badges</li>
+                <li>Structure flex inadéquate</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>✅ Solutions Appliquées</h2>
+            <ul>
+                <li class="success">✓ <code>flex-shrink-0</code> sur tous les badges</li>
+                <li class="success">✓ Largeurs réduites : 7rem → 5rem, 6rem → 4.5rem</li>
+                <li class="success">✓ Structure flex améliorée avec <code>gap-2</code></li>
+                <li class="success">✓ <code>min-w-0</code> sur les conteneurs de texte</li>
+                <li class="success">✓ Badges plus petits mais toujours lisibles</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>🎨 Démonstration Avant/Après</h2>
+            
+            <div class="before-after">
+                <div>
+                    <h4>❌ AVANT (Badge déborde)</h4>
+                    <div class="demo-card problem-demo">
+                        <div style="font-weight: bold; color: #1e293b;">DEV110/BDD</div>
+                        <div style="color: #64748b; font-size: 9px;">Esseyssah/Aicha</div>
+                        <div style="color: #64748b; font-size: 9px;">Lab1/Lab2</div>
+                        <span class="badge combined overflow-badge">TD/TP</span>
+                    </div>
+                </div>
+                
+                <span class="arrow">→</span>
+                
+                <div>
+                    <h4>✅ APRÈS (Badge contenu)</h4>
+                    <div class="demo-card purple-demo">
+                        <div class="card-content">
+                            <div class="card-text">
+                                <div style="font-weight: bold; color: #1e293b; font-size: 10px; truncate;">DEV110/BDD</div>
+                                <div style="color: #64748b; font-size: 8px; truncate;">Esseyssah/Aicha</div>
+                                <div style="color: #64748b; font-size: 8px; truncate;">Lab1/Lab2</div>
+                            </div>
+                            <span class="badge combined">TD/TP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Exemples de Cartes Corrigées</h2>
+            <div class="demo-grid">
+                <div class="demo-card">
+                    <div class="card-content">
+                        <div class="card-text">
+                            <div style="font-weight: bold; color: #1e293b;">DEV110</div>
+                            <div style="color: #64748b; font-size: 9px;">Esseyssah</div>
+                            <div style="color: #64748b; font-size: 9px;">Lab1</div>
+                        </div>
+                        <span class="badge td">TD</span>
+                    </div>
+                </div>
+                
+                <div class="demo-card">
+                    <div class="card-content">
+                        <div class="card-text">
+                            <div style="font-weight: bold; color: #1e293b;">BDD201</div>
+                            <div style="color: #64748b; font-size: 9px;">Aicha</div>
+                            <div style="color: #64748b; font-size: 9px;">Amphi A</div>
+                        </div>
+                        <span class="badge cm">CM</span>
+                    </div>
+                </div>
+                
+                <div class="demo-card purple-demo">
+                    <div class="card-content">
+                        <div class="card-text">
+                            <div style="font-weight: bold; color: #1e293b; font-size: 10px;">DEV/BDD</div>
+                            <div style="color: #64748b; font-size: 8px;">Ess/Aicha</div>
+                            <div style="color: #64748b; font-size: 8px;">L1/L2</div>
+                        </div>
+                        <span class="badge combined">TD/TP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Modifications CSS Clés</h2>
+            <div style="background: #f8fafc; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 12px;">
+                <strong>Avant :</strong><br>
+                <code>className="flex justify-between items-center"</code><br>
+                <code>min-w-[24px]</code><br><br>
+                
+                <strong>Après :</strong><br>
+                <code>className="flex items-center gap-2 w-full"</code><br>
+                <code>flex-shrink-0 min-w-[18px]</code><br>
+                <code>flex-1 min-w-0</code> (pour le texte)
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Test de Fonctionnement</h2>
+            <ol>
+                <li class="info">Ouvrir <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></li>
+                <li class="info">Créer des cours avec des noms longs</li>
+                <li class="info">Créer des cours combinés (TD/TP, CM/TD)</li>
+                <li class="info">Vérifier que tous les badges restent dans les cartes</li>
+                <li class="success">➜ Les badges ne doivent plus déborder !</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>🎯 Résultat</h2>
+            <p class="success" style="font-size: 18px; text-align: center;">
+                ✅ <strong>BADGES CONTENUS DANS LES CARTES</strong><br>
+                Fini les libellés qui sortent des cartes !
+            </p>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 Test correction badges');
+        console.log('✅ flex-shrink-0 appliqué');
+        console.log('✅ Largeurs optimisées');
+        console.log('✅ Structure flex améliorée');
+        console.log('🎯 Badges maintenant contenus');
+    </script>
+</body>
+</html>

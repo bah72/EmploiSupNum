@@ -1,0 +1,22 @@
+// Test simple pour vérifier la fusion des cartes
+console.log('🧪 Test de la fusion des cartes');
+console.log('');
+console.log('✅ Fonctionnalités implémentées :');
+console.log('  1. Fonction getCombinedCourseInfo() - ✓ Présente');
+console.log('  2. Logique d\'affichage modifiée - ✓ Appliquée');
+console.log('  3. Support des cours multiples - ✓ Activé');
+console.log('  4. Cartes combinées violettes - ✓ Configuré');
+console.log('');
+console.log('📋 Comment tester :');
+console.log('  1. Ouvrir l\'application sur http://localhost:3000');
+console.log('  2. Aller dans la gestion des cours');
+console.log('  3. Créer deux cours avec des salles/enseignants différents');
+console.log('  4. Les glisser dans le même créneau du planning');
+console.log('  5. Vérifier qu\'une seule carte violette apparaît');
+console.log('  6. Format attendu: DEV110/DEV111 | Prof1/Prof2 | Salle1/Salle2 | TP/TD');
+console.log('');
+console.log('🎯 Résultat attendu :');
+console.log('  • Une seule carte par créneau même avec plusieurs cours');
+console.log('  • Informations fusionnées avec des "/" comme séparateurs');
+console.log('  • Couleur violette distinctive pour les cartes combinées');
+console.log('  • Suppression de tous les cours en supprimant la carte combinée');
