@@ -9,10 +9,14 @@ Risque : L'IA peut casser votre code ou produire un résultat moche.
 
 Action :
 
-git add .
+* git add .
 
-git commit -m "Avant redesign par IA"
+* git commit -m "Avant redesign par IA"
 
 Lancer l'IA.
 
-Résultat : Si l'IA se plante, vous faites un git reset --hard HEAD (comme vu avant) et hop, vous revenez à la seconde avant l'erreur.
+Résultat : Si l'IA se plante, vous faites un 
+
+* git reset --hard HEAD 
+
+ et hop, vous revenez à la seconde avant l'erreur.

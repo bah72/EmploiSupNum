@@ -438,6 +438,12 @@ export default function App() {
             conflictSet.add(courseId1);
             conflictSet.add(courseId2);
           }
+
+          // Conflit CM parallèle pour le même groupe
+          if (course1.type === 'CM' && course2.type === 'CM') {
+            conflictSet.add(courseId1);
+            conflictSet.add(courseId2);
+          }
         }
       }
     });
@@ -552,6 +558,11 @@ export default function App() {
         const commonTeacher = draggingTeachers.find(t => existingTeachers.includes(t));
         if (commonTeacher) {
           return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà dans ce créneau (${existingCourse.subject}) - ${group}`;
+        }
+
+        // Interdire deux CM en parallèle pour le même groupe
+        if (draggingCourse.type === 'CM' && existingCourse.type === 'CM') {
+          return `CONFLIT CM : Deux cours de CM ne peuvent pas être en parallèle pour le même groupe (${existingCourse.subject} et ${draggingCourse.subject})`;
         }
       }
     }
