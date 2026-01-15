@@ -57,6 +57,7 @@ export default function App() {
   const [isExporting, setIsExporting] = useState(false);
   const [toastMessage, setToastMessage] = useState<{ msg: string, type: 'error' | 'success' } | null>(null);
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
+  const [compact, setCompact] = useState(true);
 
   // États pour la gestion des données
   const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
@@ -713,7 +714,8 @@ export default function App() {
 
       const result = await response.json();
       if (result.success) {
-        alert('Sauvegarde réussie ! Vous devez redémarrer le serveur pour voir les changements persistants.');
+        alert('Sauvegarde réussie ! La page va se rafraîchir.');
+        window.location.reload();
       } else {
         alert('Erreur lors de la sauvegarde : ' + result.message);
       }
@@ -812,9 +814,9 @@ export default function App() {
             </div>
           </div>
           <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
-            Du&nbsp;&nbsp;<span className="text-blue-700 font-bold">{startStr}</span>&nbsp;&nbsp;au&nbsp;&nbsp;<span className="text-blue-700 font-bold">{endStr}</span>
+            S{semester.replace('S', '')} - {group} - Semaine {week} (Du <span className="text-blue-700 font-bold mx-1">{startStr}</span> au <span className="text-blue-700 font-bold mx-1">{endStr}</span>)
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 no-export">
             <div className="relative group">
               <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
@@ -837,19 +839,156 @@ export default function App() {
   }
 
 
+  const handleUnassignBatch = (courseIds: string[]) => {
+    setSchedule(prev => {
+      const next = { ...prev as Record<string, string | null | string[]> };
+      Object.keys(next).forEach(k => {
+        const value = next[k];
+        if (Array.isArray(value)) {
+          const filtered = value.filter(id => !courseIds.includes(id));
+          next[k] = filtered.length > 0 ? filtered : null;
+        } else if (courseIds.includes(value as string)) {
+          next[k] = null;
+        }
+      });
+      return next;
+    });
+  };
+
+  const isCourseMatch = (course: any) => {
+    if (!searchQuery || !course) return false;
+    const q = searchQuery.toLowerCase();
+    return (
+      (course.subject || '').toLowerCase().includes(q) ||
+      (course.teacher || '').toLowerCase().includes(q) ||
+      (course.room || '').toLowerCase().includes(q)
+    );
+  };
+
+  const hasConflict = (day: string, time: string, courseIds: string[]) => {
+    return courseIds.some(id => conflicts.has(id));
+  };
+
   const handleExportPDF = async () => {
-    const element = document.getElementById('calendar-capture-zone');
+    const element = document.getElementById('export-container');
     if (!element) return;
     setIsExporting(true);
     try {
-      const dataUrl = await toPng(element, { quality: 1.0, pixelRatio: 2, backgroundColor: "#ffffff" });
+      // Étape 1: Préparer l'élément et ses parents pour la capture
+      const originalStyle = element.style.cssText;
+      const rootDiv = element.parentElement;
+      const originalRootStyle = rootDiv?.style.cssText || "";
+
+      element.classList.add('hide-scrollbars');
+      element.classList.add('exporting-pdf');
+
+      // Injecter des styles temporaires pour booster la lisibilité
+      const styleTag = document.createElement('style');
+      styleTag.id = 'pdf-export-styles';
+      styleTag.innerHTML = `
+        .exporting-pdf .text-[9px] { font-size: 12px !important; line-height: 1.2 !important; }
+        .exporting-pdf .text-[8px] { font-size: 11px !important; line-height: 1.2 !important; }
+        .exporting-pdf .text-[7px] { font-size: 10px !important; line-height: 1.2 !important; }
+        .exporting-pdf .text-[6px] { font-size: 9px !important; line-height: 1.2 !important; }
+        .exporting-pdf .p-1 { padding: 4px !important; }
+        .exporting-pdf .mb-0.5 { margin-bottom: 4px !important; }
+        .exporting-pdf .gap-0.5 { gap: 4px !important; }
+        .exporting-pdf .rounded { border-radius: 4px !important; }
+      `;
+      document.head.appendChild(styleTag);
+
+      // Forcer une largeur de capture contrôlée
+      const captureWidth = 1200;
+      // Ratio A4 Paysage ≈ 1.4142 (297/210)
+      const targetHeight = captureWidth / (297 / 210);
+
+      element.style.width = `${captureWidth}px`;
+      element.style.minWidth = `${captureWidth}px`;
+      element.style.height = `${targetHeight}px`;
+      element.style.minHeight = `${targetHeight}px`;
+      element.style.display = 'flex';
+      element.style.flexDirection = 'column';
+      element.style.overflow = 'visible';
+      element.style.position = 'relative';
+
+      // Débloquer les parents pour permettre l'expansion sans clipping
+      if (rootDiv) {
+        rootDiv.style.height = 'auto';
+        rootDiv.style.minHeight = 'none';
+        rootDiv.style.overflow = 'visible';
+      }
+
+      // S'assurer que le conteneur des lignes s'étire bien
+      const rowContainer = element.querySelector('.container-export-rows') as HTMLElement;
+      let originalRowContainerStyle = "";
+      if (rowContainer) {
+        originalRowContainerStyle = rowContainer.style.cssText;
+        rowContainer.style.display = 'flex';
+        rowContainer.style.flexDirection = 'column';
+        rowContainer.style.flex = '1';
+        rowContainer.style.height = 'auto';
+        rowContainer.style.overflow = 'visible';
+      }
+
+      // Trouver tous les conteneurs qui pourraient bloquer le rendu ou le défilement
+      const scrollables = element.querySelectorAll('.overflow-auto, .overflow-scroll, .overflow-y-auto, .overflow-hidden');
+      const flexFillers = element.querySelectorAll('.flex-1, .h-full, .h-screen');
+      const originalStyles = new Map();
+
+      scrollables.forEach((s) => {
+        const el = s as HTMLElement;
+        originalStyles.set(el, el.style.cssText);
+        el.style.overflow = 'visible';
+        el.style.height = 'auto';
+      });
+
+      flexFillers.forEach((f) => {
+        const el = f as HTMLElement;
+        if (!originalStyles.has(el)) originalStyles.set(el, el.style.cssText);
+        el.style.flex = '1';
+        el.style.height = 'auto'; // Laisser flex-1 gérer la hauteur dans le conteneur fixé
+      });
+
+      // Capturer l'image
+      const dataUrl = await toPng(element, {
+        quality: 1.0,
+        pixelRatio: 2.5, // Augmenté pour une netteté cristalline
+        backgroundColor: "#ffffff",
+        style: {
+          transform: 'none',
+          width: `${captureWidth}px`,
+          height: `${targetHeight}px`,
+          display: 'flex',
+          flexDirection: 'column'
+        },
+        filter: (node: HTMLElement) => !(node.classList && node.classList.contains('no-export')) as any
+      });
+
+      // Restaurer les styles originaux
+      element.classList.remove('hide-scrollbars');
+      element.classList.remove('exporting-pdf');
+      document.getElementById('pdf-export-styles')?.remove();
+
+      element.style.cssText = originalStyle;
+      if (rootDiv) rootDiv.style.cssText = originalRootStyle;
+      if (rowContainer) rowContainer.style.cssText = originalRowContainerStyle;
+      originalStyles.forEach((style, el) => {
+        el.style.cssText = style;
+      });
+
       const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-      pdf.addImage(dataUrl, 'PNG', 0, 10, pdfWidth, pdfHeight);
-      pdf.save(`Planning_${semester}_${activeMainGroup}.pdf`);
-    } catch (err) { alert("Erreur export PDF"); } finally { setIsExporting(false); }
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+
+      // L'image a déjà le ratio A4 exact (1200 / 848.5)
+      pdf.addImage(dataUrl, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+      pdf.save(`Planning_${semester}_${activeMainGroup}_Semaine_${currentWeek}.pdf`);
+    } catch (err) {
+      console.error(err);
+      alert("Erreur export PDF : " + (err as any).message);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
@@ -1074,7 +1213,7 @@ export default function App() {
     return !isPlacedDirectly && !isSimilarPlaced;
   });
 
-  const gridTemplate = `40px repeat(${config.timeSlots.length}, minmax(0, 1fr))`;
+  const gridTemplate = `32px repeat(${config.timeSlots.length}, minmax(0, 1fr))`;
   const gridBaseClasses = "grid w-full";
 
   return (
@@ -1089,1099 +1228,1093 @@ export default function App() {
         </div>
       )}
 
-      <HeaderBanner
-        semester={semester} setSemester={setSemester}
-        group={activeMainGroup} setGroup={setActiveMainGroup}
-        week={currentWeek} setWeek={setCurrentWeek}
-        totalWeeks={config.totalWeeks}
-        startStr={weekDates.startStr} endStr={weekDates.endStr}
-        searchQuery={searchQuery} setSearchQuery={setSearchQuery}
-        handleExportPDF={handleExportPDF} isExporting={isExporting}
-        dynamicGroups={dynamicGroups}
-        config={config}
-      />
+      <div id="export-container" className="flex flex-1 flex-col overflow-hidden bg-white">
+        <HeaderBanner
+          semester={semester} setSemester={setSemester}
+          group={activeMainGroup} setGroup={setActiveMainGroup}
+          week={currentWeek} setWeek={setCurrentWeek}
+          totalWeeks={config.totalWeeks}
+          startStr={weekDates.startStr} endStr={weekDates.endStr}
+          searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+          handleExportPDF={handleExportPDF} isExporting={isExporting}
+          dynamicGroups={dynamicGroups}
+          config={config}
+        />
 
-      <div className="flex flex-1 overflow-hidden">
-        <aside className="w-12 bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-6 shrink-0 z-30">
-          <button onClick={() => setActiveTab('planning')} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
-          <button onClick={() => setActiveTab('manage')} className={`p-2 rounded-xl transition-colors ${activeTab === 'manage' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Gestion"><LayoutDashboard size={20} /></button>
+        <div className="flex flex-1 overflow-hidden">
+          <aside className="w-12 bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-6 shrink-0 z-30 no-export">
+            <button onClick={() => setActiveTab('planning')} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
+            <button onClick={() => setActiveTab('manage')} className={`p-2 rounded-xl transition-colors ${activeTab === 'manage' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Gestion"><LayoutDashboard size={20} /></button>
 
-          {/* Menu Données avec dropdown */}
-          <div className="relative data-menu-container">
-            <button
-              onClick={() => {
-                setShowDataMenu(!showDataMenu);
-                if (!showDataMenu) {
-                  setActiveTab('data');
-                }
-              }}
-              className={`p-2 rounded-xl transition-colors ${activeTab === 'data' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`}
-              title="Données"
-            >
-              <Database size={20} />
-            </button>
+            {/* Menu Données avec dropdown */}
+            <div className="relative data-menu-container">
+              <button
+                onClick={() => {
+                  setShowDataMenu(!showDataMenu);
+                  if (!showDataMenu) {
+                    setActiveTab('data');
+                  }
+                }}
+                className={`p-2 rounded-xl transition-colors ${activeTab === 'data' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`}
+                title="Données"
+              >
+                <Database size={20} />
+              </button>
 
-            {/* Menu déroulant */}
-            {showDataMenu && (
-              <div className="absolute left-14 top-0 bg-white border border-slate-200 rounded-lg shadow-xl z-50 min-w-48 overflow-hidden animate-in slide-in-from-left-2 duration-200">
-                <div className="py-2">
-                  <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                    Gestion des données
+              {/* Menu déroulant */}
+              {showDataMenu && (
+                <div className="absolute left-14 top-0 bg-white border border-slate-200 rounded-lg shadow-xl z-50 min-w-48 overflow-hidden animate-in slide-in-from-left-2 duration-200">
+                  <div className="py-2">
+                    <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                      Gestion des données
+                    </div>
+                    <button
+                      onClick={() => {
+                        setDataSubTab('subjects');
+                        setActiveTab('data');
+                        setShowDataMenu(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'subjects' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                      Matières & Enseignants
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDataSubTab('rooms');
+                        setActiveTab('data');
+                        setShowDataMenu(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'rooms' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                      Salles de cours
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDataSubTab('progress');
+                        setActiveTab('data');
+                        setShowDataMenu(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'progress' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                    >
+                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                      Avancement
+                    </button>
                   </div>
-                  <button
-                    onClick={() => {
-                      setDataSubTab('subjects');
-                      setActiveTab('data');
-                      setShowDataMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'subjects' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                    Matières & Enseignants
-                  </button>
-                  <button
-                    onClick={() => {
-                      setDataSubTab('rooms');
-                      setActiveTab('data');
-                      setShowDataMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'rooms' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                    Salles de cours
-                  </button>
-                  <button
-                    onClick={() => {
-                      setDataSubTab('progress');
-                      setActiveTab('data');
-                      setShowDataMenu(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'progress' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                  >
-                    <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                    Avancement
-                  </button>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <button onClick={() => setActiveTab('config')} className={`p-2 rounded-xl transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Configuration"><Settings size={20} /></button>
-        </aside>
+            <button onClick={() => setActiveTab('config')} className={`p-2 rounded-xl transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Configuration"><Settings size={20} /></button>
+          </aside>
 
-        <main className="flex-1 flex flex-col min-w-0 h-full">
-          {activeTab === 'planning' && (
-            <DndContext onDragStart={(e) => setActiveDragItem(assignmentRows.find(r => r.id === e.active.id) || null)} onDragEnd={handleDragEnd}>
-              <div className="flex flex-1 overflow-hidden h-full">
-                <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2">
-                  <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
+          <main className="flex-1 flex flex-col min-w-0 h-full">
+            {activeTab === 'planning' && (
+              <DndContext onDragStart={(e) => setActiveDragItem(assignmentRows.find(r => r.id === e.active.id) || null)} onDragEnd={handleDragEnd}>
+                <div className="flex flex-1 overflow-hidden h-full">
+                  <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2 no-export">
+                    <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
 
-                  {/* Aide pour Ctrl+Drag */}
-                  <div className="px-3 py-2 bg-blue-50 border-b border-blue-100">
-                    <div className="flex items-center gap-2 text-[10px] text-blue-700">
-                      <span className="font-bold">💡</span>
-                      <span className="font-medium">Maintenez <kbd className="px-1 py-0.5 bg-blue-200 rounded text-[9px] font-bold">Ctrl</kbd> + glisser pour copier une carte</span>
+                    {/* Aide pour Ctrl+Drag */}
+                    <div className="px-3 py-2 bg-blue-50 border-b border-blue-100">
+                      <div className="flex items-center gap-2 text-[10px] text-blue-700">
+                        <span className="font-bold">💡</span>
+                        <span className="font-medium">Maintenez <kbd className="px-1 py-0.5 bg-blue-200 rounded text-[9px] font-bold">Ctrl</kbd> + glisser pour copier une carte</span>
+                      </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto p-3 space-y-3">
+                      {sidebarCourses.map(c => <DraggableCard key={`${c.id}-${refreshKey}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
                     </div>
                   </div>
 
-                  <div className="flex-1 overflow-y-auto p-3 space-y-3">
-                    {sidebarCourses.map(c => <DraggableCard key={`${c.id}-${refreshKey}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
-                  </div>
-                </div>
+                  <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0">
+                    <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-auto flex flex-col min-h-0">
+                      <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} border-b border-slate-200 bg-slate-50 sticky top-0 z-20`}>
+                        <div className="p-2 border-r text-center text-[10px] font-bold text-slate-400">H</div>
+                        {config.timeSlots.map(t => <div key={t} className="p-2 border-r last:border-0 text-center text-[10px] font-black text-slate-700 uppercase">{t}</div>)}
+                      </div>
 
-                <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0">
-                  <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-auto flex flex-col min-h-0">
-                    <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} border-b border-slate-200 bg-slate-50 sticky top-0 z-20`}>
-                      <div className="p-2 border-r text-center text-[10px] font-bold text-slate-400">H</div>
-                      {config.timeSlots.map(t => <div key={t} className="p-2 border-r last:border-0 text-center text-[10px] font-black text-slate-700 uppercase">{t}</div>)}
-                    </div>
-
-                    <div className="flex-1 overflow-auto bg-slate-50/30 space-y-1 min-h-0">
-                      {DAYS.map(day => (
-                        <div key={day} style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-start overflow-visible min-h-0`}>
-                          <div className="border-r border-slate-200 bg-slate-100 flex items-center justify-center py-1 self-start overflow-visible min-h-[44px]">
-                            <span className="inline-block font-black text-slate-900 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
-                          </div>
-                          {config.timeSlots.map(time => {
-                            const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
-                            const courseValue = schedule[slotKey];
-                            // Normaliser la valeur (gérer les cas string | null | string[])
-                            const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
-                            const combinedCourse = getCombinedCourseInfo(courseIds);
-                            return (
-                              <div key={time} className="p-1 border-r last:border-0 relative">
-                                <DroppableSlot id={`${day}|${time}`}>
-                                  {combinedCourse && (
-                                    <CourseBadge
-                                      key={`${combinedCourse.id}-${refreshKey}`}
-                                      course={combinedCourse}
-                                      onUnassign={() => {
-                                        if (combinedCourse.isCombined) {
-                                          combinedCourse.originalCourses.forEach((c: any) => handleUnassign(c.id, slotKey));
-                                        } else {
-                                          handleUnassign(combinedCourse.id, slotKey);
-                                        }
-                                      }}
-                                      conflicts={conflicts}
-                                      assignmentRows={assignmentRows}
-                                      schedule={schedule}
-                                      customSubjects={customSubjects}
-                                    />
-                                  )}
-                                </DroppableSlot>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <DragOverlay>
-                {activeDragItem ? <div className="opacity-90 w-36 shadow-2xl rotate-1"><DraggableCard course={activeDragItem} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} /></div> : null}
-              </DragOverlay>
-            </DndContext>
-          )}
-
-          {activeTab === 'manage' && (
-            <div className="p-6 overflow-auto h-full bg-slate-50">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-lg font-black uppercase text-slate-800 tracking-tight">Gestion des cours</h2>
-                <div className="flex gap-3">
-                  <input
-                    type="text"
-                    placeholder="Filtrer..."
-                    value={manageFilterCode}
-                    onChange={(e) => setManageFilterCode(e.target.value)}
-                    className="text-xs border border-slate-200 rounded-md px-2 py-1 outline-none font-bold shadow-sm focus:ring-2 ring-blue-100 w-36"
-                  />
-                  {/* Buttons removed as requested */}
-                </div>
-              </div>
-
-              <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-                <table className="w-full text-xs text-left border-collapse table-fixed">
-                  <thead className="bg-green-700 font-bold text-xs uppercase text-white tracking-wider sticky top-0 z-10">
-                    <tr>
-                      <th className="p-1 border-r border-green-600 w-10 text-center">Sem</th>
-                      <th className="p-1 border-r border-green-600 w-12 text-center">Groupe</th>
-                      <th className="p-1 border-r border-green-600 w-28">Matière</th>
-                      <th className="p-1 border-r border-green-600 w-12 text-center">Type</th>
-                      <th className="p-1 border-r border-green-600 w-[140px]">Enseignants & Salles</th>
-                      <th className="p-1 text-center w-16">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {assignmentRows.filter(r =>
-                      r.mainGroup === activeMainGroup &&
-                      r.semester === semester &&
-                      r.subject.toLowerCase().includes(manageFilterCode.toLowerCase())
-                    ).map(row => {
-                      return (
-                        <tr key={row.id} className="hover:bg-slate-50 transition-colors group">
-                          <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
-                          <td className="p-1 border-r border-slate-50 font-black text-slate-700 text-center text-xs">
-                            <span className="text-[11px] uppercase tracking-wide whitespace-nowrap">{row.mainGroup.replace("Groupe ", "G")}</span>
-                          </td>
-                          <td className="p-1 border-r border-slate-50 truncate">
-                            <div className="flex flex-col truncate">
-                              <span className="font-bold text-green-900 text-[12px] truncate leading-tight mb-0.5">{row.subject}</span>
-                              <span className="text-[10px] text-slate-400 italic truncate leading-tight">{SUBJECT_NAMES[row.subject] || row.subjectLabel}</span>
+                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
+                        {DAYS.map(day => (
+                          <div key={day} style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-stretch overflow-visible min-h-[48px] flex-1 export-row`}>
+                            <div className="border-r border-slate-200 bg-slate-100 flex items-center justify-center py-1 overflow-visible min-h-[44px]">
+                              <span className="inline-block font-black text-slate-900 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
                             </div>
-                          </td>
-                          <td className="p-1 border-r border-slate-50 text-center px-1">
-                            <select value={row.type} onChange={(e) => updateRow(row.id, 'type', e.target.value as CourseType)} className={`font-black rounded px-1 py-0.5 text-[11px] w-full ${getCourseColor(row.type).badge} text-white shadow-sm outline-none cursor-pointer text-center`}>
-                              <option value="CM">CM</option><option value="TD">TD</option><option value="TP">TP</option>
-                            </select>
-                          </td>
-                          <td className="p-1 border-r border-slate-50">
-                            <div className="flex gap-2 items-center">
-                              {/* Sélecteur d'enseignant */}
-                              <select
-                                key={`teacher-select-${row.id}-${refreshKey}`}
-                                value={row.type === 'CM' ?
-                                  (row.teacher.split('/')[0]?.trim() || "") :
-                                  (row.teacher || "")
-                                }
-                                onChange={(e) => {
-                                  if (row.type === 'CM') {
-                                    // Pour CM : remplacer l'enseignant
-                                    setAssignmentRows(prev => prev.map(r =>
-                                      r.id === row.id ? { ...r, teacher: e.target.value } : r
-                                    ));
-                                  } else {
-                                    // Pour TD/TP : ajouter l'enseignant s'il n'existe pas déjà
-                                    const currentTeachers = (row.teacher || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
-                                    if (!currentTeachers.includes(e.target.value) && e.target.value) {
-                                      const newTeacher = currentTeachers.length > 0 ?
-                                        currentTeachers.join('/') + '/' + e.target.value :
-                                        e.target.value;
-                                      setAssignmentRows(prev => prev.map(r =>
-                                        r.id === row.id ? { ...r, teacher: newTeacher } : r
-                                      ));
-                                    } else if (e.target.value) {
-                                      // Si l'enseignant existe déjà, juste le sélectionner
+                            {config.timeSlots.map(time => {
+                              const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
+                              const courseValue = schedule[slotKey];
+                              // Normaliser la valeur (gérer les cas string | null | string[])
+                              const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
+                              const combinedCourse = getCombinedCourseInfo(courseIds);
+                              return (
+                                <div key={time} className="p-1 border-r last:border-0 relative flex items-stretch">
+                                  <DroppableSlot id={`${day}|${time}`}>
+                                    {combinedCourse && (
+                                      <CourseBadge
+                                        course={{ ...combinedCourse, id: courseIds[0] }}
+                                        onUnassign={() => handleUnassignBatch(courseIds)}
+                                        isMatch={isCourseMatch(combinedCourse)}
+                                        hasConflict={hasConflict(day, time, courseIds)}
+                                        compact={compact}
+                                        customSubjects={customSubjects}
+                                        schedule={schedule}
+                                        assignmentRows={assignmentRows}
+                                        className="flex-1"
+                                      />
+                                    )}
+                                  </DroppableSlot>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DragOverlay>
+                  {activeDragItem ? <div className="opacity-90 w-36 shadow-2xl rotate-1"><DraggableCard course={activeDragItem} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} /></div> : null}
+                </DragOverlay>
+              </DndContext>
+            )}
+
+            {activeTab === 'manage' && (
+              <div className="p-6 overflow-auto h-full bg-slate-50">
+                <div className="flex justify-between items-center mb-6">
+                  <h2 className="text-lg font-black uppercase text-slate-800 tracking-tight">Gestion des cours</h2>
+                  <div className="flex gap-3">
+                    <input
+                      type="text"
+                      placeholder="Filtrer..."
+                      value={manageFilterCode}
+                      onChange={(e) => setManageFilterCode(e.target.value)}
+                      className="text-xs border border-slate-200 rounded-md px-2 py-1 outline-none font-bold shadow-sm focus:ring-2 ring-blue-100 w-36"
+                    />
+                    {/* Buttons removed as requested */}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                  <table className="w-full text-xs text-left border-collapse table-fixed">
+                    <thead className="bg-green-700 font-bold text-xs uppercase text-white tracking-wider sticky top-0 z-10">
+                      <tr>
+                        <th className="p-1 border-r border-green-600 w-10 text-center">Sem</th>
+                        <th className="p-1 border-r border-green-600 w-12 text-center">Groupe</th>
+                        <th className="p-1 border-r border-green-600 w-28">Matière</th>
+                        <th className="p-1 border-r border-green-600 w-12 text-center">Type</th>
+                        <th className="p-1 border-r border-green-600 w-[140px]">Enseignants & Salles</th>
+                        <th className="p-1 text-center w-16">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {assignmentRows.filter(r =>
+                        r.mainGroup === activeMainGroup &&
+                        r.semester === semester &&
+                        r.subject.toLowerCase().includes(manageFilterCode.toLowerCase())
+                      ).map(row => {
+                        return (
+                          <tr key={row.id} className="hover:bg-slate-50 transition-colors group">
+                            <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
+                            <td className="p-1 border-r border-slate-50 font-black text-slate-700 text-center text-xs">
+                              <span className="text-[11px] uppercase tracking-wide whitespace-nowrap">{row.mainGroup.replace("Groupe ", "G")}</span>
+                            </td>
+                            <td className="p-1 border-r border-slate-50 truncate">
+                              <div className="flex flex-col truncate">
+                                <span className="font-bold text-green-900 text-[12px] truncate leading-tight mb-0.5">{row.subject}</span>
+                                <span className="text-[10px] text-slate-400 italic truncate leading-tight">{SUBJECT_NAMES[row.subject] || row.subjectLabel}</span>
+                              </div>
+                            </td>
+                            <td className="p-1 border-r border-slate-50 text-center px-1">
+                              <select value={row.type} onChange={(e) => updateRow(row.id, 'type', e.target.value as CourseType)} className={`font-black rounded px-1 py-0.5 text-[11px] w-full ${getCourseColor(row.type).badge} text-white shadow-sm outline-none cursor-pointer text-center`}>
+                                <option value="CM">CM</option><option value="TD">TD</option><option value="TP">TP</option>
+                              </select>
+                            </td>
+                            <td className="p-1 border-r border-slate-50">
+                              <div className="flex gap-2 items-center">
+                                {/* Sélecteur d'enseignant */}
+                                <select
+                                  key={`teacher-select-${row.id}-${refreshKey}`}
+                                  value={row.type === 'CM' ?
+                                    (row.teacher.split('/')[0]?.trim() || "") :
+                                    (row.teacher || "")
+                                  }
+                                  onChange={(e) => {
+                                    if (row.type === 'CM') {
+                                      // Pour CM : remplacer l'enseignant
                                       setAssignmentRows(prev => prev.map(r =>
                                         r.id === row.id ? { ...r, teacher: e.target.value } : r
                                       ));
-                                    }
-                                  }
-                                  setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
-                                }}
-                                className="flex-1 border border-slate-200 rounded px-2 py-1 bg-white text-[10px] font-bold outline-none focus:ring-1 ring-green-300 shadow-sm"
-                              >
-                                <option value="">Enseignant...</option>
-                                {/* Enseignants affectés à cette matière */}
-                                {(() => {
-                                  const semesterData = customSubjects.find(s => s.semestre === row.semester);
-                                  const matiereData = semesterData?.matieres.find(m => m.code === row.subject);
-
-                                  // Utiliser les enseignants appropriés selon le type de cours
-                                  let assignedTeachers: string[] = [];
-                                  if (row.type === 'CM') {
-                                    assignedTeachers = (matiereData?.enseignantsCM || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
-                                  } else {
-                                    assignedTeachers = (matiereData?.enseignantsTD || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
-                                  }
-
-                                  // Utiliser refreshKey pour forcer la mise à jour
-                                  return assignedTeachers.map((teacher, tIdx) => (
-                                    <option key={`teacher-${tIdx}-${refreshKey}`} value={teacher}>{teacher}</option>
-                                  ));
-                                })()}
-                              </select>
-
-                              {/* Bouton pour ajouter un enseignant à cette matière */}
-                              <button
-                                onClick={() => {
-                                  const newTeacher = prompt('Nom du nouvel enseignant:');
-                                  if (newTeacher && newTeacher.trim()) {
-                                    const teacherName = newTeacher.trim();
-
-                                    // Mettre à jour customSubjects pour ajouter l'enseignant à cette matière
-                                    setCustomSubjects(prev => {
-                                      const newSubjects = [...prev];
-                                      const semesterIndex = newSubjects.findIndex(s => s.semestre === row.semester);
-                                      if (semesterIndex !== -1) {
-                                        const matiereIndex = newSubjects[semesterIndex].matieres.findIndex(m => m.code === row.subject);
-                                        if (matiereIndex !== -1) {
-                                          // Ajouter l'enseignant au bon champ selon le type de cours
-                                          if (row.type === 'CM') {
-                                            const currentTeachers = newSubjects[semesterIndex].matieres[matiereIndex].enseignantsCM || newSubjects[semesterIndex].matieres[matiereIndex].enseignants || '';
-                                            if (!currentTeachers.includes(teacherName)) {
-                                              newSubjects[semesterIndex].matieres[matiereIndex].enseignantsCM = currentTeachers ? currentTeachers + '/' + teacherName : teacherName;
-                                            }
-                                          } else {
-                                            const currentTeachers = newSubjects[semesterIndex].matieres[matiereIndex].enseignantsTD || newSubjects[semesterIndex].matieres[matiereIndex].enseignants || '';
-                                            if (!currentTeachers.includes(teacherName)) {
-                                              newSubjects[semesterIndex].matieres[matiereIndex].enseignantsTD = currentTeachers ? currentTeachers + '/' + teacherName : teacherName;
-                                            }
-                                          }
-                                        }
+                                    } else {
+                                      // Pour TD/TP : ajouter l'enseignant s'il n'existe pas déjà
+                                      const currentTeachers = (row.teacher || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                                      if (!currentTeachers.includes(e.target.value) && e.target.value) {
+                                        const newTeacher = currentTeachers.length > 0 ?
+                                          currentTeachers.join('/') + '/' + e.target.value :
+                                          e.target.value;
+                                        setAssignmentRows(prev => prev.map(r =>
+                                          r.id === row.id ? { ...r, teacher: newTeacher } : r
+                                        ));
+                                      } else if (e.target.value) {
+                                        // Si l'enseignant existe déjà, juste le sélectionner
+                                        setAssignmentRows(prev => prev.map(r =>
+                                          r.id === row.id ? { ...r, teacher: e.target.value } : r
+                                        ));
                                       }
+                                    }
+                                    setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
+                                  }}
+                                  className="flex-1 border border-slate-200 rounded px-2 py-1 bg-white text-[10px] font-bold outline-none focus:ring-1 ring-green-300 shadow-sm"
+                                >
+                                  <option value="">Enseignant...</option>
+                                  {/* Enseignants affectés à cette matière */}
+                                  {(() => {
+                                    const semesterData = customSubjects.find(s => s.semestre === row.semester);
+                                    const matiereData = semesterData?.matieres.find(m => m.code === row.subject);
 
-                                      return newSubjects;
-                                    });
+                                    // Utiliser les enseignants appropriés selon le type de cours
+                                    let assignedTeachers: string[] = [];
+                                    if (row.type === 'CM') {
+                                      assignedTeachers = (matiereData?.enseignantsCM || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                                    } else {
+                                      assignedTeachers = (matiereData?.enseignantsTD || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                                    }
 
-                                    // Forcer le re-rendu pour mettre à jour les listes déroulantes
-                                    setRefreshKey(prev => prev + 1);
+                                    // Utiliser refreshKey pour forcer la mise à jour
+                                    return assignedTeachers.map((teacher, tIdx) => (
+                                      <option key={`teacher-${tIdx}-${refreshKey}`} value={teacher}>{teacher}</option>
+                                    ));
+                                  })()}
+                                </select>
 
-                                    setToastMessage({ msg: `Enseignant "${teacherName}" ajouté à ${row.subject} (${row.type})`, type: 'success' });
-                                  }
-                                }}
-                                className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
-                                title={`Ajouter un enseignant ${row.type}`}
-                              >
-                                +
-                              </button>
+                                {/* Bouton pour ajouter un enseignant à cette matière */}
+                                <button
+                                  onClick={() => {
+                                    const newTeacher = prompt('Nom du nouvel enseignant:');
+                                    if (newTeacher && newTeacher.trim()) {
+                                      const teacherName = newTeacher.trim();
 
-                              {/* Sélecteur de salle */}
-                              <select
-                                value={row.room || ""}
-                                onChange={(e) => {
-                                  setAssignmentRows(prev => prev.map(r =>
-                                    r.id === row.id ? { ...r, room: e.target.value } : r
-                                  ));
-                                  setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
-                                }}
-                                className="w-20 border border-slate-200 rounded px-2 py-1 bg-white font-mono font-bold text-[10px] outline-none focus:ring-1 ring-green-300 shadow-sm text-center"
-                              >
-                                <option value="">Salle...</option>
-                                {customRooms.map(room => (
-                                  <option key={room} value={room}>{room}</option>
-                                ))}
-                              </select>
-                            </div>
-                          </td>
-                          <td className="p-2 text-center">
-                            <div className="flex gap-1 justify-center">
-                              <button
-                                onClick={() => {
-                                  const newRow: AssignmentRow = {
-                                    id: 'new-' + Date.now(),
-                                    subject: row.subject,
-                                    subjectLabel: row.subjectLabel,
-                                    type: row.type === 'CM' ? 'TD' : 'CM',
-                                    mainGroup: row.mainGroup,
-                                    sharedGroups: [row.mainGroup],
-                                    subLabel: row.type === 'CM' ? 'TD' : 'CM',
-                                    teacher: row.teacher,
-                                    room: '101',
-                                    semester: row.semester
-                                  };
-                                  setAssignmentRows(prev => [...prev, newRow]);
-                                  setToastMessage({ msg: `Nouvelle ligne ${newRow.type} ajoutée pour ${row.subject}`, type: 'success' });
-                                }}
-                                className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-all shadow-sm"
-                                title="Ajouter une ligne"
-                              >
-                                +
-                              </button>
-                              <button onClick={() => { if (confirm('Supprimer ce cours ?')) setAssignmentRows(prev => prev.filter(r => r.id !== row.id)) }} className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-all shadow-sm" title="Supprimer ce cours">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'data' && (
-            <div className="p-6 overflow-auto h-full bg-slate-50">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h2 className="text-lg font-black uppercase text-slate-800 tracking-tight">Gestion des Données</h2>
-                  <p className="text-sm text-slate-600 mt-1">
-                    {dataSubTab === 'subjects' ? 'Gérez les matières et leurs enseignants par semestre' :
-                      dataSubTab === 'rooms' ? 'Gérez les salles de cours disponibles' :
-                        'Suivez l\'avancement des séances par matière'}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
-                  <div className={`w-3 h-3 rounded-full ${dataSubTab === 'subjects' ? 'bg-green-500' : dataSubTab === 'rooms' ? 'bg-orange-500' : 'bg-purple-500'}`}></div>
-                  <span className="font-medium">
-                    {dataSubTab === 'subjects' ? 'Matières & Enseignants' :
-                      dataSubTab === 'rooms' ? 'Salles de cours' :
-                        'Avancement des cours'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Gestion des Salles */}
-              {dataSubTab === 'rooms' && (
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-700">Gestion des Salles</h3>
-                    <button onClick={() => setCustomRooms([...customRooms, `Nouvelle Salle ${customRooms.length + 1}`])} className="flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors" title="Ajouter une salle">
-                      <Plus size={16} className="mr-2" />
-                      Ajouter une salle
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
-                    {customRooms.map((room, idx) => (
-                      <div key={idx} className="flex gap-2 items-center bg-slate-50 p-3 rounded border">
-                        <input
-                          type="text"
-                          value={room}
-                          onChange={(e) => {
-                            const newRooms = [...customRooms];
-                            newRooms[idx] = e.target.value;
-                            setCustomRooms(newRooms);
-                          }}
-                          className="flex-1 border rounded px-3 py-2 text-sm font-mono"
-                          placeholder="Nom de la salle"
-                        />
-                        <button onClick={() => {
-                          const newRooms = customRooms.filter((_, i) => i !== idx);
-                          setCustomRooms(newRooms);
-                        }} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Supprimer">
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Gestion des Matières */}
-              {dataSubTab === 'subjects' && (
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                  {/* Section Gestion des Données (Déplacé ici) */}
-                  <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
-                    <h3 className="text-sm font-bold text-slate-700 mb-3 uppercase flex items-center gap-2"><Database size={16} /> Sauvegarde et Restauration</h3>
-                    <div className="flex flex-wrap gap-3">
-                      <button
-                        onClick={handleExport}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 text-xs rounded font-bold transition-colors flex items-center gap-1.5"
-                      >
-                        <Download size={14} />
-                        Backup JSON
-                      </button>
-                      <label className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 text-xs rounded font-bold transition-colors cursor-pointer flex items-center gap-1.5">
-                        <Upload size={14} />
-                        Restaurer
-                        <input
-                          type="file"
-                          accept=".json"
-                          onChange={handleImport}
-                          className="hidden"
-                        />
-                      </label>
-
-                      <div className="border-l border-slate-300 mx-1"></div>
-
-                      <button
-                        onClick={saveToConstantsFile}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs rounded font-bold transition-colors flex items-center gap-1.5"
-                        title="Écrase le fichier source constants.ts"
-                      >
-                        <Save size={14} />
-                        Sauvegarder dans le fichier (Permanent)
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-700">Gestion des Matières</h3>
-                    <div className="flex gap-3 items-center">
-                      {/* Filtre par semestre */}
-                      <select
-                        value={dataFilterSemester}
-                        onChange={(e) => setDataFilterSemester(e.target.value)}
-                        className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
-                      >
-                        <option value="">Tous les semestres</option>
-                        {SEMESTERS.map(sem => (
-                          <option key={sem} value={sem}>{sem}</option>
-                        ))}
-                      </select>
-
-                      {/* Filtre par matière */}
-                      <input
-                        type="text"
-                        placeholder="Filtrer par matière..."
-                        value={dataFilterSubject}
-                        onChange={(e) => setDataFilterSubject(e.target.value)}
-                        className="border border-slate-200 rounded px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100 w-48"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {customSubjects
-                      .filter(semestre => !dataFilterSemester || semestre.semestre === dataFilterSemester)
-                      .map((semestre, semIdx) => (
-                        <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
-                          <div className="flex justify-between items-center mb-3">
-                            <h4 className="font-bold text-lg text-blue-700">{semestre.semestre}</h4>
-                            <button onClick={() => {
-                              const newSubjects = [...customSubjects];
-                              const newMatiere = {
-                                code: `NEW${Date.now()}`,
-                                libelle: 'Nouvelle Matière',
-                                enseignants: 'Nouvel Enseignant',
-                                enseignantsCM: 'Nouvel Enseignant',
-                                enseignantsTD: 'Nouvel Enseignant',
-                                credit: 3
-                              };
-                              newSubjects[semIdx].matieres.push(newMatiere);
-                              setCustomSubjects(newSubjects);
-
-                              // Créer automatiquement les cartes pour tous les groupes
-                              const newCourses: AssignmentRow[] = [];
-                              dynamicGroups.forEach(group => {
-                                // Cours CM
-                                newCourses.push({
-                                  id: Math.random().toString(36).substr(2, 9),
-                                  subject: newMatiere.code,
-                                  subjectLabel: newMatiere.libelle,
-                                  type: 'CM',
-                                  mainGroup: group,
-                                  sharedGroups: [group],
-                                  subLabel: 'CM',
-                                  teacher: newMatiere.enseignantsCM.split('/')[0]?.trim() || '',
-                                  room: 'Amphi A',
-                                  semester: semestre.semestre
-                                });
-
-                                // Cours TD
-                                const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
-                                newCourses.push({
-                                  id: Math.random().toString(36).substr(2, 9),
-                                  subject: newMatiere.code,
-                                  subjectLabel: newMatiere.libelle,
-                                  type: 'TD',
-                                  mainGroup: group,
-                                  sharedGroups: [group],
-                                  subLabel: 'TD',
-                                  teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
-                                  room: defaultRoom,
-                                  semester: semestre.semestre
-                                });
-                              });
-
-                              // Ajouter les nouveaux cours aux assignmentRows
-                              setAssignmentRows(prev => [...prev, ...newCourses]);
-
-                              setToastMessage({ msg: `Matière "${newMatiere.libelle}" ajoutée avec ${newCourses.length} cours créés`, type: 'success' });
-                            }} className="flex items-center gap-1 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded transition-colors" title="Ajouter une matière">
-                              <Plus size={14} />
-                              Ajouter matière
-                            </button>
-                          </div>
-
-                          <div className="space-y-3">
-                            {semestre.matieres
-                              .filter(matiere => !dataFilterSubject ||
-                                matiere.code.toLowerCase().includes(dataFilterSubject.toLowerCase()) ||
-                                matiere.libelle.toLowerCase().includes(dataFilterSubject.toLowerCase())
-                              )
-                              .map((matiere, matIdx) => (
-                                <div key={matIdx} className="bg-white p-4 rounded border shadow-sm">
-                                  <div className="grid grid-cols-12 gap-3 items-center mb-3">
-                                    <div className="col-span-2">
-                                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Code</label>
-                                      <input
-                                        type="text"
-                                        value={matiere.code}
-                                        onChange={(e) => {
-                                          console.log('Modification code:', e.target.value);
-                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                          // Trouver les vrais index car le filtrage change l'ordre d'affichage
-                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                          if (realSemIdx !== -1) {
-                                            const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
-                                            if (realMatIdx !== -1) {
-                                              const oldCode = newSubjects[realSemIdx].matieres[realMatIdx].code;
-                                              newSubjects[realSemIdx].matieres[realMatIdx].code = e.target.value;
-                                              setCustomSubjects(newSubjects);
-
-                                              // FIX: Mettre à jour aussi les cours programmés
-                                              const newAssignmentRows = [...assignmentRows];
-                                              let hasUpdates = false;
-                                              newAssignmentRows.forEach(row => {
-                                                if (row.subject === oldCode) {
-                                                  row.subject = e.target.value;
-                                                  hasUpdates = true;
-                                                }
-                                              });
-                                              if (hasUpdates) {
-                                                setAssignmentRows(newAssignmentRows);
+                                      // Mettre à jour customSubjects pour ajouter l'enseignant à cette matière
+                                      setCustomSubjects(prev => {
+                                        const newSubjects = [...prev];
+                                        const semesterIndex = newSubjects.findIndex(s => s.semestre === row.semester);
+                                        if (semesterIndex !== -1) {
+                                          const matiereIndex = newSubjects[semesterIndex].matieres.findIndex(m => m.code === row.subject);
+                                          if (matiereIndex !== -1) {
+                                            // Ajouter l'enseignant au bon champ selon le type de cours
+                                            if (row.type === 'CM') {
+                                              const currentTeachers = newSubjects[semesterIndex].matieres[matiereIndex].enseignantsCM || newSubjects[semesterIndex].matieres[matiereIndex].enseignants || '';
+                                              if (!currentTeachers.includes(teacherName)) {
+                                                newSubjects[semesterIndex].matieres[matiereIndex].enseignantsCM = currentTeachers ? currentTeachers + '/' + teacherName : teacherName;
+                                              }
+                                            } else {
+                                              const currentTeachers = newSubjects[semesterIndex].matieres[matiereIndex].enseignantsTD || newSubjects[semesterIndex].matieres[matiereIndex].enseignants || '';
+                                              if (!currentTeachers.includes(teacherName)) {
+                                                newSubjects[semesterIndex].matieres[matiereIndex].enseignantsTD = currentTeachers ? currentTeachers + '/' + teacherName : teacherName;
                                               }
                                             }
                                           }
-                                        }}
-                                        className="w-full border border-slate-300 rounded px-2 py-1 text-sm font-mono font-bold bg-white"
-                                        placeholder="Code"
-                                        readOnly={false}
-                                        disabled={false}
-                                      />
-                                    </div>
-                                    <div className="col-span-3">
-                                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nom de la matière</label>
-                                      <input
-                                        type="text"
-                                        value={matiere.libelle}
-                                        onChange={(e) => {
-                                          console.log('Modification libellé:', e.target.value);
-                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                          if (realSemIdx !== -1) {
-                                            const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
-                                            if (realMatIdx !== -1) {
-                                              newSubjects[realSemIdx].matieres[realMatIdx].libelle = e.target.value;
-                                              setCustomSubjects(newSubjects);
-
-                                              // FIX: Mettre à jour aussi les cours programmés
-                                              const newAssignmentRows = [...assignmentRows];
-                                              let hasUpdates = false;
-                                              newAssignmentRows.forEach(row => {
-                                                if (row.subject === matiere.code) { // Utiliser le code (qui n'a pas changé ici)
-                                                  row.subjectLabel = e.target.value;
-                                                  hasUpdates = true;
-                                                }
-                                              });
-                                              if (hasUpdates) {
-                                                setAssignmentRows(newAssignmentRows);
-                                              }
-                                            }
-                                          }
-                                        }}
-                                        className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-white"
-                                        placeholder="Nom de la matière"
-                                        readOnly={false}
-                                        disabled={false}
-                                      />
-                                    </div>
-                                    <div className="col-span-1">
-                                      <label className="block text-xs font-bold text-purple-600 uppercase mb-1">Crédit</label>
-                                      <input
-                                        type="number"
-                                        min="1"
-                                        max="10"
-                                        value={matiere.credit || 3}
-                                        onChange={(e) => {
-                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                          if (realSemIdx !== -1) {
-                                            const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
-                                            if (realMatIdx !== -1) {
-                                              newSubjects[realSemIdx].matieres[realMatIdx].credit = parseInt(e.target.value) || 3;
-                                              setCustomSubjects(newSubjects);
-                                            }
-                                          }
-                                        }}
-                                        className="w-full border rounded px-2 py-1 text-sm bg-purple-50 text-center font-bold"
-                                        placeholder="3"
-                                      />
-                                    </div>
-                                    <div className="col-span-2">
-                                      <label className="block text-xs font-bold text-blue-600 uppercase mb-1">Profs CM</label>
-                                      <input
-                                        type="text"
-                                        value={matiere.enseignantsCM || ''}
-                                        onChange={(e) => {
-                                          console.log('Modification enseignants CM:', e.target.value);
-                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                          if (realSemIdx !== -1) {
-                                            const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
-                                            if (realMatIdx !== -1) {
-                                              newSubjects[realSemIdx].matieres[realMatIdx].enseignantsCM = e.target.value;
-                                              setCustomSubjects(newSubjects);
-                                            }
-                                          }
-                                        }}
-                                        className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-blue-50"
-                                        placeholder="Enseignant CM"
-                                        readOnly={false}
-                                        disabled={false}
-                                      />
-                                    </div>
-                                    <div className="col-span-3">
-                                      <label className="block text-xs font-bold text-green-600 uppercase mb-1">Profs TD/TP</label>
-                                      <input
-                                        type="text"
-                                        value={matiere.enseignantsTD || ''}
-                                        onChange={(e) => {
-                                          console.log('Modification enseignants TD:', e.target.value);
-                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                          if (realSemIdx !== -1) {
-                                            const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
-                                            if (realMatIdx !== -1) {
-                                              newSubjects[realSemIdx].matieres[realMatIdx].enseignantsTD = e.target.value;
-                                              setCustomSubjects(newSubjects);
-                                            }
-                                          }
-                                        }}
-                                        className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-green-50"
-                                        placeholder="Intervenants TD/TP (séparés par /)"
-                                        readOnly={false}
-                                        disabled={false}
-                                      />
-                                    </div>
-                                    <div className="col-span-1 flex justify-center">
-                                      <button onClick={() => {
-                                        const newSubjects = JSON.parse(JSON.stringify(customSubjects));
-                                        const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
-                                        if (realSemIdx !== -1) {
-                                          newSubjects[realSemIdx].matieres = newSubjects[realSemIdx].matieres.filter((m: any) => m.code !== matiere.code);
-                                          setCustomSubjects(newSubjects);
                                         }
-                                      }} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Supprimer">
-                                        <Trash2 size={16} />
-                                      </button>
-                                    </div>
-                                  </div>
-                                  <div className="text-xs text-slate-500 italic">
-                                    Séparez plusieurs enseignants par "/" (ex: "Moussa/Cheikh") • Crédit: nombre d'ECTS de la matière
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
+
+                                        return newSubjects;
+                                      });
+
+                                      // Forcer le re-rendu pour mettre à jour les listes déroulantes
+                                      setRefreshKey(prev => prev + 1);
+
+                                      setToastMessage({ msg: `Enseignant "${teacherName}" ajouté à ${row.subject} (${row.type})`, type: 'success' });
+                                    }
+                                  }}
+                                  className="p-1 text-blue-600 hover:bg-blue-100 rounded transition-colors"
+                                  title={`Ajouter un enseignant ${row.type}`}
+                                >
+                                  +
+                                </button>
+
+                                {/* Sélecteur de salle */}
+                                <select
+                                  value={row.room || ""}
+                                  onChange={(e) => {
+                                    setAssignmentRows(prev => prev.map(r =>
+                                      r.id === row.id ? { ...r, room: e.target.value } : r
+                                    ));
+                                    setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
+                                  }}
+                                  className="w-20 border border-slate-200 rounded px-2 py-1 bg-white font-mono font-bold text-[10px] outline-none focus:ring-1 ring-green-300 shadow-sm text-center"
+                                >
+                                  <option value="">Salle...</option>
+                                  {customRooms.map(room => (
+                                    <option key={room} value={room}>{room}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </td>
+                            <td className="p-2 text-center">
+                              <div className="flex gap-1 justify-center">
+                                <button
+                                  onClick={() => {
+                                    const newRow: AssignmentRow = {
+                                      id: 'new-' + Date.now(),
+                                      subject: row.subject,
+                                      subjectLabel: row.subjectLabel,
+                                      type: row.type === 'CM' ? 'TD' : 'CM',
+                                      mainGroup: row.mainGroup,
+                                      sharedGroups: [row.mainGroup],
+                                      subLabel: row.type === 'CM' ? 'TD' : 'CM',
+                                      teacher: row.teacher,
+                                      room: '101',
+                                      semester: row.semester
+                                    };
+                                    setAssignmentRows(prev => [...prev, newRow]);
+                                    setToastMessage({ msg: `Nouvelle ligne ${newRow.type} ajoutée pour ${row.subject}`, type: 'success' });
+                                  }}
+                                  className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-all shadow-sm"
+                                  title="Ajouter une ligne"
+                                >
+                                  +
+                                </button>
+                                <button onClick={() => { if (confirm('Supprimer ce cours ?')) setAssignmentRows(prev => prev.filter(r => r.id !== row.id)) }} className="p-2 text-red-600 hover:bg-red-50 rounded-full transition-all shadow-sm" title="Supprimer ce cours">
+                                  <Trash2 size={16} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'data' && (
+              <div className="p-6 overflow-auto h-full bg-slate-50">
+                <div className="flex items-center justify-between mb-6">
+                  <div>
+                    <h2 className="text-lg font-black uppercase text-slate-800 tracking-tight">Gestion des Données</h2>
+                    <p className="text-sm text-slate-600 mt-1">
+                      {dataSubTab === 'subjects' ? 'Gérez les matières et leurs enseignants par semestre' :
+                        dataSubTab === 'rooms' ? 'Gérez les salles de cours disponibles' :
+                          'Suivez l\'avancement des séances par matière'}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm text-slate-500">
+                    <div className={`w-3 h-3 rounded-full ${dataSubTab === 'subjects' ? 'bg-green-500' : dataSubTab === 'rooms' ? 'bg-orange-500' : 'bg-purple-500'}`}></div>
+                    <span className="font-medium">
+                      {dataSubTab === 'subjects' ? 'Matières & Enseignants' :
+                        dataSubTab === 'rooms' ? 'Salles de cours' :
+                          'Avancement des cours'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Gestion des Salles */}
+                {dataSubTab === 'rooms' && (
+                  <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-slate-700">Gestion des Salles</h3>
+                      <button onClick={() => setCustomRooms([...customRooms, `Nouvelle Salle ${customRooms.length + 1}`])} className="flex items-center justify-center bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors" title="Ajouter une salle">
+                        <Plus size={16} className="mr-2" />
+                        Ajouter une salle
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                      {customRooms.map((room, idx) => (
+                        <div key={idx} className="flex gap-2 items-center bg-slate-50 p-3 rounded border">
+                          <input
+                            type="text"
+                            value={room}
+                            onChange={(e) => {
+                              const newRooms = [...customRooms];
+                              newRooms[idx] = e.target.value;
+                              setCustomRooms(newRooms);
+                            }}
+                            className="flex-1 border rounded px-3 py-2 text-sm font-mono"
+                            placeholder="Nom de la salle"
+                          />
+                          <button onClick={() => {
+                            const newRooms = customRooms.filter((_, i) => i !== idx);
+                            setCustomRooms(newRooms);
+                          }} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Supprimer">
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                       ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Avancement des cours */}
-              {dataSubTab === 'progress' && (
-                <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-slate-700">Avancement des Cours</h3>
-                    <div className="flex gap-3 items-center">
-                      {/* Selecteur de Vue */}
-                      <div className="flex bg-slate-100 p-1 rounded-lg">
-                        <button
-                          onClick={() => setDataProgressViewMode('subjects')}
-                          className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${dataProgressViewMode === 'subjects' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                          Par Matière
-                        </button>
-                        <button
-                          onClick={() => setDataProgressViewMode('teachers')}
-                          className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${dataProgressViewMode === 'teachers' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
-                        >
-                          Par Enseignant
-                        </button>
-                      </div>
-
-                      {/* Filtre par semestre */}
-                      <select
-                        value={dataFilterSemester}
-                        onChange={(e) => setDataFilterSemester(e.target.value)}
-                        className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
-                      >
-                        <option value="">Tous les semestres</option>
-                        {SEMESTERS.map(sem => (
-                          <option key={sem} value={sem}>{sem}</option>
-                        ))}
-                      </select>
-
-                      {/* Filtre par groupe (seulement pour la vue matières) */}
-                      {dataProgressViewMode === 'subjects' && (
-                        <select
-                          value={dataFilterSubject}
-                          onChange={(e) => setDataFilterSubject(e.target.value)}
-                          className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
-                        >
-                          <option value="">Tous les groupes</option>
-                          {dynamicGroups.map(group => (
-                            <option key={group} value={group}>{group}</option>
-                          ))}
-                        </select>
-                      )}
                     </div>
                   </div>
+                )}
 
-                  <div className="space-y-4 max-h-96 overflow-y-auto">
-                    {dataProgressViewMode === 'subjects' ? (
-                      // VUE PAR MATIÈRE (Existant)
-                      customSubjects
+                {/* Gestion des Matières */}
+                {dataSubTab === 'subjects' && (
+                  <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    {/* Section Gestion des Données (Déplacé ici) */}
+                    <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
+                      <h3 className="text-sm font-bold text-slate-700 mb-3 uppercase flex items-center gap-2"><Database size={16} /> Sauvegarde et Restauration</h3>
+                      <div className="flex flex-wrap gap-3">
+                        <button
+                          onClick={handleExport}
+                          className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 text-xs rounded font-bold transition-colors flex items-center gap-1.5"
+                        >
+                          <Download size={14} />
+                          Backup JSON
+                        </button>
+                        <label className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-1.5 text-xs rounded font-bold transition-colors cursor-pointer flex items-center gap-1.5">
+                          <Upload size={14} />
+                          Restaurer
+                          <input
+                            type="file"
+                            accept=".json"
+                            onChange={handleImport}
+                            className="hidden"
+                          />
+                        </label>
+
+                        <div className="border-l border-slate-300 mx-1"></div>
+
+                        <button
+                          onClick={saveToConstantsFile}
+                          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 text-xs rounded font-bold transition-colors flex items-center gap-1.5"
+                          title="Écrase le fichier source constants.ts"
+                        >
+                          <Save size={14} />
+                          Sauvegarder dans le fichier (Permanent)
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-slate-700">Gestion des Matières</h3>
+                      <div className="flex gap-3 items-center">
+                        {/* Filtre par semestre */}
+                        <select
+                          value={dataFilterSemester}
+                          onChange={(e) => setDataFilterSemester(e.target.value)}
+                          className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
+                        >
+                          <option value="">Tous les semestres</option>
+                          {SEMESTERS.map(sem => (
+                            <option key={sem} value={sem}>{sem}</option>
+                          ))}
+                        </select>
+
+                        {/* Filtre par matière */}
+                        <input
+                          type="text"
+                          placeholder="Filtrer par matière..."
+                          value={dataFilterSubject}
+                          onChange={(e) => setDataFilterSubject(e.target.value)}
+                          className="border border-slate-200 rounded px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100 w-48"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                      {customSubjects
                         .filter(semestre => !dataFilterSemester || semestre.semestre === dataFilterSemester)
                         .map((semestre, semIdx) => (
                           <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
-                            <h4 className="font-bold text-lg text-blue-700 mb-3">{semestre.semestre}</h4>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {semestre.matieres.map((matiere, matIdx) => {
-                                // Calculer l'avancement global de la matière
-                                const credit = matiere.credit || 3;
-                                const totalSessions = credit * 8;
-
-                                // Calculer les séances réalisées pour tous les groupes et types
-                                const getProgressForSubject = () => {
-                                  const groupsToShow = dataFilterSubject ? [dataFilterSubject] : dynamicGroups;
-
-                                  return groupsToShow.map(group => {
-                                    let cmSessions = 0;
-                                    let tdSessions = 0;
-                                    let tpSessions = 0;
-
-                                    // Compter les séances par type
-                                    Object.entries(schedule).forEach(([key, courseIds]) => {
-                                      // Normaliser courseIds en tableau (gérer les cas string | null | string[])
-                                      const courseIdsArray = Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []);
-
-                                      if (courseIdsArray.length > 0) {
-                                        courseIdsArray.forEach(courseId => {
-                                          const scheduledCourse = assignmentRows.find((row: any) => row.id === courseId);
-                                          if (scheduledCourse &&
-                                            scheduledCourse.subject === matiere.code &&
-                                            scheduledCourse.mainGroup === group &&
-                                            scheduledCourse.semester === semestre.semestre) {
-
-                                            if (scheduledCourse.type === 'CM') cmSessions++;
-                                            else if (scheduledCourse.type === 'TD') tdSessions++;
-                                            else if (scheduledCourse.type === 'TP') tpSessions++;
-                                          }
-                                        });
-                                      }
-                                    });
-
-                                    const totalRealized = cmSessions + tdSessions + tpSessions;
-                                    const progressPercent = Math.round((totalRealized / totalSessions) * 100);
-
-                                    return {
-                                      group,
-                                      cmSessions,
-                                      tdSessions,
-                                      tpSessions,
-                                      totalRealized,
-                                      totalSessions,
-                                      progressPercent
-                                    };
-                                  });
+                            <div className="flex justify-between items-center mb-3">
+                              <h4 className="font-bold text-lg text-blue-700">{semestre.semestre}</h4>
+                              <button onClick={() => {
+                                const newSubjects = [...customSubjects];
+                                const newMatiere = {
+                                  code: `NEW${Date.now()}`,
+                                  libelle: 'Nouvelle Matière',
+                                  enseignants: 'Nouvel Enseignant',
+                                  enseignantsCM: 'Nouvel Enseignant',
+                                  enseignantsTD: 'Nouvel Enseignant',
+                                  credit: 3
                                 };
+                                newSubjects[semIdx].matieres.push(newMatiere);
+                                setCustomSubjects(newSubjects);
 
-                                const progressData = getProgressForSubject();
+                                // Créer automatiquement les cartes pour tous les groupes
+                                const newCourses: AssignmentRow[] = [];
+                                dynamicGroups.forEach(group => {
+                                  // Cours CM
+                                  newCourses.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    subject: newMatiere.code,
+                                    subjectLabel: newMatiere.libelle,
+                                    type: 'CM',
+                                    mainGroup: group,
+                                    sharedGroups: [group],
+                                    subLabel: 'CM',
+                                    teacher: newMatiere.enseignantsCM.split('/')[0]?.trim() || '',
+                                    room: 'Amphi A',
+                                    semester: semestre.semestre
+                                  });
 
-                                return (
+                                  // Cours TD
+                                  const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
+                                  newCourses.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    subject: newMatiere.code,
+                                    subjectLabel: newMatiere.libelle,
+                                    type: 'TD',
+                                    mainGroup: group,
+                                    sharedGroups: [group],
+                                    subLabel: 'TD',
+                                    teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
+                                    room: defaultRoom,
+                                    semester: semestre.semestre
+                                  });
+                                });
+
+                                // Ajouter les nouveaux cours aux assignmentRows
+                                setAssignmentRows(prev => [...prev, ...newCourses]);
+
+                                setToastMessage({ msg: `Matière "${newMatiere.libelle}" ajoutée avec ${newCourses.length} cours créés`, type: 'success' });
+                              }} className="flex items-center gap-1 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded transition-colors" title="Ajouter une matière">
+                                <Plus size={14} />
+                                Ajouter matière
+                              </button>
+                            </div>
+
+                            <div className="space-y-3">
+                              {semestre.matieres
+                                .filter(matiere => !dataFilterSubject ||
+                                  matiere.code.toLowerCase().includes(dataFilterSubject.toLowerCase()) ||
+                                  matiere.libelle.toLowerCase().includes(dataFilterSubject.toLowerCase())
+                                )
+                                .map((matiere, matIdx) => (
                                   <div key={matIdx} className="bg-white p-4 rounded border shadow-sm">
-                                    <div className="flex justify-between items-start mb-3">
-                                      <div>
-                                        <h5 className="font-bold text-sm text-slate-800">{matiere.code}</h5>
-                                        <p className="text-xs text-slate-600 truncate">{matiere.libelle}</p>
-                                        <p className="text-xs text-purple-600 font-bold">{credit} crédits • {totalSessions} séances prévues</p>
+                                    <div className="grid grid-cols-12 gap-3 items-center mb-3">
+                                      <div className="col-span-2">
+                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Code</label>
+                                        <input
+                                          type="text"
+                                          value={matiere.code}
+                                          onChange={(e) => {
+                                            console.log('Modification code:', e.target.value);
+                                            const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                            // Trouver les vrais index car le filtrage change l'ordre d'affichage
+                                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                            if (realSemIdx !== -1) {
+                                              const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
+                                              if (realMatIdx !== -1) {
+                                                const oldCode = newSubjects[realSemIdx].matieres[realMatIdx].code;
+                                                newSubjects[realSemIdx].matieres[realMatIdx].code = e.target.value;
+                                                setCustomSubjects(newSubjects);
+
+                                                // FIX: Mettre à jour aussi les cours programmés
+                                                const newAssignmentRows = [...assignmentRows];
+                                                let hasUpdates = false;
+                                                newAssignmentRows.forEach(row => {
+                                                  if (row.subject === oldCode) {
+                                                    row.subject = e.target.value;
+                                                    hasUpdates = true;
+                                                  }
+                                                });
+                                                if (hasUpdates) {
+                                                  setAssignmentRows(newAssignmentRows);
+                                                }
+                                              }
+                                            }
+                                          }}
+                                          className="w-full border border-slate-300 rounded px-2 py-1 text-sm font-mono font-bold bg-white"
+                                          placeholder="Code"
+                                          readOnly={false}
+                                          disabled={false}
+                                        />
+                                      </div>
+                                      <div className="col-span-3">
+                                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nom de la matière</label>
+                                        <input
+                                          type="text"
+                                          value={matiere.libelle}
+                                          onChange={(e) => {
+                                            console.log('Modification libellé:', e.target.value);
+                                            const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                            if (realSemIdx !== -1) {
+                                              const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
+                                              if (realMatIdx !== -1) {
+                                                newSubjects[realSemIdx].matieres[realMatIdx].libelle = e.target.value;
+                                                setCustomSubjects(newSubjects);
+
+                                                // FIX: Mettre à jour aussi les cours programmés
+                                                const newAssignmentRows = [...assignmentRows];
+                                                let hasUpdates = false;
+                                                newAssignmentRows.forEach(row => {
+                                                  if (row.subject === matiere.code) { // Utiliser le code (qui n'a pas changé ici)
+                                                    row.subjectLabel = e.target.value;
+                                                    hasUpdates = true;
+                                                  }
+                                                });
+                                                if (hasUpdates) {
+                                                  setAssignmentRows(newAssignmentRows);
+                                                }
+                                              }
+                                            }
+                                          }}
+                                          className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-white"
+                                          placeholder="Nom de la matière"
+                                          readOnly={false}
+                                          disabled={false}
+                                        />
+                                      </div>
+                                      <div className="col-span-1">
+                                        <label className="block text-xs font-bold text-purple-600 uppercase mb-1">Crédit</label>
+                                        <input
+                                          type="number"
+                                          min="1"
+                                          max="10"
+                                          value={matiere.credit || 3}
+                                          onChange={(e) => {
+                                            const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                            if (realSemIdx !== -1) {
+                                              const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
+                                              if (realMatIdx !== -1) {
+                                                newSubjects[realSemIdx].matieres[realMatIdx].credit = parseInt(e.target.value) || 3;
+                                                setCustomSubjects(newSubjects);
+                                              }
+                                            }
+                                          }}
+                                          className="w-full border rounded px-2 py-1 text-sm bg-purple-50 text-center font-bold"
+                                          placeholder="3"
+                                        />
+                                      </div>
+                                      <div className="col-span-2">
+                                        <label className="block text-xs font-bold text-blue-600 uppercase mb-1">Profs CM</label>
+                                        <TeacherSelector
+                                          value={matiere.enseignantsCM || ''}
+                                          allTeachers={UNIQUE_TEACHERS}
+                                          onChange={(val: string) => {
+                                            console.log('Modification enseignants CM:', val);
+                                            const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                            if (realSemIdx !== -1) {
+                                              const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
+                                              if (realMatIdx !== -1) {
+                                                newSubjects[realSemIdx].matieres[realMatIdx].enseignantsCM = val;
+                                                setCustomSubjects(newSubjects);
+                                              }
+                                            }
+                                          }}
+                                          className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-blue-50"
+                                          placeholder="Enseignant CM"
+                                        />
+                                      </div>
+                                      <div className="col-span-3">
+                                        <label className="block text-xs font-bold text-green-600 uppercase mb-1">Profs TD/TP</label>
+                                        <TeacherSelector
+                                          value={matiere.enseignantsTD || ''}
+                                          allTeachers={UNIQUE_TEACHERS}
+                                          onChange={(val: string) => {
+                                            console.log('Modification enseignants TD:', val);
+                                            const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                            if (realSemIdx !== -1) {
+                                              const realMatIdx = newSubjects[realSemIdx].matieres.findIndex((m: any) => m.code === matiere.code);
+                                              if (realMatIdx !== -1) {
+                                                newSubjects[realSemIdx].matieres[realMatIdx].enseignantsTD = val;
+                                                setCustomSubjects(newSubjects);
+                                              }
+                                            }
+                                          }}
+                                          className="w-full border border-slate-300 rounded px-2 py-1 text-sm bg-green-50"
+                                          placeholder="Intervenants TD/TP"
+                                        />
+                                      </div>
+                                      <div className="col-span-1 flex justify-center">
+                                        <button onClick={() => {
+                                          const newSubjects = JSON.parse(JSON.stringify(customSubjects));
+                                          const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === semestre.semestre);
+                                          if (realSemIdx !== -1) {
+                                            newSubjects[realSemIdx].matieres = newSubjects[realSemIdx].matieres.filter((m: any) => m.code !== matiere.code);
+                                            setCustomSubjects(newSubjects);
+                                          }
+                                        }} className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors" title="Supprimer">
+                                          <Trash2 size={16} />
+                                        </button>
                                       </div>
                                     </div>
-
-                                    <div className="space-y-2">
-                                      {progressData.map((data, idx) => (
-                                        <div key={idx} className="border border-slate-100 rounded p-2 bg-slate-50">
-                                          <div className="flex justify-between items-center mb-1">
-                                            <span className="text-xs font-bold text-slate-700">{data.group.replace("Groupe ", "G")}</span>
-                                            <span className={`text-xs font-bold px-2 py-1 rounded ${data.progressPercent >= 100 ? 'bg-green-100 text-green-700' : data.progressPercent >= 50 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>
-                                              {data.progressPercent}%
-                                            </span>
-                                          </div>
-
-                                          <div className="flex justify-between text-xs text-slate-600 mb-2">
-                                            <span>CM: {data.cmSessions}</span>
-                                            <span>TD: {data.tdSessions}</span>
-                                            <span>TP: {data.tpSessions}</span>
-                                            <span className="font-bold">Total: {data.totalRealized}/{data.totalSessions}</span>
-                                          </div>
-
-                                          {/* Barre de progression */}
-                                          <div className="w-full bg-slate-200 rounded-full h-2">
-                                            <div
-                                              className={`h-2 rounded-full transition-all ${data.progressPercent >= 100 ? 'bg-green-500' : data.progressPercent >= 50 ? 'bg-orange-500' : 'bg-red-500'}`}
-                                              style={{ width: `${Math.min(data.progressPercent, 100)}%` }}
-                                            ></div>
-                                          </div>
-                                        </div>
-                                      ))}
+                                    <div className="text-xs text-slate-500 italic">
+                                      Séparez plusieurs enseignants par "/" (ex: "Moussa/Cheikh") • Crédit: nombre d'ECTS de la matière
                                     </div>
                                   </div>
-                                );
-                              })}
+                                ))}
                             </div>
-                          </div>
-                        ))
-                    ) : (
-                      // VUE PAR ENSEIGNANT (Nouvelle)
-                      <div className="border border-slate-100 rounded-lg p-4 bg-slate-50">
-                        <h4 className="font-bold text-lg text-blue-700 mb-3">
-                          {dataFilterSemester ? `Avancement par Enseignant (${dataFilterSemester})` : "Avancement par Enseignant (Global)"}
-                        </h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {Object.entries(
-                            AssignmentRowService.getTeacherStats(
-                              assignmentRows,
-                              schedule,
-                              dataFilterSemester || undefined
-                            )
-                          ).map(([teacher, stats]: any) => (
-                            <div key={teacher} className="bg-white p-4 rounded border shadow-sm">
-                              <div className="flex justify-between items-start mb-3 border-b pb-2">
-                                <div>
-                                  <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                  <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {stats.total}</p>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-3 gap-2 text-center">
-                                <div className="bg-blue-50 p-2 rounded">
-                                  <div className="text-xs text-blue-600 font-bold uppercase">CM</div>
-                                  <div className="text-md font-black text-blue-800">{stats.cm}</div>
-                                </div>
-                                <div className="bg-green-50 p-2 rounded">
-                                  <div className="text-xs text-green-600 font-bold uppercase">TD</div>
-                                  <div className="text-md font-black text-green-800">{stats.td}</div>
-                                </div>
-                                <div className="bg-purple-50 p-2 rounded">
-                                  <div className="text-xs text-purple-600 font-bold uppercase">TP</div>
-                                  <div className="text-md font-black text-purple-800">{stats.tp}</div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                          {Object.keys(AssignmentRowService.getTeacherStats(assignmentRows, schedule, dataFilterSemester || undefined)).length === 0 && (
-                            <div className="col-span-full text-center py-8 text-slate-400 italic">
-                              Aucun cours planifié pour les critères sélectionnés.
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
-            </div>
-          )}
-
-          {activeTab === 'config' && (
-            <div className="p-8 max-w-4xl mx-auto h-full overflow-auto">
-              <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-black uppercase text-slate-800 flex items-center gap-3"><Settings className="text-blue-600" size={28} /> Configuration Générale</h2>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                  <h3 className="text-lg font-bold text-slate-700 mb-4 border-b pb-2">Paramètres de Temps</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Date de début (Lundi Semaine 1)</label>
-                      <input
-                        type="date"
-                        value={config.startDate || '2024-09-02'}
-                        onChange={(e) => setConfig({ ...config, startDate: e.target.value })}
-                        className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre total de semaines</label>
-                      <input
-                        type="number"
-                        value={config.totalWeeks || 16}
-                        onChange={(e) => setConfig({ ...config, totalWeeks: parseInt(e.target.value) || 16 })}
-                        className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de groupes</label>
-                      <input
-                        type="number"
-                        min="1"
-                        max="10"
-                        value={config.numberOfGroups || 4}
-                        onChange={(e) => setConfig({ ...config, numberOfGroups: parseInt(e.target.value) || 4 })}
-                        className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Périodes de vacances</label>
-                      <div className="space-y-2">
-                        {(config.vacationPeriods || []).map((period, idx) => (
-                          <div key={idx} className="flex gap-2 items-center bg-slate-50 p-2 rounded border">
-                            <div className="flex items-center gap-1 text-xs text-slate-600">
-                              <span>Du</span>
-                              <input
-                                type="date"
-                                value={period.startDate || ''}
-                                onChange={(e) => {
-                                  const newPeriods = [...(config.vacationPeriods || [])];
-                                  newPeriods[idx] = { ...newPeriods[idx], startDate: e.target.value };
-                                  setConfig({ ...config, vacationPeriods: newPeriods });
-                                }}
-                                className="border rounded px-2 py-1 text-xs"
-                              />
-                              <span>au</span>
-                              <input
-                                type="date"
-                                value={period.endDate || ''}
-                                onChange={(e) => {
-                                  const newPeriods = [...(config.vacationPeriods || [])];
-                                  newPeriods[idx] = { ...newPeriods[idx], endDate: e.target.value };
-                                  setConfig({ ...config, vacationPeriods: newPeriods });
-                                }}
-                                className="border rounded px-2 py-1 text-xs"
-                              />
-                            </div>
-                            <button onClick={() => {
-                              const newPeriods = (config.vacationPeriods || []).filter((_, i) => i !== idx);
-                              setConfig({ ...config, vacationPeriods: newPeriods });
-                            }} className="p-1 text-red-400 hover:text-red-600" title="Supprimer">
-                              <Trash2 size={14} />
-                            </button>
                           </div>
                         ))}
-                        <button onClick={() => {
-                          const newPeriods = [...(config.vacationPeriods || []), { startDate: '', endDate: '' }];
-                          setConfig({ ...config, vacationPeriods: newPeriods });
-                        }} className="flex items-center gap-1 text-blue-600 text-xs font-bold hover:underline">
-                          <Plus size={12} /> Ajouter une période de vacances
-                        </button>
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1">Définissez les périodes de vacances à exclure du planning</p>
                     </div>
                   </div>
-                </section>
+                )}
 
-                <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                  <div className="flex justify-between items-center mb-4 border-b pb-2">
-                    <h3 className="text-lg font-bold text-slate-700">Créneaux Horaires</h3>
-                    <button onClick={() => setConfig({ ...config, timeSlots: [...config.timeSlots, '00:00-00:00'] })} className="flex items-center justify-center bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors" title="Ajouter un créneau">
-                      <Plus size={16} />
+                {/* Avancement des cours */}
+                {dataSubTab === 'progress' && (
+                  <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-bold text-slate-700">Avancement des Cours</h3>
+                      <div className="flex gap-3 items-center">
+                        {/* Selecteur de Vue */}
+                        <div className="flex bg-slate-100 p-1 rounded-lg">
+                          <button
+                            onClick={() => setDataProgressViewMode('subjects')}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${dataProgressViewMode === 'subjects' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Par Matière
+                          </button>
+                          <button
+                            onClick={() => setDataProgressViewMode('teachers')}
+                            className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${dataProgressViewMode === 'teachers' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                          >
+                            Par Enseignant
+                          </button>
+                        </div>
+
+                        {/* Filtre par semestre */}
+                        <select
+                          value={dataFilterSemester}
+                          onChange={(e) => setDataFilterSemester(e.target.value)}
+                          className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
+                        >
+                          <option value="">Tous les semestres</option>
+                          {SEMESTERS.map(sem => (
+                            <option key={sem} value={sem}>{sem}</option>
+                          ))}
+                        </select>
+
+                        {/* Filtre par groupe (seulement pour la vue matières) */}
+                        {dataProgressViewMode === 'subjects' && (
+                          <select
+                            value={dataFilterSubject}
+                            onChange={(e) => setDataFilterSubject(e.target.value)}
+                            className="border border-slate-200 rounded px-3 py-2 text-sm font-bold outline-none focus:ring-2 ring-blue-100"
+                          >
+                            <option value="">Tous les groupes</option>
+                            {dynamicGroups.map(group => (
+                              <option key={group} value={group}>{group}</option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 max-h-96 overflow-y-auto">
+                      {dataProgressViewMode === 'subjects' ? (
+                        // VUE PAR MATIÈRE (Existant)
+                        customSubjects
+                          .filter(semestre => !dataFilterSemester || semestre.semestre === dataFilterSemester)
+                          .map((semestre, semIdx) => (
+                            <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
+                              <h4 className="font-bold text-lg text-blue-700 mb-3">{semestre.semestre}</h4>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {semestre.matieres.map((matiere, matIdx) => {
+                                  // Calculer l'avancement global de la matière
+                                  const credit = matiere.credit || 3;
+                                  const totalSessions = credit * 8;
+
+                                  // Calculer les séances réalisées pour tous les groupes et types
+                                  const getProgressForSubject = () => {
+                                    const groupsToShow = dataFilterSubject ? [dataFilterSubject] : dynamicGroups;
+
+                                    return groupsToShow.map(group => {
+                                      let cmSessions = 0;
+                                      let tdSessions = 0;
+                                      let tpSessions = 0;
+
+                                      // Compter les séances par type
+                                      Object.entries(schedule).forEach(([key, courseIds]) => {
+                                        // Normaliser courseIds en tableau (gérer les cas string | null | string[])
+                                        const courseIdsArray = Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []);
+
+                                        if (courseIdsArray.length > 0) {
+                                          courseIdsArray.forEach(courseId => {
+                                            const scheduledCourse = assignmentRows.find((row: any) => row.id === courseId);
+                                            if (scheduledCourse &&
+                                              scheduledCourse.subject === matiere.code &&
+                                              scheduledCourse.mainGroup === group &&
+                                              scheduledCourse.semester === semestre.semestre) {
+
+                                              if (scheduledCourse.type === 'CM') cmSessions++;
+                                              else if (scheduledCourse.type === 'TD') tdSessions++;
+                                              else if (scheduledCourse.type === 'TP') tpSessions++;
+                                            }
+                                          });
+                                        }
+                                      });
+
+                                      const totalRealized = cmSessions + tdSessions + tpSessions;
+                                      const progressPercent = Math.round((totalRealized / totalSessions) * 100);
+
+                                      return {
+                                        group,
+                                        cmSessions,
+                                        tdSessions,
+                                        tpSessions,
+                                        totalRealized,
+                                        totalSessions,
+                                        progressPercent
+                                      };
+                                    });
+                                  };
+
+                                  const progressData = getProgressForSubject();
+
+                                  return (
+                                    <div key={matIdx} className="bg-white p-4 rounded border shadow-sm">
+                                      <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                          <h5 className="font-bold text-sm text-slate-800">{matiere.code}</h5>
+                                          <p className="text-xs text-slate-600 truncate">{matiere.libelle}</p>
+                                          <p className="text-xs text-purple-600 font-bold">{credit} crédits • {totalSessions} séances prévues</p>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        {progressData.map((data, idx) => (
+                                          <div key={idx} className="border border-slate-100 rounded p-2 bg-slate-50">
+                                            <div className="flex justify-between items-center mb-1">
+                                              <span className="text-xs font-bold text-slate-700">{data.group.replace("Groupe ", "G")}</span>
+                                              <span className={`text-xs font-bold px-2 py-1 rounded ${data.progressPercent >= 100 ? 'bg-green-100 text-green-700' : data.progressPercent >= 50 ? 'bg-orange-100 text-orange-700' : 'bg-red-100 text-red-700'}`}>
+                                                {data.progressPercent}%
+                                              </span>
+                                            </div>
+
+                                            <div className="flex justify-between text-xs text-slate-600 mb-2">
+                                              <span>CM: {data.cmSessions}</span>
+                                              <span>TD: {data.tdSessions}</span>
+                                              <span>TP: {data.tpSessions}</span>
+                                              <span className="font-bold">Total: {data.totalRealized}/{data.totalSessions}</span>
+                                            </div>
+
+                                            {/* Barre de progression */}
+                                            <div className="w-full bg-slate-200 rounded-full h-2">
+                                              <div
+                                                className={`h-2 rounded-full transition-all ${data.progressPercent >= 100 ? 'bg-green-500' : data.progressPercent >= 50 ? 'bg-orange-500' : 'bg-red-500'}`}
+                                                style={{ width: `${Math.min(data.progressPercent, 100)}%` }}
+                                              ></div>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
+                          ))
+                      ) : (
+                        // VUE PAR ENSEIGNANT (Nouvelle)
+                        <div className="border border-slate-100 rounded-lg p-4 bg-slate-50">
+                          <h4 className="font-bold text-lg text-blue-700 mb-3">
+                            {dataFilterSemester ? `Avancement par Enseignant (${dataFilterSemester})` : "Avancement par Enseignant (Global)"}
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {Object.entries(
+                              AssignmentRowService.getTeacherStats(
+                                assignmentRows,
+                                schedule,
+                                dataFilterSemester || undefined
+                              )
+                            ).map(([teacher, stats]: any) => (
+                              <div key={teacher} className="bg-white p-4 rounded border shadow-sm">
+                                <div className="flex justify-between items-start mb-3 border-b pb-2">
+                                  <div>
+                                    <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
+                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {stats.total}</p>
+                                  </div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-2 text-center">
+                                  <div className="bg-blue-50 p-2 rounded">
+                                    <div className="text-xs text-blue-600 font-bold uppercase">CM</div>
+                                    <div className="text-md font-black text-blue-800">{stats.cm}</div>
+                                  </div>
+                                  <div className="bg-green-50 p-2 rounded">
+                                    <div className="text-xs text-green-600 font-bold uppercase">TD</div>
+                                    <div className="text-md font-black text-green-800">{stats.td}</div>
+                                  </div>
+                                  <div className="bg-purple-50 p-2 rounded">
+                                    <div className="text-xs text-purple-600 font-bold uppercase">TP</div>
+                                    <div className="text-md font-black text-purple-800">{stats.tp}</div>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            {Object.keys(AssignmentRowService.getTeacherStats(assignmentRows, schedule, dataFilterSemester || undefined)).length === 0 && (
+                              <div className="col-span-full text-center py-8 text-slate-400 italic">
+                                Aucun cours planifié pour les critères sélectionnés.
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              </div>
+            )}
+
+            {activeTab === 'config' && (
+              <div className="p-8 max-w-4xl mx-auto h-full overflow-auto">
+                <div className="flex justify-between items-center mb-8">
+                  <h2 className="text-2xl font-black uppercase text-slate-800 flex items-center gap-3"><Settings className="text-blue-600" size={28} /> Configuration Générale</h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 className="text-lg font-bold text-slate-700 mb-4 border-b pb-2">Paramètres de Temps</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Date de début (Lundi Semaine 1)</label>
+                        <input
+                          type="date"
+                          value={config.startDate || '2024-09-02'}
+                          onChange={(e) => setConfig({ ...config, startDate: e.target.value })}
+                          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre total de semaines</label>
+                        <input
+                          type="number"
+                          value={config.totalWeeks || 16}
+                          onChange={(e) => setConfig({ ...config, totalWeeks: parseInt(e.target.value) || 16 })}
+                          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Nombre de groupes</label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="10"
+                          value={config.numberOfGroups || 4}
+                          onChange={(e) => setConfig({ ...config, numberOfGroups: parseInt(e.target.value) || 4 })}
+                          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Périodes de vacances</label>
+                        <div className="space-y-2">
+                          {(config.vacationPeriods || []).map((period, idx) => (
+                            <div key={idx} className="flex gap-2 items-center bg-slate-50 p-2 rounded border">
+                              <div className="flex items-center gap-1 text-xs text-slate-600">
+                                <span>Du</span>
+                                <input
+                                  type="date"
+                                  value={period.startDate || ''}
+                                  onChange={(e) => {
+                                    const newPeriods = [...(config.vacationPeriods || [])];
+                                    newPeriods[idx] = { ...newPeriods[idx], startDate: e.target.value };
+                                    setConfig({ ...config, vacationPeriods: newPeriods });
+                                  }}
+                                  className="border rounded px-2 py-1 text-xs"
+                                />
+                                <span>au</span>
+                                <input
+                                  type="date"
+                                  value={period.endDate || ''}
+                                  onChange={(e) => {
+                                    const newPeriods = [...(config.vacationPeriods || [])];
+                                    newPeriods[idx] = { ...newPeriods[idx], endDate: e.target.value };
+                                    setConfig({ ...config, vacationPeriods: newPeriods });
+                                  }}
+                                  className="border rounded px-2 py-1 text-xs"
+                                />
+                              </div>
+                              <button onClick={() => {
+                                const newPeriods = (config.vacationPeriods || []).filter((_, i) => i !== idx);
+                                setConfig({ ...config, vacationPeriods: newPeriods });
+                              }} className="p-1 text-red-400 hover:text-red-600" title="Supprimer">
+                                <Trash2 size={14} />
+                              </button>
+                            </div>
+                          ))}
+                          <button onClick={() => {
+                            const newPeriods = [...(config.vacationPeriods || []), { startDate: '', endDate: '' }];
+                            setConfig({ ...config, vacationPeriods: newPeriods });
+                          }} className="flex items-center gap-1 text-blue-600 text-xs font-bold hover:underline">
+                            <Plus size={12} /> Ajouter une période de vacances
+                          </button>
+                        </div>
+                        <p className="text-xs text-slate-500 mt-1">Définissez les périodes de vacances à exclure du planning</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <div className="flex justify-between items-center mb-4 border-b pb-2">
+                      <h3 className="text-lg font-bold text-slate-700">Créneaux Horaires</h3>
+                      <button onClick={() => setConfig({ ...config, timeSlots: [...config.timeSlots, '00:00-00:00'] })} className="flex items-center justify-center bg-blue-600 text-white p-2 rounded-lg shadow-lg hover:bg-blue-700 transition-colors" title="Ajouter un créneau">
+                        <Plus size={16} />
+                      </button>
+                    </div>
+                    <div className="space-y-2">
+                      {config.timeSlots.map((slot, idx) => (
+                        <div key={idx} className="flex gap-2">
+                          <input
+                            type="text"
+                            value={slot || ''}
+                            onChange={(e) => {
+                              const newSlots = [...config.timeSlots];
+                              newSlots[idx] = e.target.value;
+                              setConfig({ ...config, timeSlots: newSlots });
+                            }}
+                            className="flex-1 border rounded px-2 py-1 text-sm font-mono"
+                          />
+                          <button onClick={() => {
+                            const newSlots = config.timeSlots.filter((_, i) => i !== idx);
+                            setConfig({ ...config, timeSlots: newSlots });
+                          }} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={16} /></button>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+
+                {/* Section Gestion des Données */}
+                <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-8">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4">Gestion des Données et Sauvegarde</h3>
+                  <div className="flex flex-wrap gap-4">
+                    <button
+                      onClick={handleExport}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
+                    >
+                      <Download size={18} />
+                      Exporter Backup JSON
+                    </button>
+                    <label className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded font-bold transition-colors cursor-pointer flex items-center gap-2">
+                      <Upload size={18} />
+                      Importer Backup
+                      <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleImport}
+                        className="hidden"
+                      />
+                    </label>
+
+                    <div className="border-l border-slate-300 mx-2"></div>
+
+                    <button
+                      onClick={saveToConstantsFile}
+                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
+                      title="Écrase le fichier source constants.ts"
+                    >
+                      <Save size={18} />
+                      Sauvegarder dans le fichier (Permanent)
                     </button>
                   </div>
-                  <div className="space-y-2">
-                    {config.timeSlots.map((slot, idx) => (
-                      <div key={idx} className="flex gap-2">
-                        <input
-                          type="text"
-                          value={slot || ''}
-                          onChange={(e) => {
-                            const newSlots = [...config.timeSlots];
-                            newSlots[idx] = e.target.value;
-                            setConfig({ ...config, timeSlots: newSlots });
-                          }}
-                          className="flex-1 border rounded px-2 py-1 text-sm font-mono"
-                        />
-                        <button onClick={() => {
-                          const newSlots = config.timeSlots.filter((_, i) => i !== idx);
-                          setConfig({ ...config, timeSlots: newSlots });
-                        }} className="p-1 text-red-400 hover:text-red-600"><Trash2 size={16} /></button>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-
-              {/* Section Gestion des Données */}
-              <div className="bg-slate-50 p-6 rounded-lg border border-slate-200 mt-8">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Gestion des Données et Sauvegarde</h3>
-                <div className="flex flex-wrap gap-4">
-                  <button
-                    onClick={handleExport}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
-                  >
-                    <Download size={18} />
-                    Exporter Backup JSON
-                  </button>
-                  <label className="bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded font-bold transition-colors cursor-pointer flex items-center gap-2">
-                    <Upload size={18} />
-                    Importer Backup
-                    <input
-                      type="file"
-                      accept=".json"
-                      onChange={handleImport}
-                      className="hidden"
-                    />
-                  </label>
-
-                  <div className="border-l border-slate-300 mx-2"></div>
-
-                  <button
-                    onClick={saveToConstantsFile}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
-                    title="Écrase le fichier source constants.ts"
-                  >
-                    <Save size={18} />
-                    Sauvegarder dans le fichier (Permanent)
-                  </button>
+                  <p className="text-sm text-slate-500 mt-2 italic">
+                    "Exporter Backup" crée un fichier .json local. "Sauvegarder dans le fichier" met à jour le code source de l'application (constants.ts) pour que les changements soient effectifs pour tous les utilisateurs au redémarrage.
+                  </p>
                 </div>
-                <p className="text-sm text-slate-500 mt-2 italic">
-                  "Exporter Backup" crée un fichier .json local. "Sauvegarder dans le fichier" met à jour le code source de l'application (constants.ts) pour que les changements soient effectifs pour tous les utilisateurs au redémarrage.
-                </p>
-              </div>
 
-              <div className="mt-12 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <h4 className="font-bold text-yellow-800 flex items-center gap-2 mb-1"><AlertTriangle size={16} /> Attention</h4>
-                <p className="text-xs text-yellow-700">La modification de la date de début impacte l'affichage des dates dans tous les emplois du temps. Les créneaux horaires modifiés apparaîtront immédiatement sur la grille de planning.</p>
+                <div className="mt-12 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <h4 className="font-bold text-yellow-800 flex items-center gap-2 mb-1"><AlertTriangle size={16} /> Attention</h4>
+                  <p className="text-xs text-yellow-700">La modification de la date de début impacte l'affichage des dates dans tous les emplois du temps. Les créneaux horaires modifiés apparaîtront immédiatement sur la grille de planning.</p>
+                </div>
               </div>
-            </div>
-          )}
-        </main>
+            )}
+          </main>
+        </div>
       </div>
     </div>
   );
@@ -2190,104 +2323,56 @@ export default function App() {
 // --- SOUS-COMPOSANTS ---
 
 function DraggableCard({ course, compact, searchQuery, customSubjects, schedule, assignmentRows }: any) {
-  // Vérifier la recherche AVANT les hooks
   if (searchQuery && !course.subject.toLowerCase().includes(searchQuery.toLowerCase())) return null;
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: course.id });
-  const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` } : undefined;
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
+  const [isCtrlPressed, setIsCtrlPressed] = useState(false);
   const colors = getCourseColor(course.type);
-  const compactClasses = compact ? 'p-3 text-[12px]' : 'p-2';
-  const labelMaxWidth = compact ? 'max-w-[12rem]' : 'max-w-[12rem]';
+  const style = { opacity: isDragging ? 0.4 : 1, transform: 'none' };
+  const compactClasses = compact ? "p-1.5" : "p-3";
 
-  // État pour détecter si Ctrl est pressé
-  const [isCtrlPressed, setIsCtrlPressed] = React.useState(false);
-
-  // Écouter les événements clavier
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey) {
-        setIsCtrlPressed(true);
-      }
-    };
-
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.ctrlKey && !e.metaKey) {
-        setIsCtrlPressed(false);
-      }
-    };
-
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => { if (e.key === 'Control') setIsCtrlPressed(true); };
+    const handleKeyUp = (e: KeyboardEvent) => { if (e.key === 'Control') setIsCtrlPressed(false); };
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
-
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('keyup', handleKeyUp);
     };
   }, []);
 
-  // Calculer les séances réalisées et prévues
   const getSessionsInfo = () => {
     const semesterData = customSubjects?.find((s: any) => s.semestre === course.semester);
     const matiereData = semesterData?.matieres.find((m: any) => m.code === course.subject);
     const credit = matiereData?.credit || 3;
-    const totalSessions = credit * 8; // Nombre total de séances prévues
-
-    // Trouver tous les cours similaires (même matière, type, enseignant, salle, semestre)
-    const similarCourses = (assignmentRows || []).filter(r =>
-      r.subject === course.subject &&
-      r.type === course.type &&
-      r.teacher === course.teacher &&
-      r.room === course.room &&
-      r.semester === course.semester
+    const totalSessions = credit * 8;
+    const similarCourses = (assignmentRows || []).filter((r: any) =>
+      r.subject === course.subject && r.type === course.type && r.teacher === course.teacher && r.room === course.room && r.semester === course.semester
     );
-    const similarCourseIds = new Set(similarCourses.map(c => c.id));
-    similarCourseIds.add(course.id); // Inclure le cours actuel
-
-    // Compter les séances réalisées : compter toutes les séances où ce cours OU un cours similaire est placé
+    const similarCourseIds = new Set(similarCourses.map((c: any) => c.id));
+    similarCourseIds.add(course.id);
     let realizedSessions = 0;
     if (schedule && assignmentRows) {
       Object.entries(schedule).forEach(([key, courseIds]) => {
-        // Normaliser courseIds en tableau (gérer les cas string | null | string[])
         const courseIdsArray = Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []);
-
-        if (courseIdsArray.length > 0) {
-          // Vérifier si un cours similaire est dans ce créneau
-          const hasSimilarCourse = courseIdsArray.some(courseId => similarCourseIds.has(courseId));
-          if (hasSimilarCourse) {
-            realizedSessions++;
-          }
-        }
+        if (courseIdsArray.some((id: string) => similarCourseIds.has(id))) { realizedSessions++; }
       });
     }
-
     return { realized: realizedSessions, total: totalSessions };
   };
 
   const sessionsInfo = getSessionsInfo();
 
   if (compact) {
-    // Forcer l'affichage d'un seul enseignant pour les CM
     let teacher;
-    if (course.type === 'CM') {
-      // Pour les CM, toujours prendre seulement le premier enseignant
-      teacher = (course.teacher || '').split('/')[0]?.trim() || '';
-    } else {
-      // Pour TD/TP, afficher tous les enseignants
-      teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
-    }
-
+    if (course.type === 'CM') { teacher = (course.teacher || '').split('/')[0]?.trim() || ''; }
+    else { teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/'); }
     return (
-      <div ref={setNodeRef} style={style} {...listeners} {...attributes}
-        className={`relative rounded-lg border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow transition-all shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
-        {isDragging && isCtrlPressed && (
-          <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
-            COPIE
-          </div>
-        )}
+      <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`relative rounded-lg border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
+        {isDragging && isCtrlPressed && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">COPIE</div>}
         <div className="absolute top-2 right-2 flex gap-1">
-          <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-            {sessionsInfo.realized}/{sessionsInfo.total}
-          </span>
+          <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${colors.badge}`}>{course.type}</span>
         </div>
         <div className="flex justify-between items-start mb-1">
@@ -2302,29 +2387,19 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
             </span>
           </div>
         </div>
-        <div className="mt-2 flex items-center gap-2">
-          <Users size={14} className="text-slate-400" />
-          <span className="text-[10px] font-normal text-red-600 truncate">{teacher}</span>
-        </div>
+        <div className="mt-2 flex items-center gap-2"><Users size={14} className="text-slate-400" /><span className="text-[10px] font-normal text-red-600 truncate">{teacher}</span></div>
       </div>
     );
   }
 
   return (
-    <div ref={setNodeRef} style={style} {...listeners} {...attributes}
-      className={`rounded-md border-2 ${colors.border} border-l-4 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow-md transition-all mb-2 shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
-      {isDragging && isCtrlPressed && (
-        <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">
-          COPIE
-        </div>
-      )}
+    <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`rounded-md border-2 ${colors.border} border-l-4 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow-md transition-all mb-2 shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
+      {isDragging && isCtrlPressed && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">COPIE</div>}
       <div className="flex flex-col gap-1">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
             <span className="text-[9px] font-medium text-slate-900 truncate" style={{ maxWidth: '7rem' }}>{course.subject}</span>
-            <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-              {sessionsInfo.realized}/{sessionsInfo.total}
-            </span>
+            <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           </div>
           <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.type}</span>
         </div>
@@ -2336,18 +2411,11 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
           })()}
         </div>
         <div className="flex items-center gap-1 mt-1">
-          <Users size={10} className="text-slate-400" />
-          <span className="text-[7px] font-normal text-red-600 truncate" style={{ maxWidth: '8rem' }}>
+          <Users size={10} className="text-slate-400" /><span className="text-[7px] font-normal text-red-600 truncate" style={{ maxWidth: '8rem' }}>
             {(() => {
-              // Forcer l'affichage d'un seul enseignant pour les CM
               let teacherData;
-              if (course.type === 'CM') {
-                // Pour les CM, toujours prendre seulement le premier enseignant
-                teacherData = (course.teacher || '').split('/')[0]?.trim() || '';
-              } else {
-                // Pour TD/TP, afficher tous les enseignants
-                teacherData = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
-              }
+              if (course.type === 'CM') { teacherData = (course.teacher || '').split('/')[0]?.trim() || ''; }
+              else { teacherData = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/'); }
               return teacherData || '?';
             })()}
           </span>
@@ -2360,110 +2428,76 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
 function DroppableSlot({ id, children }: any) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`w-full min-h-[32px] rounded transition-colors self-start flex flex-col gap-1 ${isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''}`}>
+    <div ref={setNodeRef} className={`w-full h-full min-h-[32px] rounded transition-colors flex flex-col gap-1 ${isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''}`}>
       {children}
     </div>
   );
 }
 
-function CourseBadge({ course, hasConflict, searchQuery, onUnassign, customSubjects, schedule, assignmentRows }: any) {
+const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, className = "" }: any) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
   const colors = getCourseColor(course.type);
   const style = { opacity: isDragging ? 0.4 : 1 };
-  const isMatch = searchQuery && course.subject.toLowerCase().includes(searchQuery.toLowerCase());
-
-  // Calculer les séances réalisées et prévues
   const getSessionsInfo = () => {
     const semesterData = customSubjects?.find((s: any) => s.semestre === course.semester);
     const matiereData = semesterData?.matieres.find((m: any) => m.code === course.subject);
     const credit = matiereData?.credit || 3;
-    const totalSessions = credit * 8; // Nombre total de séances prévues
-
-    // Trouver tous les cours similaires (même matière, type, enseignant, salle, semestre)
-    const similarCourses = assignmentRows.filter(r =>
-      r.subject === course.subject &&
-      r.type === course.type &&
-      r.teacher === course.teacher &&
-      r.room === course.room &&
-      r.semester === course.semester
+    const totalSessions = credit * 8;
+    const similarCourses = (assignmentRows || []).filter((r: any) =>
+      r.subject === course.subject && r.type === course.type && r.teacher === course.teacher && r.room === course.room && r.semester === course.semester
     );
-    const similarCourseIds = new Set(similarCourses.map(c => c.id));
-    similarCourseIds.add(course.id); // Inclure le cours actuel
-
-    // Compter les séances réalisées : compter toutes les séances où ce cours OU un cours similaire est placé
+    const similarCourseIds = new Set(similarCourses.map((c: any) => c.id));
+    similarCourseIds.add(course.id);
     let realizedSessions = 0;
     if (schedule && assignmentRows) {
       Object.entries(schedule).forEach(([key, courseIds]) => {
-        // Normaliser courseIds en tableau (gérer les cas string | null | string[])
         const courseIdsArray = Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []);
-
-        if (courseIdsArray.length > 0) {
-          // Vérifier si un cours similaire est dans ce créneau
-          const hasSimilarCourse = courseIdsArray.some(courseId => similarCourseIds.has(courseId));
-          if (hasSimilarCourse) {
-            realizedSessions++;
-          }
-        }
+        if (courseIdsArray.some((id: string) => similarCourseIds.has(id))) { realizedSessions++; }
       });
     }
-
     return { realized: realizedSessions, total: totalSessions };
   };
-
   const sessionsInfo = getSessionsInfo();
-
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}
-      className={`relative w-full rounded border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} p-1.5 flex flex-col justify-between group shadow-sm hover:shadow transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''}`}>
-      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className="absolute top-1 right-1 text-slate-300 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white/80 rounded-full p-0.5"><X size={10} /></button>
-      <div className="flex justify-between items-start mb-1">
-        <div className="flex flex-col pr-2 flex-1 min-w-0">
+      className={`relative w-full rounded border-[1.5px] ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} p-1 flex flex-col justify-between group shadow-sm hover:shadow transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
+      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className="absolute top-0.5 right-0.5 text-slate-300 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white/80 rounded-full p-0.5"><X size={10} /></button>
+      <div className="flex justify-between items-start mb-0.5">
+        <div className="flex flex-col pr-1 flex-1 min-w-0">
           <div className="flex items-center gap-1 flex-wrap">
-            <span title={course.type} className="font-bold text-[10px] text-slate-950 leading-tight break-words uppercase">{course.type}</span>
-            <span className={`text-[7px] font-black px-1 py-0.5 rounded shadow-sm shrink-0 ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-              {sessionsInfo.realized}/{sessionsInfo.total}
-            </span>
+            <span title={course.type} className="font-bold text-[9px] text-slate-950 leading-tight break-words uppercase">{course.type}</span>
+            <span className={`text-[6px] font-black px-1 py-0.2 rounded shadow-sm shrink-0 ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           </div>
-          <span title={course.subject} className="text-[9px] font-medium text-slate-700 leading-tight break-all mt-0.5">
-            {course.subject}
-          </span>
+          <span title={course.subject} className="text-[8px] font-medium text-slate-700 leading-tight break-all mt-0.5">{course.subject}</span>
         </div>
-        <div className={`text-[7px] font-black px-1 rounded text-white ${colors.badge} shrink-0 ml-1 shadow-sm`}>
-          {course.type.includes('/') ? 'PARAL' : course.type}
-        </div>
+        <div className={`text-[6px] font-black px-0.5 rounded text-white ${colors.badge} shrink-0 ml-0.5 shadow-sm`}>{course.type.includes('/') ? 'PAL' : course.type}</div>
       </div>
       <div className="flex flex-col gap-0.5 mt-auto">
         {(() => {
-          // Forcer l'affichage d'un seul enseignant pour les CM
           let teachers, rooms;
           if (course.type === 'CM') {
-            // Pour les CM, toujours prendre seulement le premier enseignant
             teachers = (course.teacher || '').split('/')[0]?.trim() || '';
             rooms = (course.room || '').split('/')[0]?.trim() || '';
           } else {
-            // Pour TD/TP, afficher tous les enseignants
             teachers = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
             rooms = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
           }
-
           return (
-            <div className="flex flex-col gap-0.5 bg-white/60 rounded px-1.5 py-1 border border-slate-100/50 mt-1">
-              <span className="text-[8px] font-normal text-red-600 leading-tight break-words" title={teachers}>{teachers || '?'}</span>
-              <span className="text-[8px] font-bold text-blue-800 leading-tight break-words mt-0.5" title={rooms}>{rooms || '?'}</span>
+            <div className="flex flex-col gap-0 bg-white/60 rounded px-1 py-0.5 border border-slate-100/50 mt-0.5">
+              <span className="text-[7px] font-normal text-red-600 leading-tight break-words" title={teachers}>{teachers || '?'}</span>
+              <span className="text-[7px] font-bold text-blue-800 leading-tight break-words" title={rooms}>{rooms || '?'}</span>
             </div>
           );
         })()}
       </div>
     </div>
   );
-}
+};
 
 function getCourseColor(type: CourseType | string) {
-  // Vérifier si c'est un cours combiné (contient des slashes)
   if (typeof type === 'string' && type.includes('/')) {
     return { bg: 'bg-purple-50', border: 'border-purple-300', borderLeft: 'border-l-purple-600', badge: 'bg-purple-600' };
   }
-
   switch (type) {
     case 'CM': return { bg: 'bg-emerald-50', border: 'border-emerald-300', borderLeft: 'border-l-emerald-600', badge: 'bg-emerald-600' };
     case 'TD': return { bg: 'bg-blue-50', border: 'border-blue-300', borderLeft: 'border-l-blue-600', badge: 'bg-blue-600' };
@@ -2471,3 +2505,105 @@ function getCourseColor(type: CourseType | string) {
     default: return { bg: 'bg-gray-50', border: 'border-gray-300', borderLeft: 'border-l-gray-600', badge: 'bg-gray-600' };
   }
 }
+
+function TeacherSelector({ value, onChange, allTeachers, placeholder, className }: any) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const teachers = (value || '').split('/').map((t: string) => t.trim()).filter(Boolean);
+  const removeTeacher = (e: React.MouseEvent, teacher: string) => {
+    e.stopPropagation();
+    const newList = teachers.filter((t: string) => t !== teacher);
+    onChange(newList.join('/'));
+  };
+  return (
+    <>
+      <div onClick={() => setIsModalOpen(true)} className={`${className} cursor-pointer min-h-[40px] p-1.5 flex flex-wrap gap-1 items-start bg-white border border-slate-300 rounded overflow-hidden hover:border-blue-400 transition-all group`}>
+        {teachers.length > 0 ? (
+          teachers.map((t: string) => (
+            <span key={t} className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-100 transition-colors group/chip">
+              {t}
+              <button onClick={(e) => removeTeacher(e, t)} className="opacity-40 group-hover/chip:opacity-100"><X size={10} /></button>
+            </span>
+          ))
+        ) : (
+          <span className="text-slate-400 text-[11px] px-1 py-1">{placeholder}</span>
+        )}
+        <div className="ml-auto self-center p-1 text-slate-400 group-hover:text-blue-600"><Plus size={14} /></div>
+      </div>
+      {isModalOpen && <TeacherSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} selectedTeachers={value} allTeachers={allTeachers} onSelect={onChange} />}
+    </>
+  );
+}
+
+function TeacherSelectionModal({ isOpen, onClose, selectedTeachers, allTeachers, onSelect }: any) {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [newTeacher, setNewTeacher] = useState('');
+  const selectedList = (selectedTeachers || '').split('/').map((t: string) => t.trim()).filter(Boolean);
+  const filteredTeachers = allTeachers.filter((t: string) => t.toLowerCase().includes(searchTerm.toLowerCase()));
+  const toggleTeacher = (teacher: string) => {
+    let newList;
+    if (selectedList.includes(teacher)) {
+      newList = selectedList.filter((t: string) => t !== teacher);
+    } else {
+      newList = [...selectedList, teacher];
+    }
+    onSelect(newList.join('/'));
+  };
+  const handleAddNew = () => {
+    if (newTeacher && newTeacher.trim()) {
+      const name = newTeacher.trim();
+      if (!selectedList.includes(name)) { onSelect([...selectedList, name].join('/')); }
+      setNewTeacher('');
+      setSearchTerm('');
+    }
+  };
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[85vh] overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="p-5 border-b border-slate-100 flex justify-between items-center bg-white">
+          <div>
+            <h3 className="font-black text-slate-900 text-lg uppercase tracking-tight flex items-center gap-2"><Users size={22} className="text-blue-600" /> Profs de la matière</h3>
+            <p className="text-xs text-slate-500 font-medium">Sélectionnez ou ajoutez des intervenants</p>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-full transition-colors"><X size={24} /></button>
+        </div>
+        <div className="p-5 space-y-5 overflow-y-auto bg-slate-50/50">
+          <div className="bg-white p-4 rounded-xl border border-blue-100 shadow-sm ring-4 ring-blue-50">
+            <label className="block text-[10px] font-black text-blue-600 uppercase mb-2 tracking-wider">Ajouter un prof non listé</label>
+            <div className="flex gap-2">
+              <input type="text" placeholder="Nom complet du professeur..." value={newTeacher} onChange={e => setNewTeacher(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleAddNew()} className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm outline-none font-bold" />
+              <button onClick={handleAddNew} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors shadow-md font-bold text-sm flex items-center gap-2"><Plus size={18} /> Ajouter</button>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center px-1"><label className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Ou choisir dans la liste ({allTeachers.length})</label></div>
+            <div className="relative group">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+              <input type="text" placeholder="Chercher parmi les profs existants..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm shadow-sm focus:ring-2 ring-blue-500/10 outline-none transition-all" />
+            </div>
+            <div className="grid grid-cols-1 gap-2 max-h-52 overflow-y-auto pr-2 custom-scrollbar">
+              {filteredTeachers.map((teacher: string) => (
+                <label key={teacher} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer border transition-all ${selectedList.includes(teacher) ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'bg-white border-slate-100 hover:border-blue-200 hover:bg-blue-50'}`}>
+                  <div className={`w-5 h-5 rounded flex items-center justify-center border transition-colors ${selectedList.includes(teacher) ? 'bg-white border-white' : 'border-slate-300 bg-white'}`}>{selectedList.includes(teacher) && <div className="w-2.5 h-2.5 bg-blue-600 rounded-sm" />}</div>
+                  <input type="checkbox" checked={selectedList.includes(teacher)} onChange={() => toggleTeacher(teacher)} className="hidden" />
+                  <span className="text-sm font-bold tracking-tight">{teacher}</span>
+                </label>
+              ))}
+              {filteredTeachers.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-8 text-slate-400 bg-white rounded-xl border border-dashed border-slate-200">
+                  <Search size={32} className="opacity-20 mb-2" /><p className="text-xs italic font-medium">Aucun enseignant trouvé pour "{searchTerm}"</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="p-5 bg-white border-t border-slate-100 flex justify-between items-center">
+          <div className="text-xs text-slate-500 font-bold uppercase">{selectedList.length} sélectionné{selectedList.length > 1 ? 's' : ''}</div>
+          <button onClick={onClose} className="bg-slate-900 border border-slate-800 text-white px-8 py-3 rounded-xl font-black text-sm hover:bg-slate-800 transition-all uppercase tracking-widest">Terminer</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+
