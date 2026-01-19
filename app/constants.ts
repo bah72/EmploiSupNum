@@ -3,6 +3,24 @@ export const MAIN_GROUPS = ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"];
 export const DAYS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'];
 export const SEMESTERS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
 
+// Utilisateurs par défaut
+export const DEFAULT_USERS = [
+  {
+    id: "1",
+    username: "admin",
+    password: "admin123",
+    role: "admin" as const,
+    name: "Administrateur"
+  },
+  {
+    id: "2", 
+    username: "etudiant",
+    password: "etudiant123",
+    role: "student" as const,
+    name: "Étudiant"
+  }
+];
+
 export const MASTER_DB = [
   {
     "semestre": "S1",

@@ -814,7 +814,7 @@ export default function App() {
             </div>
           </div>
           <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
-            S{semester.replace('S', '')} - {group} - Semaine {week} (Du <span className="text-blue-700 font-bold mx-1">{startStr}</span> au <span className="text-blue-700 font-bold mx-1">{endStr}</span>)
+            Du <span className="text-blue-700 font-bold mx-1">{startStr}</span> au <span className="text-blue-700 font-bold mx-1">{endStr}</span>
           </div>
           <div className="flex items-center gap-2 no-export">
             <div className="relative group">
