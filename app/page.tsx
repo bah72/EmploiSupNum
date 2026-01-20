@@ -2365,9 +2365,15 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
   const sessionsInfo = getSessionsInfo();
 
   if (compact) {
-    let teacher;
-    if (course.type === 'CM') { teacher = (course.teacher || '').split('/')[0]?.trim() || ''; }
-    else { teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/'); }
+    let teacher, room;
+    if (course.type === 'CM') {
+      teacher = (course.teacher || '').split('/')[0]?.trim() || '';
+      room = (course.room || '').split('/')[0]?.trim() || '';
+    }
+    else {
+      teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+      room = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    }
     return (
       <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`relative rounded-lg border-2 ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} ${compactClasses} cursor-grab active:cursor-grabbing hover:shadow shadow-sm ${isDragging && isCtrlPressed ? 'ring-2 ring-blue-400 bg-blue-50' : ''}`}>
         {isDragging && isCtrlPressed && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">COPIE</div>}
@@ -2388,6 +2394,7 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
           </div>
         </div>
         <div className="mt-2 flex items-center gap-2"><Users size={14} className="text-slate-400" /><span className="text-[10px] font-normal text-red-600 truncate">{teacher}</span></div>
+        <div className="mt-1 flex items-center gap-2"><MapPin size={14} className="text-slate-400" /><span className="text-[10px] font-normal text-blue-600 truncate">{room || '?'}</span></div>
       </div>
     );
   }
@@ -2417,6 +2424,16 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
               if (course.type === 'CM') { teacherData = (course.teacher || '').split('/')[0]?.trim() || ''; }
               else { teacherData = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/'); }
               return teacherData || '?';
+            })()}
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          <MapPin size={10} className="text-slate-400" /><span className="text-[7px] font-normal text-blue-600 truncate" style={{ maxWidth: '8rem' }}>
+            {(() => {
+              let roomData;
+              if (course.type === 'CM') { roomData = (course.room || '').split('/')[0]?.trim() || ''; }
+              else { roomData = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/'); }
+              return roomData || '?';
             })()}
           </span>
         </div>
