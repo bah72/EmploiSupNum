@@ -12,19 +12,29 @@ if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Initial default user
+// Initial default users
 const DEFAULT_ADMIN: User = {
     id: 'admin',
     username: 'admin',
-    password: 'password123', // Change this in production!
+    password: 'admin123',
     role: 'admin',
     isActive: true,
     name: 'Administrateur'
 };
 
+const DEFAULT_STUDENT: User = {
+    id: 'etudiant',
+    username: 'etudiant',
+    password: '12345678',
+    role: 'student',
+    isActive: true,
+    name: 'Étudiant'
+};
+
+
 function getUsers(): User[] {
     if (!fs.existsSync(USERS_FILE)) {
-        const initialUsers = [DEFAULT_ADMIN];
+        const initialUsers = [DEFAULT_ADMIN, DEFAULT_STUDENT];
         fs.writeFileSync(USERS_FILE, JSON.stringify(initialUsers, null, 2));
         return initialUsers;
     }
@@ -33,7 +43,7 @@ function getUsers(): User[] {
         return JSON.parse(data);
     } catch (error) {
         console.error("Error reading users file:", error);
-        return [DEFAULT_ADMIN];
+        return [DEFAULT_ADMIN, DEFAULT_STUDENT];
     }
 }
 
@@ -126,9 +136,9 @@ export async function DELETE(request: Request) {
 
         if (!userToDelete) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
-        // Prevent deleting the main admin
-        if (userToDelete.username === 'admin') {
-            return NextResponse.json({ error: 'Cannot delete the default admin' }, { status: 403 });
+        // Prevent deleting the default users (admin and etudiant)
+        if (userToDelete.username === 'admin' || userToDelete.username === 'etudiant') {
+            return NextResponse.json({ error: 'Cannot delete default users' }, { status: 403 });
         }
 
         users = users.filter(u => u.id !== id);

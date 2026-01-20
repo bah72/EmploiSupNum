@@ -8,6 +8,7 @@ export type User = {
   password: string;
   role: UserRole;
   name?: string;
+  isActive?: boolean;
 };
 
 export type AssignmentRow = {

@@ -3,12 +3,14 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { DndContext, DragEndEvent, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
 import {
-  LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, FileDown, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save
+  LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, FileDown, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 import jsPDF from 'jspdf';
-import { AssignmentRow, CourseType } from './types';
+import { AssignmentRow, CourseType, User } from './types';
 import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
+import LoginScreen from './components/LoginScreen';
+import UserManagement from './components/UserManagement';
 
 // Helper pour les statistiques
 const AssignmentRowService = {
@@ -48,9 +50,10 @@ const AssignmentRowService = {
 };
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [semester, setSemester] = useState<string>('S1');
-  const [activeTab, setActiveTab] = useState<'manage' | 'planning' | 'config' | 'data'>('planning');
+  const [activeTab, setActiveTab] = useState<'manage' | 'planning' | 'config' | 'data' | 'users'>('planning');
   const [activeMainGroup, setActiveMainGroup] = useState("Groupe 1");
   const [currentWeek, setCurrentWeek] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -1216,6 +1219,11 @@ export default function App() {
   const gridTemplate = `32px repeat(${config.timeSlots.length}, minmax(0, 1fr))`;
   const gridBaseClasses = "grid w-full";
 
+  // Show login screen if not authenticated
+  if (!currentUser) {
+    return <LoginScreen onLogin={setCurrentUser} />;
+  }
+
   return (
     <div className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden relative" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       {toastMessage && (
@@ -1307,6 +1315,17 @@ export default function App() {
             </div>
 
             <button onClick={() => setActiveTab('config')} className={`p-2 rounded-xl transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Configuration"><Settings size={20} /></button>
+
+            {/* User Management - Admin only */}
+            {currentUser?.role === 'admin' && (
+              <button onClick={() => setActiveTab('users')} className={`p-2 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Utilisateurs"><Users size={20} /></button>
+            )}
+
+            {/* Spacer to push logout to bottom */}
+            <div className="flex-1"></div>
+
+            {/* Logout button */}
+            <button onClick={() => setCurrentUser(null)} className="p-2 rounded-xl transition-colors hover:bg-red-600 hover:text-white text-slate-400" title="Déconnexion"><LogOut size={20} /></button>
           </aside>
 
           <main className="flex-1 flex flex-col min-w-0 h-full">
@@ -2311,6 +2330,13 @@ export default function App() {
                   <h4 className="font-bold text-yellow-800 flex items-center gap-2 mb-1"><AlertTriangle size={16} /> Attention</h4>
                   <p className="text-xs text-yellow-700">La modification de la date de début impacte l'affichage des dates dans tous les emplois du temps. Les créneaux horaires modifiés apparaîtront immédiatement sur la grille de planning.</p>
                 </div>
+              </div>
+            )}
+
+            {/* User Management Tab - Admin Only */}
+            {activeTab === 'users' && currentUser?.role === 'admin' && (
+              <div className="p-6 overflow-auto h-full bg-slate-50">
+                <UserManagement />
               </div>
             )}
           </main>

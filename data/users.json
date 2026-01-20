@@ -1,0 +1,18 @@
+[
+  {
+    "id": "admin",
+    "username": "admin",
+    "password": "admin123",
+    "role": "admin",
+    "isActive": true,
+    "name": "Administrateur"
+  },
+  {
+    "id": "etudiant",
+    "username": "etudiant",
+    "password": "12345678",
+    "role": "student",
+    "isActive": true,
+    "name": "Étudiant"
+  }
+]
