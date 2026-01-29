@@ -776,16 +776,16 @@ export default function App() {
   const HeaderBanner = ({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, setSearchQuery, handleExportPDF, isExporting, dynamicGroups, config }: any) => {
     return (
       <div className="flex flex-col bg-white shrink-0 shadow-sm z-40" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
-        <div className="flex items-center justify-between w-full h-14 md:h-16 bg-green-700 px-3 md:px-6 overflow-hidden">
+        <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
           <div className="shrink-0 pr-2 md:pr-4 h-full flex items-center">
-            <img src="/rim.png" alt="RIM" className="h-8 md:h-10 w-auto object-contain" />
+            <img src="/rim.png" alt="RIM" className="h-6 md:h-8 w-auto object-contain" />
           </div>
           <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
-            <h1 className="text-base md:text-lg font-semibold text-white leading-tight tracking-wide">Institut Supérieur du Numérique</h1>
-            <h2 className="text-[11px] md:text-xs font-medium text-green-100 uppercase tracking-widest">Emploi du temps</h2>
+            <h1 className="text-sm md:text-base font-semibold text-gray-800 leading-tight tracking-wide">Institut Supérieur du Numérique</h1>
+            <h2 className="text-[10px] md:text-[11px] font-medium text-gray-700 uppercase tracking-widest">Emploi du temps</h2>
           </div>
           <div className="shrink-0 pl-2 md:pl-4 h-full flex items-center">
-            <img src="/supnum.png" alt="SupNum" className="h-8 md:h-10 w-auto object-contain" />
+            <img src="/supnum.png" alt="SupNum" className="h-6 md:h-8 w-auto object-contain" />
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200 gap-2 w-full">
@@ -841,6 +841,48 @@ export default function App() {
     );
   }
 
+
+  // Fonction pour sauvegarder en base de données
+  const handleSaveToDatabase = async () => {
+    if (!currentUser) {
+      setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
+      return;
+    }
+
+    try {
+      // Sauvegarder les assignmentRows
+      await fetch('/api/timetable/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.username,
+          dataType: 'assignment_rows',
+          dataContent: assignmentRows
+        }),
+      });
+
+      // Sauvegarder le planning
+      await fetch('/api/timetable/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.username,
+          dataType: 'schedule',
+          dataContent: schedule
+        }),
+      });
+
+      setToastMessage({ msg: 'Données sauvegardées en base avec succès', type: 'success' });
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde:', error);
+      setToastMessage({ msg: 'Erreur lors de la sauvegarde en base', type: 'error' });
+    }
+  };
+
+  // Fonction pour imprimer le planning
+  const handlePrint = () => {
+    window.print();
+  };
 
   const handleUnassignBatch = (courseIds: string[]) => {
     setSchedule(prev => {
@@ -1350,16 +1392,21 @@ export default function App() {
 
                   <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0">
                     <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-auto flex flex-col min-h-0">
-                      <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} border-b border-slate-200 bg-slate-50 sticky top-0 z-20`}>
-                        <div className="p-2 border-r text-center text-[10px] font-bold text-slate-400">H</div>
-                        {config.timeSlots.map(t => <div key={t} className="p-2 border-r last:border-0 text-center text-[10px] font-black text-slate-700 uppercase">{t}</div>)}
+                      <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: '#c4d79b' }} className={`${gridBaseClasses} border-b border-slate-200 sticky top-0 z-20`}>
+                        <div className="p-2 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>
+                        {config.timeSlots.map((t, index) => (
+                          <div key={t} className={`p-2 text-center text-sm font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-4' : ''}`} style={{ backgroundColor: '#c4d79b' }}>
+                            {t}
+                          </div>
+                        ))}
                       </div>
 
-                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
-                        {DAYS.map(day => (
-                          <div key={day} style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-stretch overflow-visible min-h-[48px] flex-1 export-row`}>
-                            <div className="border-r border-slate-200 bg-slate-100 flex items-center justify-center py-1 overflow-visible min-h-[44px]">
-                              <span className="inline-block font-black text-slate-900 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
+                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-2 min-h-0 container-export-rows">
+                        {DAYS.map((day, dayIndex) => (
+                          <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
+                            <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-stretch overflow-visible min-h-[48px] flex-1 export-row`}>
+                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[44px] border border-black" style={{ backgroundColor: '#c4d79b' }}>
+                              <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
                             </div>
                             {config.timeSlots.map(time => {
                               const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
@@ -1368,7 +1415,7 @@ export default function App() {
                               const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
                               const combinedCourse = getCombinedCourseInfo(courseIds);
                               return (
-                                <div key={time} className="p-1 border-r last:border-0 relative flex items-stretch">
+                                <div key={time} className="p-1 relative flex items-stretch mr-4 last:mr-0">
                                   <DroppableSlot id={`${day}|${time}`}>
                                     {combinedCourse && (
                                       <CourseBadge
@@ -1387,6 +1434,7 @@ export default function App() {
                                 </div>
                               );
                             })}
+                          </div>
                           </div>
                         ))}
                       </div>
@@ -2470,69 +2518,75 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
 
 function DroppableSlot({ id, children }: any) {
   const { setNodeRef, isOver } = useDroppable({ id });
+  const isEmpty = !children;
+  
   return (
-    <div ref={setNodeRef} className={`w-full h-full min-h-[32px] rounded transition-colors flex flex-col gap-1 ${isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''}`}>
-      {children}
+    <div 
+      ref={setNodeRef} 
+      className={`w-full h-full min-h-[80px] transition-colors flex flex-col gap-1 ${
+        isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''
+      }`}
+    >
+      {isEmpty ? (
+        // Tableau vide avec structure visible en gris
+        <div className="w-full h-full border border-gray-400 bg-gray-100 flex flex-col">
+          {/* Première ligne du tableau vide */}
+          <div className="flex h-8 border-b border-gray-400">
+            <div className="flex-1 border-r border-gray-400"></div>
+            <div className="w-12 border-r border-gray-400"></div>
+            <div className="w-12"></div>
+          </div>
+          {/* Deuxième ligne du tableau vide */}
+          <div className="flex-1 border-b border-gray-400"></div>
+          {/* Troisième ligne du tableau vide */}
+          <div className="h-8"></div>
+        </div>
+      ) : (
+        children
+      )}
     </div>
   );
 }
 
 const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, className = "" }: any) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
-  const colors = getCourseColor(course.type);
   const style = { opacity: isDragging ? 0.4 : 1 };
-  const getSessionsInfo = () => {
-    const semesterData = customSubjects?.find((s: any) => s.semestre === course.semester);
-    const matiereData = semesterData?.matieres.find((m: any) => m.code === course.subject);
-    const credit = matiereData?.credit || 3;
-    const totalSessions = credit * 8;
-    const similarCourses = (assignmentRows || []).filter((r: any) =>
-      r.subject === course.subject && r.type === course.type && r.teacher === course.teacher && r.room === course.room && r.semester === course.semester
-    );
-    const similarCourseIds = new Set(similarCourses.map((c: any) => c.id));
-    similarCourseIds.add(course.id);
-    let realizedSessions = 0;
-    if (schedule && assignmentRows) {
-      Object.entries(schedule).forEach(([key, courseIds]) => {
-        const courseIdsArray = Array.isArray(courseIds) ? courseIds : (courseIds ? [courseIds] : []);
-        if (courseIdsArray.some((id: string) => similarCourseIds.has(id))) { realizedSessions++; }
-      });
-    }
-    return { realized: realizedSessions, total: totalSessions };
-  };
-  const sessionsInfo = getSessionsInfo();
+  
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}
-      className={`relative w-full rounded border-[1.5px] ${colors.border} border-l-2 ${colors.borderLeft} ${colors.bg} p-1 flex flex-col justify-between group shadow-sm hover:shadow transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
-      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className="absolute top-0.5 right-0.5 text-slate-300 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white/80 rounded-full p-0.5"><X size={10} /></button>
-      <div className="flex justify-between items-start mb-0.5">
-        <div className="flex flex-col pr-1 flex-1 min-w-0">
-          <div className="flex items-center gap-1 flex-wrap">
-            <span title={course.type} className="font-bold text-[9px] text-slate-950 leading-tight break-words uppercase">{course.type}</span>
-            <span className={`text-[6px] font-black px-1 py-0.2 rounded shadow-sm shrink-0 ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
-          </div>
-          <span title={course.subject} className="text-[8px] font-medium text-slate-700 leading-tight break-all mt-0.5">{course.subject}</span>
+      className={`relative w-full h-full border border-black bg-white flex flex-col group hover:shadow-lg transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
+      
+      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className="absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5"><X size={10} /></button>
+      
+      {/* Première ligne du tableau : Code matière | Type | Salle */}
+      <div className="flex h-8 border-b border-black">
+        <div className="flex-1 px-1 py-1 border-r border-black flex items-center justify-center bg-white overflow-hidden">
+          <span className="font-bold text-xs text-black text-center truncate">{course.subject}</span>
         </div>
-        <div className={`text-[6px] font-black px-0.5 rounded text-white ${colors.badge} shrink-0 ml-0.5 shadow-sm`}>{course.type.includes('/') ? 'PAL' : course.type}</div>
+        <div className="w-12 px-1 py-1 border-r border-black flex items-center justify-center bg-white overflow-hidden">
+          <span className="font-bold text-xs text-black text-center truncate">{course.type}</span>
+        </div>
+        <div className="w-12 px-1 py-1 flex items-center justify-center bg-white overflow-hidden">
+          <span className="font-bold text-xs text-black text-center truncate">{(() => {
+            const rooms = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+            return rooms || '?';
+          })()}</span>
+        </div>
       </div>
-      <div className="flex flex-col gap-0.5 mt-auto">
-        {(() => {
-          let teachers, rooms;
-          if (course.type === 'CM') {
-            teachers = (course.teacher || '').split('/')[0]?.trim() || '';
-            rooms = (course.room || '').split('/')[0]?.trim() || '';
-          } else {
-            teachers = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
-            rooms = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
-          }
-          return (
-            <div className="flex flex-col gap-0 bg-white/60 rounded px-1 py-0.5 border border-slate-100/50 mt-0.5">
-              <span className="text-[7px] font-normal text-red-600 leading-tight break-words" title={teachers}>{teachers || '?'}</span>
-              <span className="text-[7px] font-bold text-blue-800 leading-tight break-words" title={rooms}>{rooms || '?'}</span>
-            </div>
-          );
-        })()}
+      
+      {/* Deuxième ligne du tableau : Nom complet de la matière */}
+      <div className="flex-1 px-1 py-1 border-b border-black flex items-center bg-white overflow-hidden">
+        <span className="text-xs text-black font-medium text-center w-full truncate leading-tight">{course.subjectLabel || course.subject}</span>
       </div>
+      
+      {/* Troisième ligne du tableau : Enseignant */}
+      <div className="h-8 px-1 py-1 flex items-center justify-center bg-white overflow-hidden">
+        <span className="text-xs font-bold text-red-600 text-center truncate">{(() => {
+          const teachers = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+          return teachers || '?';
+        })()}</span>
+      </div>
+      
     </div>
   );
 };
