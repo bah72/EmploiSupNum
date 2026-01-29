@@ -1181,7 +1181,7 @@ export default function App() {
     return !isPlacedDirectly && !isSimilarPlaced;
   });
 
-  const gridTemplate = `32px repeat(${config.timeSlots.length}, minmax(0, 1fr))`;
+  const gridTemplate = `28px repeat(${config.timeSlots.length}, minmax(100px, 1fr))`;
   const gridBaseClasses = "grid w-full";
 
   // Show login screen if not authenticated
@@ -1332,7 +1332,7 @@ export default function App() {
                         ))}
                       </div>
 
-                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-2 min-h-0 container-export-rows">
+                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
                         {DAYS.map((day, dayIndex) => (
                           <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
                             <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-stretch overflow-visible min-h-[48px] flex-1 export-row`}>
