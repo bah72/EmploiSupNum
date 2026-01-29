@@ -1186,7 +1186,7 @@ export default function App() {
     return !isPlacedDirectly && !isSimilarPlaced;
   });
 
-  const gridTemplate = `24px repeat(${config.timeSlots.length}, minmax(50px, 1fr))`;
+  const gridTemplate = `24px repeat(${config.timeSlots.length}, minmax(70px, 1fr))`;
   const gridBaseClasses = "grid w-full";
 
   // Show login screen if not authenticated
@@ -1328,7 +1328,7 @@ export default function App() {
 
                   <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0 planning-container">
                     <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-x-auto overflow-y-auto flex flex-col min-h-0">
-                      <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: '#c4d79b', minWidth: '400px' }} className={`${gridBaseClasses} sticky top-0 z-20`}>
+                      <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: '#c4d79b', minWidth: '450px' }} className={`${gridBaseClasses} sticky top-0 z-20`}>
                         <div className="p-1 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>
                         {config.timeSlots.map((t, index) => (
                           <div key={t} className={`p-1 text-center text-xs font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-4' : ''}`} style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
@@ -1337,11 +1337,11 @@ export default function App() {
                         ))}
                       </div>
 
-                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
+                      <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 min-h-0 container-export-rows">
                         {DAYS.map((day, dayIndex) => (
                           <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
-                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '400px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible min-h-[60px] flex-1 export-row`}>
-                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[56px] border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '450px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible min-h-[50px] flex-1 export-row`}>
+                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[46px] border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
                               <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
                             </div>
                             {config.timeSlots.map(time => {
@@ -2459,7 +2459,7 @@ function DroppableSlot({ id, children }: any) {
   return (
     <div 
       ref={setNodeRef} 
-      className={`w-full h-full min-h-[90px] transition-colors flex flex-col gap-1 ${
+      className={`w-full h-full min-h-[70px] transition-colors flex flex-col ${
         isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''
       }`}
     >
