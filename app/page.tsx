@@ -58,6 +58,7 @@ export default function App() {
   const [toastMessage, setToastMessage] = useState<{ msg: string, type: 'error' | 'success' } | null>(null);
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
   const [compact, setCompact] = useState(true);
+  const [cardsSidebarVisible, setCardsSidebarVisible] = useState(true);
 
   // États pour la gestion des données
   const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
@@ -749,6 +750,13 @@ export default function App() {
     }
   }, [toastMessage]);
 
+  // Charger les données depuis la base quand l'utilisateur se connecte
+  useEffect(() => {
+    if (currentUser && isClient) {
+      loadFromDatabase(currentUser);
+    }
+  }, [currentUser, isClient]);
+
   // --- SOUND UTILS ---
   const playConflictSound = () => {
     try {
@@ -772,7 +780,7 @@ export default function App() {
   // --- HEADER BANNER ---
   const HeaderBanner = ({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, setSearchQuery, dynamicGroups, config }: any) => {
     return (
-      <div className="flex flex-col bg-white shrink-0 shadow-sm z-40" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+      <div className="flex flex-col bg-white shrink-0 shadow-sm z-40 print-header" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
         <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
           <div className="shrink-0 pr-2 md:pr-4 h-full flex items-center">
             <img src="/rim.png" alt="RIM" className="h-6 md:h-8 w-auto object-contain" />
@@ -817,17 +825,21 @@ export default function App() {
             Du <span className="text-blue-700 font-bold mx-1">{startStr}</span> au <span className="text-blue-700 font-bold mx-1">{endStr}</span>
           </div>
           <div className="flex items-center gap-2 no-export">
-            <div className="relative group">
+            <div className="relative group no-print">
               <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
             </div>
-            <button onClick={() => handleSaveToDatabase()} className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm" title="Sauvegarder en base de données">
+            <button onClick={() => handleSaveToDatabase()} className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Sauvegarder en base de données">
               <Save size={16} className="mr-1" />
               SAVE
             </button>
-            <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm" title="Imprimer le planning">
+            <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
               <Printer size={16} className="mr-1" />
               PRINT
+            </button>
+            <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
+              <LogOut size={16} className="mr-1" />
+              LOGOUT
             </button>
             <button onClick={() => {
               console.log('Debug info:', {
@@ -838,7 +850,7 @@ export default function App() {
                 activeMainGroup
               });
               loadFullDataset(false);
-            }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all" title="Debug">🐛</button>
+            }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug">🐛</button>
           </div>
         </div>
       </div>
@@ -880,6 +892,35 @@ export default function App() {
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
       setToastMessage({ msg: 'Erreur lors de la sauvegarde en base', type: 'error' });
+    }
+  };
+
+  // Fonction pour charger les données depuis la base de données
+  const loadFromDatabase = async (user: User) => {
+    try {
+      // Charger toutes les données de l'utilisateur
+      const response = await fetch(`/api/timetable/load?userId=${user.username}`);
+      const result = await response.json();
+
+      if (result.success && result.data) {
+        const data = result.data;
+
+        // Charger les assignmentRows si disponibles
+        if (data.assignment_rows) {
+          setAssignmentRows(data.assignment_rows);
+        }
+
+        // Charger le planning si disponible
+        if (data.schedule) {
+          setSchedule(data.schedule);
+        }
+
+        console.log('Données chargées depuis la base de données:', data);
+        setToastMessage({ msg: 'Données chargées depuis la base de données', type: 'success' });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement depuis la base:', error);
+      // Ne pas afficher d'erreur car les données peuvent ne pas exister encore
     }
   };
 
@@ -1149,7 +1190,7 @@ export default function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden relative" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+    <div id="export-container" className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden relative" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       {toastMessage && (
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[9999]">
           <div className={`px-4 py-2 rounded-lg shadow-xl font-bold text-white flex items-center gap-2 ${toastMessage.type === 'error' ? 'bg-red-600' : 'bg-green-600'}`}>
@@ -1174,7 +1215,14 @@ export default function App() {
 
         <div className="flex flex-1 overflow-hidden">
           <aside className="w-12 bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-6 shrink-0 z-30 no-export">
-            <button onClick={() => setActiveTab('planning')} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
+            <button onClick={() => {
+              if (activeTab === 'planning') {
+                setCardsSidebarVisible(!cardsSidebarVisible);
+              } else {
+                setActiveTab('planning');
+                setCardsSidebarVisible(true);
+              }
+            }} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
             <button onClick={() => setActiveTab('manage')} className={`p-2 rounded-xl transition-colors ${activeTab === 'manage' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Gestion"><LayoutDashboard size={20} /></button>
 
             {/* Menu Données avec dropdown */}
@@ -1255,23 +1303,25 @@ export default function App() {
             {activeTab === 'planning' && (
               <DndContext onDragStart={(e) => setActiveDragItem(assignmentRows.find(r => r.id === e.active.id) || null)} onDragEnd={handleDragEnd}>
                 <div className="flex flex-1 overflow-hidden h-full">
-                  <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2 no-export">
-                    <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
+                  {cardsSidebarVisible && (
+                    <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2 no-export">
+                      <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
 
-                    {/* Aide pour Ctrl+Drag */}
-                    <div className="px-3 py-2 bg-blue-50 border-b border-blue-100">
-                      <div className="flex items-center gap-2 text-[10px] text-blue-700">
-                        <span className="font-bold">💡</span>
-                        <span className="font-medium">Maintenez <kbd className="px-1 py-0.5 bg-blue-200 rounded text-[9px] font-bold">Ctrl</kbd> + glisser pour copier une carte</span>
+                      {/* Aide pour Ctrl+Drag */}
+                      <div className="px-3 py-2 bg-blue-50 border-b border-blue-100">
+                        <div className="flex items-center gap-2 text-[10px] text-blue-700">
+                          <span className="font-bold">💡</span>
+                          <span className="font-medium">Maintenez <kbd className="px-1 py-0.5 bg-blue-200 rounded text-[9px] font-bold">Ctrl</kbd> + glisser pour copier une carte</span>
+                        </div>
+                      </div>
+
+                      <div className="flex-1 overflow-y-auto p-3 space-y-3">
+                        {sidebarCourses.map(c => <DraggableCard key={`${c.id}-${refreshKey}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
                       </div>
                     </div>
+                  )}
 
-                    <div className="flex-1 overflow-y-auto p-3 space-y-3">
-                      {sidebarCourses.map(c => <DraggableCard key={`${c.id}-${refreshKey}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
-                    </div>
-                  </div>
-
-                  <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0">
+                  <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0 planning-container">
                     <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-auto flex flex-col min-h-0">
                       <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: '#c4d79b' }} className={`${gridBaseClasses} border-b border-slate-200 sticky top-0 z-20`}>
                         <div className="p-2 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>

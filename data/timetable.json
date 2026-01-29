@@ -1,0 +1,6445 @@
+{
+  "admin": {
+    "schedule": {
+      "data_content": {
+        "test": "data2",
+        "S1|w1|Groupe 1|MAR|08:30-09:45": [
+          "6gzlm0jrt"
+        ],
+        "S1|w1|Groupe 1|MER|09:50-11:15": [
+          "new_1769706652561_isl9x"
+        ],
+        "S1|w1|Groupe 1|VEN|09:50-11:15": [
+          "4fjq9tjvc"
+        ],
+        "S1|w1|Groupe 1|SAM|08:30-09:45": [
+          "7b2yu2lbb"
+        ],
+        "S1|w1|Groupe 1|JEU|08:30-09:45": [
+          "new_1769706834124_puqtz"
+        ],
+        "S1|w1|Groupe 1|LUN|08:30-09:45": [
+          "q6abs4se8"
+        ]
+      },
+      "updated_at": "2026-01-29T22:03:41.024Z"
+    },
+    "assignment_rows": {
+      "data_content": [
+        {
+          "id": "q6abs4se8",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "6gzlm0jrt",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "Lab 1",
+          "semester": "S1"
+        },
+        {
+          "id": "new_1769706652561_isl9x",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "TP",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP",
+          "teacher": "Aicha",
+          "room": "Lab 1",
+          "semester": "S1"
+        },
+        {
+          "id": "ss39y9llv",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "9z7pnkhjs",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "t51jh2jg1",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "9y1035wlc",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "itu6eg4cc",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "s2u9a20fl",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et programmation",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "k8zb3zqxo",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "4fjq9tjvc",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "new_1769706834124_puqtz",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "TP",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP",
+          "teacher": "Aicha",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "5jalugdmz",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "ksusjudnb",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "8ee6s4c83",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "uc40msgnr",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "ywi8jc594",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "jtl46npod",
+          "subject": "DEV111",
+          "subjectLabel": "Bases de données 1",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "7b2yu2lbb",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "6hpd4attl",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "o402b58rq",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "wyjlzmlml",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "yw0gpg9te",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "ujpy4ttcd",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "fcacl219g",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "gq7emzr7c",
+          "subject": "DEV112",
+          "subjectLabel": "Technologies web",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "h8ec50glo",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "gvcrvn3la",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "s54e5vmrl",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "cf5a7onj5",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "adhq35s52",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "rgtlbpiha",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "ic8qhn1gl",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "mo79hplbz",
+          "subject": "SYR110",
+          "subjectLabel": "Bases informatiques",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "s3of60f8t",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "nsbo7m4j6",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "iob8o7s76",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "r9ttqzhha",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "y3wo08vcs",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "mf22lwlez",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "udcond4jy",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "uatgph0s4",
+          "subject": "SYR111",
+          "subjectLabel": "Concepts de Base de Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "bxojjdu3z",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "imf9kltbc",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "s4qgtpsae",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "mzg27rb46",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "dluqxbi2n",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "jgdrrbsce",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "ex04sxwzt",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "dqjyskieu",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "ceqoadbw9",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "v6keth3pk",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "rv9dccogw",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "9sz26qqsf",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "s4md0qgwe",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "54j0i4d7h",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "umyoaw10m",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "y7aggpbks",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "j769smjt5",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "1vauipy5a",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Equipe",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "2fy9h6vsm",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "5e5o6kap3",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Equipe",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "gr70znkr3",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "noo4xuo2s",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Equipe",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "xw52kbeko",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "iaftieyol",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Equipe",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "ueqgz5skt",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "j3ci0gzx0",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "r380wdvdt",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "wjx4zsaql",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "r8us9bcp9",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "kqzg8stj7",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "0g9x4lgrv",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "q3toi9c1h",
+          "subject": "DPR110",
+          "subjectLabel": "Communication/Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "qe0vob14r",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "di80zz8rb",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "101",
+          "semester": "S1"
+        },
+        {
+          "id": "22kev424p",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "3he3yfjxr",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "349b3n5zk",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "pwzyxlva5",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "202",
+          "semester": "S1"
+        },
+        {
+          "id": "du8on63py",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S1"
+        },
+        {
+          "id": "qariqytni",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Générale",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "203",
+          "semester": "S1"
+        },
+        {
+          "id": "6ze27j6xm",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "s6v0ihd37",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hafedh",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "ojuitbjua",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "a5ibr21qg",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hafedh",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "vszjbdoht",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "rbhdei9hb",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hafedh",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "51tdt9213",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "mmh9ljprb",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hafedh",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "rym5fyo0e",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "g5cvwf6vm",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "SidiMed",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "belj1f9io",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "rbduw7rvp",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "SidiMed",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "smden8fz4",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "h16p8yxsb",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "SidiMed",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "0bqu52zj4",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "jt48zbgf5",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "SidiMed",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "zz46eaqzg",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "gtgstnypd",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "20uaki6ag",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "sub3vqnlh",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "0mxgs7xgp",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "jlf1hlexn",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "w6m7rddwo",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "2ej6fzedh",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "jqqlu0238",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "e17zil2p3",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "hhpxdrdds",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "5xpn62prd",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "x8whe7rwk",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "xsvovz0yr",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "loz6a8prj",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "8eg5t5zlo",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "mmwpz3rna",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "0tn3943qk",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "otesa6ldk",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "arlw937w0",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "15fl2mpxn",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "5npk3giw6",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "744u6o314",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "s3hdgm50d",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "mictboajl",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "ywhzsbh0e",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidati",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "q4nvbfxs5",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "8fxp61jrd",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidati",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "s552les2a",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "yhlsbiu64",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidati",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "4bcagacw9",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "ry9jt2yrl",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidati",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "8kwt8pd2a",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "v9zg63uni",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "yxdy8ogmg",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "v4n5bnek1",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "qy248ewh5",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "vhyk566l6",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "3t7pknvih",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "spvvyaw2e",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sass",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "ks80mi86m",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "jnr276nnk",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "0bo0nxegp",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "0m6cx95d6",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "03v61s9xy",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "sd3c7ak8k",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "u9mgblv3w",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "aixvjr9u5",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "xci2bpe46",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "j9b1wnvl9",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "bwfepqvn5",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "ucez83p1r",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "cc46cj1h7",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "0q27swvk0",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "3w6eta8ta",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "sgcb9glt6",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Habeb",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "1bdaebp8b",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "c6c9i4a9a",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "S.Maouloud",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "4bxl565y3",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "8tjxg0awf",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "S.Maouloud",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "qtorqx0ez",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "nm5jy8gyh",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "S.Maouloud",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "czuahpqaf",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "gthlm1m6k",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "S.Maouloud",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "rxt1ctr1c",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "1kuldd2b2",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Aicha",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "ovklstdio",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "bi2ip5ccz",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Aicha",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "eqmgl1fjn",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "nbuhqn44p",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Aicha",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "63i6v8nu1",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "07f150juu",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Aicha",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "zljaff8n3",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "8p12pvuxx",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "jtgqbyznt",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "zqfyv8pb2",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "p69mntxzc",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "s9bz9mfb2",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "rcz2x1pn7",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "l01l3wwsi",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Lam",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "3vko9i72v",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "m3j29my9n",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Bouha",
+          "room": "101",
+          "semester": "S2"
+        },
+        {
+          "id": "x4huz4df6",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "w95zbebsp",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Bouha",
+          "room": "201",
+          "semester": "S2"
+        },
+        {
+          "id": "gfodro4k2",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "e64647mnj",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Bouha",
+          "room": "202",
+          "semester": "S2"
+        },
+        {
+          "id": "syvx6z53c",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Amphi A",
+          "semester": "S2"
+        },
+        {
+          "id": "xb635n2ix",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Bouha",
+          "room": "203",
+          "semester": "S2"
+        },
+        {
+          "id": "26g0coah0",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "z3tf6rpsa",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Debagh",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "klsikvuvr",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "xugeqeu7b",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Debagh",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "rxhn1pjwo",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "xrogtau7l",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Debagh",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "m8023dwca",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "tnfz51p32",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Debagh",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "halnxvhq9",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "r4ighbb2u",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "6eqpehuqj",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "h42y9mbkv",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "rclbiz2oq",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "nkpcecask",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "nw3k2t2hn",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "9pxzh43jo",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Cheikh",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "bbk8ieo30",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "dqllc5ew8",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Louly",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "zit6okpuw",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "y38smmrmb",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Louly",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "hydm55qvg",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "zjjqv4dmk",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Louly",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "n0pi4bzsv",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "tdsrfbp3u",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Louly",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "cuy1c7tt6",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "4n7ybny52",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "851ii8ql6",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "g71208qk4",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "01h8ihvt6",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "4go757kst",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "hqz1a1yx8",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "3cqxy09fy",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Meya",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "5mlptt2dc",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "n0pqnz5t3",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Med Lemine",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "fnt1jaddx",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "84afl5enb",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Med Lemine",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "aj5fijn9v",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "brqa34vty",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Med Lemine",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "9a09dcrda",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "b6d00lnxk",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Med Lemine",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "ey30lr9h5",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "vlp0s3w71",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "l9xei5o92",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "cntvmcwgq",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "pvljj9wab",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "aphzpjzwn",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "modhl761o",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "890lxck8r",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "dpkg0nyu7",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "vuf9x53rs",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "wk6bgzqro",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "ua9qfun08",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "rcyjh8959",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "tmymq702d",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "6t21zctkd",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "abmgz9ejb",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "6u0b601lc",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "b04cfstoe",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "6t3av6807",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "6mkic15uq",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "b87d8x003",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "stmn2hvgj",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "rd8glcwv7",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "wglbzc5wy",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Hamadi",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "fy7yqtt6m",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "hg0smytak",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "fqwge0cgq",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "hmbeilcm3",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "h9js96j46",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "474228cs4",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "7a81ftcik",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "xadax88lm",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "3kfhr2amz",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "kpdgtp7js",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "3xolfc7l7",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "n46dfswsg",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "kn6uxuknq",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "2zn6wxejg",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "4pa5bel26",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "euvxxl1tl",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "qg8u93496",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "esqbovkuk",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "heifz7tnd",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "4ilpaghlo",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "8sa08q0zc",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "5gux5edwu",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "qd35hdgio",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "7iokjm6d8",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Med",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "959yvbyyw",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "nkyyjbv5d",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Vatimetou",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "9sx9uqeyt",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "7ln0kvwb0",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Vatimetou",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "kxu8abkyl",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "bxucwimig",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Vatimetou",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "dm54havki",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "1jyce3rhy",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Vatimetou",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "85amdoy2i",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "dz7ymypxf",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadreur",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "x4ioskk39",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "68jquvj1u",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadreur",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "2jibhxnx7",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "jrx9b4nx7",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadreur",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "kx310gob2",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "szln46i2v",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadreur",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "dod567keh",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "31ojf50du",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Bennany",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "8spz2g5ve",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "aajap3z9q",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Bennany",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "vdqbdj4j8",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "np5xa1319",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Bennany",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "zf7h0s0uv",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "mxkbtbbt1",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Bennany",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "o79uygg19",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "hiq6hinl7",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "qlwisx7h8",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "ytwpfg471",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "hrkcfgset",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "ngxlfrq2a",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "q906jv5ks",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "s244gkfic",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "w7ygetdzd",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "brjt1ypka",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mohamed Said",
+          "room": "101",
+          "semester": "S3"
+        },
+        {
+          "id": "nxj05zxqs",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "elcm4shsq",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mohamed Said",
+          "room": "201",
+          "semester": "S3"
+        },
+        {
+          "id": "a6wxf593r",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "qdpvcxy79",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mohamed Said",
+          "room": "202",
+          "semester": "S3"
+        },
+        {
+          "id": "d5kaqm9ly",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Amphi A",
+          "semester": "S3"
+        },
+        {
+          "id": "k42nyjrco",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mohamed Said",
+          "room": "203",
+          "semester": "S3"
+        },
+        {
+          "id": "dwf80m86s",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "6n0qjy0as",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Yehdih",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "6k5yqetgg",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "35kuh8ics",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Yehdih",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "ti88h8vcg",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "vf0uz7f4k",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Yehdih",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "wd0mbh8rk",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "9tn7vvf18",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Yehdih",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "vrk6u57g0",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "l9u9p49xl",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Salem",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "gu5xaoaw5",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "54bb5wsb4",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Salem",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "x0dujp7v9",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "cbvwydkw2",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Salem",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "o371gb8zh",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "jet5825ab",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Salem",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "h73if6gd3",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "ifdmye1b2",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "z67gu7sl2",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "x8qesuxu7",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "wije8j3xe",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "61b3lwgzj",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "d3e63e2up",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "3bcmu5d86",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "gw8yu4nsb",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "4al6tga8b",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Blake",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "y4ik8vhxx",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "4d5fo4qtj",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Blake",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "rf2nyq9mb",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "qohdg02if",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Blake",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "7s26g073t",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "nntb5p0hu",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Blake",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "ciuvzklk2",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "xj8fcvsls",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mamadou Sow",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "86tprsmr0",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "5xgy7j24j",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mamadou Sow",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "fml78zjvc",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "wheaesmcf",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mamadou Sow",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "zgm9kdq3a",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "tmy91lkqm",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Mamadou Sow",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "66tofakne",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "hfz2r95oe",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Biha",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "aoq87rd05",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "bjptrigd8",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Biha",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "62ce4ls3b",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "gvbbmy0eo",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Biha",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "4w8uzsml1",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "aht9zfqwd",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Biha",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "wny8o4377",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "0t6gxmh0p",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "ja2u8fa4a",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "5x2cko5y5",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "pa64vzru1",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "7ul607s7f",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "virixlmyk",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "4di3bzzt3",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Moussa",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "ag08287g0",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "9m6i97rsj",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Nadra",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "aye7d3w2n",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "01sf7ym84",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Nadra",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "ttrgx9d7i",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "e599nowk1",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Nadra",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "a9382bxdi",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "7xv4ikjbu",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Nadra",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "dfwn1war0",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "ftqpsw4xw",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "101",
+          "semester": "S4"
+        },
+        {
+          "id": "yfb2r5du3",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "y1m0zso74",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "201",
+          "semester": "S4"
+        },
+        {
+          "id": "abits4fb7",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "npval8saq",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "202",
+          "semester": "S4"
+        },
+        {
+          "id": "6udy9kihf",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Amphi A",
+          "semester": "S4"
+        },
+        {
+          "id": "dpmavcm26",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "El Aoun",
+          "room": "203",
+          "semester": "S4"
+        },
+        {
+          "id": "j8g6i6wjy",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "42f94i970",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mahmoud",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "aq4b94u22",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "w4aaxi3ha",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mahmoud",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "a7kh8a470",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "rsalonpzg",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mahmoud",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "6ohio8ri3",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "aii06soxa",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mahmoud",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "0guv0crhl",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "dl0992gcj",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "k90cz334i",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "nn4rls7l7",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "ir00632mz",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "38dz2yvu3",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "90shlblrn",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "75jjg6lcw",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "0g6988jyy",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "1jhknkhnv",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "y3tqqcxa0",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "0e6z49bwu",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "efrfak3m8",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "dzgfpshz4",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "jls4jqe60",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "7nz4rize9",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Tourad",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "nemz3jr5z",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "illzuwi7h",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "oze61gsrb",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "hvctcn5jw",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "0xt0yu8a3",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "2ag8sxbkl",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "akbivf30e",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "u3yqqezsh",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Dieynaba",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "1d9aowmic",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "7zv2drhro",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kébé",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "bj6hqm9r3",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "2o0o5clz9",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kébé",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "l44zoknjk",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "ueiljy0c9",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kébé",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "c8ydvloqv",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "4e576sxab",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kébé",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "btjrq6xx1",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "odmgr4r32",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "jd7yadsp5",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "6dd310v41",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "gwwd0459k",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "ta27gib19",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "evggpcdpi",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "dte6eb5vs",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Kaber",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "ae3ihqp7i",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "jgcj8hap4",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Abderrahmane",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "7zvwzrsxb",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "3vhos7ab4",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Abderrahmane",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "8xdbfaq3f",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "04r1dc87f",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Abderrahmane",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "x59hlal9x",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "wvdbysz7n",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Abderrahmane",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "zsv5df82q",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "mpbpecgwf",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadrants",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "ki4kcr4hz",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "ef9n512k8",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadrants",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "mb5gnbjo0",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "fabyhmrj1",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadrants",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "hlt5hmxpw",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "jzxn8r2pp",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Encadrants",
+          "room": "203",
+          "semester": "S5"
+        },
+        {
+          "id": "a6rm1opzv",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "od3f9p34t",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "TD",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sow",
+          "room": "101",
+          "semester": "S5"
+        },
+        {
+          "id": "n8rldiyqu",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "qqsvhgq0o",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "TD",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sow",
+          "room": "201",
+          "semester": "S5"
+        },
+        {
+          "id": "cngvf19z7",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "yzx0qazg1",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "TD",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sow",
+          "room": "202",
+          "semester": "S5"
+        },
+        {
+          "id": "lx4uapx1a",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Amphi A",
+          "semester": "S5"
+        },
+        {
+          "id": "e22s3p70o",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "TD",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "TD",
+          "teacher": "Sow",
+          "room": "203",
+          "semester": "S5"
+        }
+      ],
+      "updated_at": "2026-01-29T22:03:40.959Z"
+    }
+  }
+}

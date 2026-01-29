@@ -1,44 +1,73 @@
-import Database from 'better-sqlite3';
+import fs from 'fs';
 import path from 'path';
 
-// Créer ou ouvrir la base de données SQLite
-const dbPath = path.join(process.cwd(), 'data', 'timetable.db');
-const db = new Database(dbPath);
+// Créer le dossier data s'il n'existe pas
+const dataDir = path.join(process.cwd(), 'data');
+if (!fs.existsSync(dataDir)) {
+  fs.mkdirSync(dataDir, { recursive: true });
+}
 
-// Créer les tables si elles n'existent pas
-db.exec(`
-  CREATE TABLE IF NOT EXISTS timetable_data (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id TEXT NOT NULL,
-    data_type TEXT NOT NULL,
-    data_content TEXT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE INDEX IF NOT EXISTS idx_user_data_type ON timetable_data(user_id, data_type);
-`);
+const dbPath = path.join(dataDir, 'timetable.json');
 
 export interface TimetableData {
-  id?: number;
+  id?: string;
   user_id: string;
   data_type: 'assignment_rows' | 'schedule' | 'config' | 'custom_rooms' | 'custom_subjects';
-  data_content: string;
+  data_content: any;
   created_at?: string;
   updated_at?: string;
+}
+
+interface DatabaseStructure {
+  [userId: string]: {
+    [dataType: string]: {
+      data_content: any;
+      updated_at: string;
+    }
+  }
+}
+
+// Charger la base de données depuis le fichier JSON
+function loadDatabase(): DatabaseStructure {
+  try {
+    if (fs.existsSync(dbPath)) {
+      const data = fs.readFileSync(dbPath, 'utf-8');
+      return JSON.parse(data);
+    }
+    return {};
+  } catch (error) {
+    console.error('Erreur lors du chargement de la base de données:', error);
+    return {};
+  }
+}
+
+// Sauvegarder la base de données dans le fichier JSON
+function saveDatabase(data: DatabaseStructure): boolean {
+  try {
+    fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+    return true;
+  } catch (error) {
+    console.error('Erreur lors de la sauvegarde de la base de données:', error);
+    return false;
+  }
 }
 
 export class TimetableDatabase {
   // Sauvegarder des données
   static saveData(userId: string, dataType: TimetableData['data_type'], dataContent: any): boolean {
     try {
-      const stmt = db.prepare(`
-        INSERT OR REPLACE INTO timetable_data (user_id, data_type, data_content, updated_at)
-        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-      `);
+      const db = loadDatabase();
       
-      stmt.run(userId, dataType, JSON.stringify(dataContent));
-      return true;
+      if (!db[userId]) {
+        db[userId] = {};
+      }
+      
+      db[userId][dataType] = {
+        data_content: dataContent,
+        updated_at: new Date().toISOString()
+      };
+      
+      return saveDatabase(db);
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
       return false;
@@ -48,15 +77,13 @@ export class TimetableDatabase {
   // Charger des données
   static loadData(userId: string, dataType: TimetableData['data_type']): any | null {
     try {
-      const stmt = db.prepare(`
-        SELECT data_content FROM timetable_data 
-        WHERE user_id = ? AND data_type = ?
-        ORDER BY updated_at DESC
-        LIMIT 1
-      `);
+      const db = loadDatabase();
       
-      const result = stmt.get(userId, dataType) as { data_content: string } | undefined;
-      return result ? JSON.parse(result.data_content) : null;
+      if (db[userId] && db[userId][dataType]) {
+        return db[userId][dataType].data_content;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Erreur lors du chargement:', error);
       return null;
@@ -66,22 +93,16 @@ export class TimetableDatabase {
   // Charger toutes les données d'un utilisateur
   static loadAllData(userId: string): Record<string, any> {
     try {
-      const stmt = db.prepare(`
-        SELECT data_type, data_content FROM timetable_data 
-        WHERE user_id = ?
-        ORDER BY updated_at DESC
-      `);
+      const db = loadDatabase();
+      const userData: Record<string, any> = {};
       
-      const results = stmt.all(userId) as { data_type: string; data_content: string }[];
-      const data: Record<string, any> = {};
-      
-      for (const result of results) {
-        if (!data[result.data_type]) {
-          data[result.data_type] = JSON.parse(result.data_content);
+      if (db[userId]) {
+        for (const [dataType, data] of Object.entries(db[userId])) {
+          userData[dataType] = data.data_content;
         }
       }
       
-      return data;
+      return userData;
     } catch (error) {
       console.error('Erreur lors du chargement de toutes les données:', error);
       return {};
@@ -91,9 +112,9 @@ export class TimetableDatabase {
   // Supprimer les données d'un utilisateur
   static deleteUserData(userId: string): boolean {
     try {
-      const stmt = db.prepare('DELETE FROM timetable_data WHERE user_id = ?');
-      stmt.run(userId);
-      return true;
+      const db = loadDatabase();
+      delete db[userId];
+      return saveDatabase(db);
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
       return false;
@@ -103,14 +124,11 @@ export class TimetableDatabase {
   // Obtenir la liste des utilisateurs avec des données
   static getUsers(): string[] {
     try {
-      const stmt = db.prepare('SELECT DISTINCT user_id FROM timetable_data ORDER BY user_id');
-      const results = stmt.all() as { user_id: string }[];
-      return results.map(r => r.user_id);
+      const db = loadDatabase();
+      return Object.keys(db);
     } catch (error) {
       console.error('Erreur lors de la récupération des utilisateurs:', error);
       return [];
     }
   }
 }
-
-export default db;

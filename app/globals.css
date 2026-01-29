@@ -34,3 +34,83 @@ body {
 .hide-scrollbars *::-webkit-scrollbar {
   display: none !important;
 }
+
+/* Styles d'impression pour format A4 paysage */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 0.5cm;
+  }
+  
+  /* Masquer les éléments non nécessaires à l'impression */
+  .no-export,
+  .no-print,
+  aside,
+  .sidebar {
+    display: none !important;
+  }
+  
+  /* Optimiser la mise en page pour l'impression */
+  body {
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Conteneur principal pour l'impression */
+  #export-container {
+    width: 100% !important;
+    height: 100vh !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background: white !important;
+  }
+  
+  /* Header optimisé pour l'impression */
+  .print-header {
+    flex-shrink: 0 !important;
+    background: white !important;
+  }
+  
+  /* Zone de contenu principal */
+  main {
+    flex: 1 !important;
+    width: 100% !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+  
+  /* Planning grid optimisé */
+  .planning-container {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    background: white !important;
+  }
+  
+  /* Tableaux et grilles */
+  table, .grid {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Éviter les coupures de page dans les éléments importants */
+  .planning-row, .course-card {
+    page-break-inside: avoid !important;
+  }
+  
+  /* Masquer les boutons d'action dans les cartes */
+  .course-card button {
+    display: none !important;
+  }
+  
+  /* Optimiser les couleurs pour l'impression */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
