@@ -441,8 +441,8 @@ export default function App() {
             conflictSet.add(courseId2);
           }
 
-          // Conflit CM parallèle pour le même groupe
-          if (course1.type === 'CM' && course2.type === 'CM') {
+          // Conflit CM avec tout autre cours pour le même groupe
+          if (course1.type === 'CM' || course2.type === 'CM') {
             conflictSet.add(courseId1);
             conflictSet.add(courseId2);
           }
@@ -562,9 +562,9 @@ export default function App() {
           return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà dans ce créneau (${existingCourse.subject}) - ${group}`;
         }
 
-        // Interdire deux CM en parallèle pour le même groupe
-        if (draggingCourse.type === 'CM' && existingCourse.type === 'CM') {
-          return `CONFLIT CM : Deux cours de CM ne peuvent pas être en parallèle pour le même groupe (${existingCourse.subject} et ${draggingCourse.subject})`;
+        // Interdire un CM en parallèle avec tout autre cours pour le même groupe
+        if (draggingCourse.type === 'CM') {
+          return `CONFLIT CM : Un cours de CM ne peut pas être en parallèle avec un autre cours pour le même groupe (${existingCourse.subject} ${existingCourse.type} et ${draggingCourse.subject} ${draggingCourse.type})`;
         }
       }
     }
@@ -1326,7 +1326,7 @@ export default function App() {
                       <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: '#c4d79b' }} className={`${gridBaseClasses} border-b border-slate-200 sticky top-0 z-20`}>
                         <div className="p-2 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>
                         {config.timeSlots.map((t, index) => (
-                          <div key={t} className={`p-2 text-center text-sm font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-4' : ''}`} style={{ backgroundColor: '#c4d79b' }}>
+                          <div key={t} className={`p-2 text-center text-sm font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-4' : ''}`} style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
                             {t}
                           </div>
                         ))}
@@ -1336,7 +1336,7 @@ export default function App() {
                         {DAYS.map((day, dayIndex) => (
                           <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
                             <div style={{ gridTemplateColumns: gridTemplate }} className={`${gridBaseClasses} w-full border-b border-slate-200 bg-white items-stretch overflow-visible min-h-[48px] flex-1 export-row`}>
-                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[44px] border border-black" style={{ backgroundColor: '#c4d79b' }}>
+                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[44px] border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
                               <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
                             </div>
                             {config.timeSlots.map(time => {
