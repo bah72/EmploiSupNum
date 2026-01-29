@@ -834,11 +834,11 @@ export default function App() {
               <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
               <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
             </div>
-            <button onClick={() => handleSaveToDatabase()} className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Sauvegarder en base de données">
+            <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
               <Save size={16} className="mr-1" />
               SAVE
             </button>
-            <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
+            <button onClick={() => handlePrint()} className={`flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Imprimer le planning">
               <Printer size={16} className="mr-1" />
               PRINT
             </button>
@@ -1228,73 +1228,77 @@ export default function App() {
                 setCardsSidebarVisible(true);
               }
             }} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
-            <button onClick={() => setActiveTab('manage')} className={`p-2 rounded-xl transition-colors ${activeTab === 'manage' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Gestion"><LayoutDashboard size={20} /></button>
-
-            {/* Menu Données avec dropdown */}
-            <div className="relative data-menu-container">
-              <button
-                onClick={() => {
-                  setShowDataMenu(!showDataMenu);
-                  if (!showDataMenu) {
-                    setActiveTab('data');
-                  }
-                }}
-                className={`p-2 rounded-xl transition-colors ${activeTab === 'data' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`}
-                title="Données"
-              >
-                <Database size={20} />
-              </button>
-
-              {/* Menu déroulant */}
-              {showDataMenu && (
-                <div className="absolute left-14 top-0 bg-white border border-slate-200 rounded-lg shadow-xl z-50 min-w-48 overflow-hidden animate-in slide-in-from-left-2 duration-200">
-                  <div className="py-2">
-                    <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
-                      Gestion des données
-                    </div>
-                    <button
-                      onClick={() => {
-                        setDataSubTab('subjects');
-                        setActiveTab('data');
-                        setShowDataMenu(false);
-                      }}
-                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'subjects' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                    >
-                      <div className="w-2 h-2 rounded-full bg-green-500"></div>
-                      Matières & Enseignants
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDataSubTab('rooms');
-                        setActiveTab('data');
-                        setShowDataMenu(false);
-                      }}
-                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'rooms' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                    >
-                      <div className="w-2 h-2 rounded-full bg-orange-500"></div>
-                      Salles de cours
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDataSubTab('progress');
-                        setActiveTab('data');
-                        setShowDataMenu(false);
-                      }}
-                      className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'progress' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
-                    >
-                      <div className="w-2 h-2 rounded-full bg-purple-500"></div>
-                      Avancement
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <button onClick={() => setActiveTab('config')} className={`p-2 rounded-xl transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Configuration"><Settings size={20} /></button>
-
-            {/* User Management - Admin only */}
+            
+            {/* Admin-only buttons */}
             {currentUser?.role === 'admin' && (
-              <button onClick={() => setActiveTab('users')} className={`p-2 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Utilisateurs"><Users size={20} /></button>
+              <>
+                <button onClick={() => setActiveTab('manage')} className={`p-2 rounded-xl transition-colors ${activeTab === 'manage' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Gestion"><LayoutDashboard size={20} /></button>
+
+                {/* Menu Données avec dropdown */}
+                <div className="relative data-menu-container">
+                  <button
+                    onClick={() => {
+                      setShowDataMenu(!showDataMenu);
+                      if (!showDataMenu) {
+                        setActiveTab('data');
+                      }
+                    }}
+                    className={`p-2 rounded-xl transition-colors ${activeTab === 'data' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`}
+                    title="Données"
+                  >
+                    <Database size={20} />
+                  </button>
+
+                  {/* Menu déroulant */}
+                  {showDataMenu && (
+                    <div className="absolute left-14 top-0 bg-white border border-slate-200 rounded-lg shadow-xl z-50 min-w-48 overflow-hidden animate-in slide-in-from-left-2 duration-200">
+                      <div className="py-2">
+                        <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">
+                          Gestion des données
+                        </div>
+                        <button
+                          onClick={() => {
+                            setDataSubTab('subjects');
+                            setActiveTab('data');
+                            setShowDataMenu(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'subjects' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                        >
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                          Matières & Enseignants
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDataSubTab('rooms');
+                            setActiveTab('data');
+                            setShowDataMenu(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'rooms' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                        >
+                          <div className="w-2 h-2 rounded-full bg-orange-500"></div>
+                          Salles de cours
+                        </button>
+                        <button
+                          onClick={() => {
+                            setDataSubTab('progress');
+                            setActiveTab('data');
+                            setShowDataMenu(false);
+                          }}
+                          className={`w-full text-left px-4 py-3 text-sm font-medium transition-colors flex items-center gap-3 ${dataSubTab === 'progress' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-slate-700 hover:bg-slate-50'}`}
+                        >
+                          <div className="w-2 h-2 rounded-full bg-purple-500"></div>
+                          Avancement
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <button onClick={() => setActiveTab('config')} className={`p-2 rounded-xl transition-colors ${activeTab === 'config' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Configuration"><Settings size={20} /></button>
+
+                {/* User Management - Admin only */}
+                <button onClick={() => setActiveTab('users')} className={`p-2 rounded-xl transition-colors ${activeTab === 'users' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Utilisateurs"><Users size={20} /></button>
+              </>
             )}
 
             {/* Spacer to push logout to bottom */}
@@ -1308,7 +1312,7 @@ export default function App() {
             {activeTab === 'planning' && (
               <DndContext onDragStart={(e) => setActiveDragItem(assignmentRows.find(r => r.id === e.active.id) || null)} onDragEnd={handleDragEnd}>
                 <div className="flex flex-1 overflow-hidden h-full">
-                  {cardsSidebarVisible && (
+                  {cardsSidebarVisible && currentUser?.role === 'admin' && (
                     <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2 no-export">
                       <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
 
@@ -1363,6 +1367,7 @@ export default function App() {
                                         customSubjects={customSubjects}
                                         schedule={schedule}
                                         assignmentRows={assignmentRows}
+                                        currentUser={currentUser}
                                         className="flex-1"
                                       />
                                     )}
@@ -2484,7 +2489,7 @@ function DroppableSlot({ id, children }: any) {
   );
 }
 
-const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, className = "" }: any) => {
+const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, currentUser, className = "" }: any) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
   const style = { opacity: isDragging ? 0.4 : 1 };
   
@@ -2492,7 +2497,7 @@ const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, custom
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}
       className={`relative w-full h-full border border-black bg-white flex flex-col group hover:shadow-lg transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
       
-      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className="absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5"><X size={10} /></button>
+      <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className={`absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5 ${currentUser?.role !== 'admin' ? 'hidden' : ''}`}><X size={10} /></button>
       
       {/* Première ligne du tableau : Code matière | Type | Salle */}
       <div className="flex h-8 border-b border-black">
