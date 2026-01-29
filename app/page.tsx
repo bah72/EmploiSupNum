@@ -921,11 +921,19 @@ export default function App() {
         }
 
         console.log('Données chargées depuis la base de données:', data);
-        setToastMessage({ msg: 'Données chargées depuis la base de données', type: 'success' });
+        setToastMessage({ msg: `Données chargées depuis ${result.sourceUser === 'admin' ? 'l\'administrateur' : 'votre profil'}`, type: 'success' });
+      } else {
+        // Si aucune donnée n'est trouvée, charger le dataset par défaut pour les étudiants
+        if (user.role === 'student' && assignmentRows.length === 0) {
+          loadFullDataset(false);
+        }
       }
     } catch (error) {
       console.error('Erreur lors du chargement depuis la base:', error);
-      // Ne pas afficher d'erreur car les données peuvent ne pas exister encore
+      // Si erreur et étudiant sans données, charger le dataset par défaut
+      if (user.role === 'student' && assignmentRows.length === 0) {
+        loadFullDataset(false);
+      }
     }
   };
 

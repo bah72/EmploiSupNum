@@ -14,20 +14,33 @@ export async function GET(request: Request) {
       );
     }
 
+    let targetUserId = userId;
+    
+    // Si l'utilisateur n'est pas admin, essayer de charger les données de l'admin
+    if (userId !== 'admin') {
+      const userData = TimetableDatabase.loadAllData(userId);
+      if (!userData || Object.keys(userData).length === 0) {
+        // Pas de données pour cet utilisateur, essayer de charger les données de l'admin
+        targetUserId = 'admin';
+      }
+    }
+
     if (dataType) {
       // Charger un type de données spécifique
-      const data = TimetableDatabase.loadData(userId, dataType as any);
+      const data = TimetableDatabase.loadData(targetUserId, dataType as any);
       return NextResponse.json({
         success: true,
         data: data,
-        dataType: dataType
+        dataType: dataType,
+        sourceUser: targetUserId
       });
     } else {
       // Charger toutes les données
-      const allData = TimetableDatabase.loadAllData(userId);
+      const allData = TimetableDatabase.loadAllData(targetUserId);
       return NextResponse.json({
         success: true,
-        data: allData
+        data: allData,
+        sourceUser: targetUserId
       });
     }
   } catch (error) {
