@@ -566,6 +566,11 @@ export default function App() {
         if (draggingCourse.type === 'CM') {
           return `CONFLIT CM : Un cours de CM ne peut pas être en parallèle avec un autre cours pour le même groupe (${existingCourse.subject} ${existingCourse.type} et ${draggingCourse.subject} ${draggingCourse.type})`;
         }
+        
+        // Interdire tout autre cours en parallèle avec un CM pour le même groupe
+        if (existingCourse.type === 'CM') {
+          return `CONFLIT CM : Un autre cours ne peut pas être en parallèle avec un CM pour le même groupe (CM ${existingCourse.subject} et ${draggingCourse.type} ${draggingCourse.subject})`;
+        }
       }
     }
 
