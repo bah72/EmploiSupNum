@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TEST BOUTONS</title>
+    <style>
+        body { 
+            font-family: Arial; 
+            margin: 20px; 
+            background: #f0f0f0; 
+        }
+        .header { 
+            background: red; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            margin-bottom: 20px;
+        }
+        .button { 
+            padding: 15px 30px; 
+            margin: 10px; 
+            font-size: 18px; 
+            font-weight: bold; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .save { background: green; color: white; }
+        .print { background: blue; color: white; }
+        .test { background: yellow; color: black; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔴 TEST BOUTONS - CETTE PAGE DOIT ÊTRE VISIBLE 🔴</h1>
+    </div>
+    
+    <div style="text-align: center;">
+        <button class="button save" onclick="alert('BOUTON SAVE FONCTIONNE!')">
+            💾 SAUVEGARDER
+        </button>
+        
+        <button class="button print" onclick="window.print()">
+            🖨️ IMPRIMER
+        </button>
+        
+        <button class="button test" onclick="alert('BOUTONS VISIBLES!')">
+            ⚠️ TEST
+        </button>
+    </div>
+    
+    <div style="margin-top: 30px; text-align: center;">
+        <p><strong>Si vous voyez cette page, le serveur fonctionne.</strong></p>
+        <p>Allez maintenant sur <a href="http://localhost:3000">http://localhost:3000</a></p>
+    </div>
+</body>
+</html>
