@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { DndContext, DragEndEvent, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
 import {
   LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut, Printer
@@ -32,8 +32,8 @@ const AssignmentRowService = {
         }
 
         if (row.type === 'CM') stats[teacher].cm++;
-        else if (row.type === 'TD') stats[teacher].td++;
-        else if (row.type === 'TP') stats[teacher].tp++;
+        else if (row.type.startsWith('TD')) stats[teacher].td++;
+        else if (row.type.startsWith('TP')) stats[teacher].tp++;
       });
     });
 
@@ -47,6 +47,93 @@ const AssignmentRowService = {
   }
 };
 
+// --- HEADER BANNER (en dehors du composant App pour éviter les re-rendus) ---
+const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups }: any) => {
+  return (
+    <div className="flex flex-col bg-white shrink-0 shadow-sm z-40 print-header" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+      <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
+        <div className="shrink-0 pr-2 md:pr-4 h-full flex items-center">
+          <img src="/rim.png" alt="RIM" className="h-6 md:h-8 w-auto object-contain" />
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
+          <h1 className="text-base md:text-lg font-semibold text-gray-800 leading-tight tracking-wide">Institut Supérieur du Numérique</h1>
+          <h2 className="text-xs md:text-sm font-medium text-gray-700 uppercase tracking-widest">Emploi du temps</h2>
+        </div>
+        <div className="shrink-0 pl-2 md:pl-4 h-full flex items-center">
+          <img src="/supnum.png" alt="SupNum" className="h-6 md:h-8 w-auto object-contain" />
+        </div>
+      </div>
+      <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200 gap-2 w-full">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+            <span className="mr-1 text-black-800 font-bold text-[10px]">Semestre:</span>
+            <select value={semester} onChange={(e) => setSemester(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+              {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+            <span className="mr-1 text-black-800 font-bold text-[10px]">Groupe:</span>
+            <select value={group} onChange={(e) => setGroup(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+              {dynamicGroups.map((g: string) => <option key={g} value={g}>{g.replace("Groupe ", "G")}</option>)}
+            </select>
+          </div>
+          <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
+            <span className="mr-1 text-black-800 font-bold text-[10px]">Semaine:</span>
+            <select value={week} onChange={(e) => setWeek(parseInt(e.target.value))} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+              {Array.from({ length: totalWeeks }, (_, i) => {
+                const weekNum = i + 1;
+                return (
+                  <option key={weekNum} value={weekNum}>
+                    {weekNum}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        </div>
+        <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
+          Du&nbsp;<span className="text-blue-700 font-bold mx-1">{startStr}</span>&nbsp;au&nbsp;<span className="text-blue-700 font-bold mx-1">{endStr}</span>
+        </div>
+        <div className="flex items-center gap-2 no-export">
+          <div className="relative group no-print">
+            <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
+            <input ref={searchInputRef} type="text" value={searchQuery} onChange={handleSearchChange} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
+          </div>
+          <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
+            <Save size={16} />
+          </button>
+          <button onClick={() => handlePrint()} className={`flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Imprimer le planning">
+            <Printer size={16} />
+          </button>
+          <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
+            <LogOut size={16} />
+          </button>
+          <button onClick={() => {
+            console.log('Debug info:', {
+              assignmentRowsLength: assignmentRows.length,
+              dynamicGroupsLength: dynamicGroups.length,
+              isClient,
+              semester,
+              activeMainGroup
+            });
+            loadFullDataset(false);
+          }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug (Réinitialise tout)">🐛</button>
+          
+          <button onClick={refreshCardsOnly} className="flex items-center justify-center bg-cyan-50 hover:bg-cyan-100 text-cyan-600 border border-cyan-200 rounded p-1.5 shadow-sm transition-all no-print" title="Rafraîchir seulement les cartes">🔄</button>
+          
+          <button onClick={clearScheduleOnly} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all no-print" title="Vider seulement le planning">🗑️</button>
+          
+          <button onClick={migrateToNewSystem} className="flex items-center justify-center bg-purple-50 hover:bg-purple-100 text-purple-600 border border-purple-200 rounded p-1.5 shadow-sm transition-all no-print" title="Migrer vers TD1/TD2/TP1/TP2 (conserve les affectations)">�</button>
+          
+          <button onClick={diagnoseCourses} className="flex items-center justify-center bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded p-1.5 shadow-sm transition-all no-print" title="Diagnostiquer les problèmes">🔍</button>
+          
+          <button onClick={fixSubGroups} className="flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 rounded p-1.5 shadow-sm transition-all no-print" title="Corriger les sous-groupes">🔧</button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isClient, setIsClient] = useState(false);
@@ -55,6 +142,19 @@ export default function App() {
   const [activeMainGroup, setActiveMainGroup] = useState("Groupe 1");
   const [currentWeek, setCurrentWeek] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Stabiliser la fonction de changement de recherche pour éviter les re-rendus
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
+
+  // Ref pour maintenir le focus de l'input de recherche
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Mémoriser les autres callbacks pour éviter les re-rendus du HeaderBanner
+  const handleSemesterChange = useCallback((value: string) => setSemester(value), []);
+  const handleGroupChange = useCallback((value: string) => setActiveMainGroup(value), []);
+  const handleWeekChange = useCallback((value: number) => setCurrentWeek(value), []);
   const [toastMessage, setToastMessage] = useState<{ msg: string, type: 'error' | 'success' } | null>(null);
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
   const [compact, setCompact] = useState(true);
@@ -78,29 +178,39 @@ export default function App() {
       return course ? { ...course, isCombined: false } : null;
     }
 
-    // Plusieurs cours - créer une carte combinée
+    // Plusieurs cours - créer une carte combinée avec meilleur formatage
     const courses = courseIds.map(id => assignmentRows.find(r => r.id === id)).filter(c => c !== undefined);
     if (courses.length === 0) return null;
 
-    // Combiner les informations avec le format demandé
-    const subjects = courses.map(c => c.subject).join('/');
-    const teachers = courses.map(c => c.teacher).join('/');
-    const rooms = courses.map(c => c.room).join('/');
-    const types = courses.map(c => c.type).join('/');
+    // Améliorer l'affichage des cours combinés - éliminer les doublons
+    const subjects = [...new Set(courses.map(c => c.subject))].join('/');
+    const subjectLabels = [...new Set(courses.map(c => c.subjectLabel))].join('/');
+    const teachers = [...new Set(courses.map(c => c.teacher))].join('/');
+    const rooms = [...new Set(courses.map(c => c.room))].join('/');
+    const types = [...new Set(courses.map(c => c.type))].join('/');
+
+    // Pour les cours parallèles, utiliser le premier type pour la couleur de base
+    const primaryType = courses[0].type;
 
     return {
       id: courseIds.join('_'),
       subject: subjects,
-      subjectLabel: courses.map(c => c.subjectLabel).join('/'),
-      type: types, // IMPORTANT: utiliser types combinés pour la couleur
+      subjectLabel: subjectLabels,
+      type: primaryType, // Utiliser le type principal pour la couleur
       mainGroup: courses[0].mainGroup,
       sharedGroups: courses[0].sharedGroups,
-      subLabel: types, // Garder cohérence avec type
+      subLabel: types, // Afficher tous les types combinés
       teacher: teachers,
       room: rooms,
       semester: courses[0].semester,
       isCombined: true,
-      originalCourses: courses
+      originalCourses: courses,
+      // Ajouter des informations pour l'affichage amélioré - avec valeurs uniques
+      combinedCount: courses.length,
+      combinedTypes: [...new Set(courses.map(c => c.type))],
+      combinedSubjects: [...new Set(courses.map(c => c.subject))],
+      combinedRooms: [...new Set(courses.map(c => c.room))],
+      combinedTeachers: [...new Set(courses.map(c => c.teacher))]
     };
   };
   const [schedule, setSchedule] = useState<Record<string, string | null | string[]>>({});
@@ -128,6 +238,7 @@ export default function App() {
     startDate: '2024-09-02',
     totalWeeks: 16,
     numberOfGroups: 4,
+    subGroupsPerGroup: 2, // Nombre de sous-groupes TD/TP par groupe principal
     vacationPeriods: [] as Array<{ startDate: string, endDate: string }>, // Périodes de vacances
     timeSlots: ['08:00-09:30', '09:45-11:15', '11:30-13:00', '14:00-15:30', '15:45-17:15']
   });
@@ -230,7 +341,7 @@ export default function App() {
               mainGroup: group,
               sharedGroups: [group],
               subLabel: 'CM',
-              teacher: teachersCM.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+              teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné', // Prendre seulement le premier enseignant
               room: 'Amphi A',
               semester: semData.semestre
             });
@@ -240,11 +351,11 @@ export default function App() {
               id: Math.random().toString(36).substr(2, 9),
               subject: matiere.code,
               subjectLabel: matiere.libelle,
-              type: 'TD',
+              type: 'TD1' as CourseType,
               mainGroup: group,
               sharedGroups: [group],
               subLabel: 'TD',
-              teacher: teachersTD.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+              teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné', // Prendre seulement le premier enseignant
               room: defaultRoom,
               semester: semData.semestre
             });
@@ -265,19 +376,19 @@ export default function App() {
       sem.matieres.forEach((m: any) => {
         // Ajouter les enseignants CM
         if (m.enseignantsCM) {
-          m.enseignantsCM.split('/').forEach((t: any) => {
+          m.enseignantsCM.split('/').forEach((t: string) => {
             if (t.trim()) set.add(t.trim());
           });
         }
         // Ajouter les enseignants TD
         if (m.enseignantsTD) {
-          m.enseignantsTD.split('/').forEach((t: any) => {
+          m.enseignantsTD.split('/').forEach((t: string) => {
             if (t.trim()) set.add(t.trim());
           });
         }
         // Fallback vers l'ancien champ pour compatibilité
         if (m.enseignants && !m.enseignantsCM && !m.enseignantsTD) {
-          m.enseignants.split('/').forEach((t: any) => {
+          m.enseignants.split('/').forEach((t: string) => {
             if (t.trim()) set.add(t.trim());
           });
         }
@@ -297,21 +408,125 @@ export default function App() {
     return Array.from({ length: config.numberOfGroups }, (_, i) => `Groupe ${i + 1}`);
   }, [config.numberOfGroups]);
 
-  const loadFullDataset = (confirmAction = true) => {
-    if (confirmAction && !confirm("Réinitialiser ?")) return;
+  // Génération des sous-groupes TD/TP
+  const allSubGroups = useMemo(() => {
+    const subGroups: { id: string, label: string, mainGroup: string, type: 'TD' | 'TP' }[] = [];
+    
+    for (let groupIndex = 1; groupIndex <= config.numberOfGroups; groupIndex++) {
+      const mainGroup = `Groupe ${groupIndex}`;
+      
+      // Générer les sous-groupes TD
+      for (let subIndex = 1; subIndex <= config.subGroupsPerGroup; subIndex++) {
+        subGroups.push({
+          id: `TD${groupIndex}${subIndex}`,
+          label: `TD${groupIndex}${subIndex}`,
+          mainGroup,
+          type: 'TD'
+        });
+      }
+      
+      // Générer les sous-groupes TP
+      for (let subIndex = 1; subIndex <= config.subGroupsPerGroup; subIndex++) {
+        subGroups.push({
+          id: `TP${groupIndex}${subIndex}`,
+          label: `TP${groupIndex}${subIndex}`,
+          mainGroup,
+          type: 'TP'
+        });
+      }
+    }
+    
+    return subGroups;
+  }, [config.numberOfGroups, config.subGroupsPerGroup]);
+
+  // Fonction de diagnostic des cours problématiques
+  const diagnoseCourses = () => {
+    const problematicCourses = assignmentRows.filter(course => {
+      if (course.type.startsWith('TD') && course.subLabel && !course.subLabel.startsWith('TD')) return true;
+      if (course.type.startsWith('TP') && course.subLabel && !course.subLabel.startsWith('TP')) return true;
+      if (course.type === 'CM' && course.subLabel && course.subLabel !== 'CM') return true;
+      return false;
+    });
+    
+    console.log('🔍 Diagnostic des cours problématiques:', {
+      total: assignmentRows.length,
+      problematic: problematicCourses.length,
+      details: problematicCourses.map(c => ({
+        id: c.id,
+        subject: c.subject,
+        type: c.type,
+        subLabel: c.subLabel,
+        mainGroup: c.mainGroup
+      }))
+    });
+    
+    if (problematicCourses.length > 0) {
+      setToastMessage({ 
+        msg: `${problematicCourses.length} cours avec incohérence type/label détectés (voir console)`, 
+        type: 'error' 
+      });
+    } else {
+      setToastMessage({ msg: 'Aucun problème détecté !', type: 'success' });
+    }
+  };
+
+  // Fonction de migration vers le nouveau système (SANS perdre les affectations)
+  const migrateToNewSystem = () => {
+    if (!confirm('Migrer vers le nouveau système TD1/TD2/TP1/TP2 ? (Conserve les affectations d\'enseignants)')) return;
+    
+    setAssignmentRows(prev => {
+      // Créer un compteur pour chaque combinaison type/matière/groupe/semestre
+      const counters: Record<string, number> = {};
+      
+      return prev.map(course => {
+        let newType = course.type;
+        let newSubLabel = course.subLabel || course.type;
+        
+        // Migrer les anciens types vers les nouveaux
+        if (course.type.startsWith('TD') || course.type.startsWith('TP')) {
+          const baseType = course.type.startsWith('TD') ? 'TD' : 'TP';
+          
+          // Créer une clé unique pour ce type de cours
+          const key = `${baseType}-${course.subject}-${course.mainGroup}-${course.semester}`;
+          
+          // Incrémenter le compteur pour cette combinaison
+          counters[key] = (counters[key] || 0) + 1;
+          
+          // Assigner le nouveau type (TD1, TD2, TP1, TP2, etc.)
+          newType = `${baseType}${counters[key]}` as CourseType;
+          
+          // Générer le nouveau subLabel
+          const groupNumber = course.mainGroup.replace('Groupe ', '');
+          newSubLabel = `${baseType}${groupNumber}${counters[key]}`;
+        }
+        
+        return {
+          ...course,
+          type: newType,
+          subLabel: newSubLabel
+        };
+      });
+    });
+    
+    setToastMessage({ msg: 'Migration vers le nouveau système terminée ! Affectations conservées.', type: 'success' });
+  };
+
+  // Fonction pour rafraîchir SEULEMENT les cartes (assignmentRows)
+  const refreshCardsOnly = () => {
+    if (!confirm('Rafraîchir seulement les cartes ? (Conserve le planning et les affectations)')) return;
+    
     const newRows: AssignmentRow[] = [];
 
+    // IMPORTANT: Utiliser customSubjects (données modifiées) au lieu de MASTER_DB
     customSubjects.forEach((semData: any) => {
       semData.matieres.forEach((matiere: any) => {
+        // Utiliser les enseignants CM pour les cours CM
+        const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
+        // Utiliser les enseignants TD pour les cours TD
+        const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+
+        // Créer les cours CM pour chaque groupe principal
         dynamicGroups.forEach(group => {
-          // Utiliser les enseignants CM pour les cours CM
-          const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
-          // Utiliser les enseignants TD pour les cours TD
-          const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
-
-          let defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
-
-          // Ligne CM pour chaque matière/groupe
           newRows.push({
             id: Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
@@ -320,21 +535,55 @@ export default function App() {
             mainGroup: group,
             sharedGroups: [group],
             subLabel: 'CM',
-            teacher: teachersCM.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+            teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné',
             room: 'Amphi A',
             semester: semData.semestre
           });
+        });
 
-          // Ligne TD pour chaque matière/groupe
+        // Créer les cours TD pour chaque sous-groupe
+        allSubGroups.filter(sg => sg.type === 'TD').forEach((subGroup, index) => {
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" : 
+                             subGroup.mainGroup === "Groupe 2" ? "201" : 
+                             subGroup.mainGroup === "Groupe 3" ? "202" : "203";
+          
+          // Utiliser TD1, TD2, etc. comme type
+          const typeIndex = (index % config.subGroupsPerGroup) + 1;
+          const courseType = `TD${typeIndex}` as CourseType;
+          
           newRows.push({
             id: Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
             subjectLabel: matiere.libelle,
-            type: 'TD',
-            mainGroup: group,
-            sharedGroups: [group],
-            subLabel: 'TD',
-            teacher: teachersTD.split('/')[0]?.trim() || '', // Prendre seulement le premier enseignant
+            type: courseType,
+            mainGroup: subGroup.mainGroup,
+            sharedGroups: [subGroup.mainGroup],
+            subLabel: subGroup.label, // TD11, TD12, etc.
+            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
+            room: defaultRoom,
+            semester: semData.semestre
+          });
+        });
+
+        // Créer les cours TP pour chaque sous-groupe
+        allSubGroups.filter(sg => sg.type === 'TP').forEach((subGroup, index) => {
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" : 
+                             subGroup.mainGroup === "Groupe 2" ? "Lab 2" : 
+                             subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+          
+          // Utiliser TP1, TP2, etc. comme type
+          const typeIndex = (index % config.subGroupsPerGroup) + 1;
+          const courseType = `TP${typeIndex}` as CourseType;
+          
+          newRows.push({
+            id: Math.random().toString(36).substr(2, 9),
+            subject: matiere.code,
+            subjectLabel: matiere.libelle,
+            type: courseType,
+            mainGroup: subGroup.mainGroup,
+            sharedGroups: [subGroup.mainGroup],
+            subLabel: subGroup.label, // TP11, TP12, etc.
+            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
             room: defaultRoom,
             semester: semData.semestre
           });
@@ -342,6 +591,153 @@ export default function App() {
       });
     });
 
+    setAssignmentRows(newRows);
+    setToastMessage({ msg: 'Cartes rafraîchies ! Planning et affectations conservés.', type: 'success' });
+  };
+
+  // Fonction pour vider SEULEMENT le planning (schedule)
+  const clearScheduleOnly = () => {
+    if (!confirm('Vider seulement le planning ? (Conserve les cartes et affectations)')) return;
+    
+    setSchedule({});
+    setToastMessage({ msg: 'Planning vidé ! Cartes et affectations conservées.', type: 'success' });
+  };
+
+  // Fonction de correction des sous-groupes
+  const fixSubGroups = () => {
+    setAssignmentRows(prev => {
+      // Créer un compteur pour chaque combinaison type/matière/groupe/semestre
+      const counters: Record<string, number> = {};
+      
+      return prev.map(course => {
+        // D'abord, extraire le vrai type depuis le subLabel si nécessaire
+        let correctedType = course.type;
+        let correctedSubLabel = course.subLabel || course.type;
+        
+        // Si le subLabel contient TD ou TP, s'assurer que le type correspond
+        if (course.subLabel && (course.subLabel.startsWith('TD') || course.subLabel.startsWith('TP'))) {
+          if (course.subLabel.startsWith('TD')) {
+            correctedType = 'TD1' as CourseType;
+          } else if (course.subLabel.startsWith('TP')) {
+            correctedType = 'TP1' as CourseType;
+          }
+        }
+        
+        // Maintenant générer le bon subLabel basé sur le type corrigé
+        if (correctedType.startsWith('TD') || correctedType.startsWith('TP')) {
+          const baseType = correctedType.startsWith('TD') ? 'TD' : 'TP';
+          // Créer une clé unique pour ce type de cours
+          const key = `${baseType}-${course.subject}-${course.mainGroup}-${course.semester}`;
+          
+          // Incrémenter le compteur pour cette combinaison
+          counters[key] = (counters[key] || 0) + 1;
+          
+          const groupNumber = course.mainGroup.replace('Groupe ', '');
+          correctedSubLabel = `${baseType}${groupNumber}${counters[key]}`;
+        } else {
+          correctedSubLabel = correctedType; // CM reste CM
+        }
+        
+        return { 
+          ...course, 
+          type: correctedType as CourseType,
+          subLabel: correctedSubLabel 
+        };
+      });
+    });
+    
+    setToastMessage({ msg: 'Types et labels des sous-groupes corrigés !', type: 'success' });
+  };
+
+  const loadFullDataset = (confirmAction = true) => {
+    if (confirmAction && !confirm("Réinitialiser ?")) return;
+    const newRows: AssignmentRow[] = [];
+
+    // IMPORTANT: Utiliser MASTER_DB au lieu de customSubjects pour avoir les nouveaux noms abrégés
+    MASTER_DB.forEach((semData: any) => {
+      semData.matieres.forEach((matiere: any) => {
+        // Utiliser les enseignants CM pour les cours CM
+        const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
+        // Utiliser les enseignants TD pour les cours TD
+        const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+
+        // Créer les cours CM pour chaque groupe principal
+        dynamicGroups.forEach(group => {
+          newRows.push({
+            id: Math.random().toString(36).substr(2, 9),
+            subject: matiere.code,
+            subjectLabel: matiere.libelle,
+            type: 'CM',
+            mainGroup: group,
+            sharedGroups: [group],
+            subLabel: 'CM',
+            teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné',
+            room: 'Amphi A',
+            semester: semData.semestre
+          });
+        });
+
+        // Créer les cours TD pour chaque sous-groupe
+        allSubGroups.filter(sg => sg.type === 'TD').forEach((subGroup, index) => {
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" : 
+                             subGroup.mainGroup === "Groupe 2" ? "201" : 
+                             subGroup.mainGroup === "Groupe 3" ? "202" : "203";
+          
+          // Utiliser TD1, TD2, etc. comme type
+          const typeIndex = (index % config.subGroupsPerGroup) + 1;
+          const courseType = `TD${typeIndex}` as CourseType;
+          
+          newRows.push({
+            id: Math.random().toString(36).substr(2, 9),
+            subject: matiere.code,
+            subjectLabel: matiere.libelle,
+            type: courseType,
+            mainGroup: subGroup.mainGroup,
+            sharedGroups: [subGroup.mainGroup],
+            subLabel: subGroup.label, // TD11, TD12, etc.
+            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
+            room: defaultRoom,
+            semester: semData.semestre
+          });
+        });
+
+        // Créer les cours TP pour chaque sous-groupe
+        allSubGroups.filter(sg => sg.type === 'TP').forEach((subGroup, index) => {
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" : 
+                             subGroup.mainGroup === "Groupe 2" ? "Lab 2" : 
+                             subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+          
+          // Utiliser TP1, TP2, etc. comme type
+          const typeIndex = (index % config.subGroupsPerGroup) + 1;
+          const courseType = `TP${typeIndex}` as CourseType;
+          
+          newRows.push({
+            id: Math.random().toString(36).substr(2, 9),
+            subject: matiere.code,
+            subjectLabel: matiere.libelle,
+            type: courseType,
+            mainGroup: subGroup.mainGroup,
+            sharedGroups: [subGroup.mainGroup],
+            subLabel: subGroup.label, // TP11, TP12, etc.
+            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
+            room: defaultRoom,
+            semester: semData.semestre
+          });
+        });
+      });
+    });
+
+    // Réinitialiser aussi customSubjects avec les nouvelles données de MASTER_DB
+    const updatedCustomSubjects = JSON.parse(JSON.stringify(MASTER_DB)).map((semester: any) => ({
+      ...semester,
+      matieres: semester.matieres.map((matiere: any) => ({
+        ...matiere,
+        enseignantsCM: matiere.enseignantsCM || matiere.enseignants,
+        enseignantsTD: matiere.enseignantsTD || matiere.enseignants
+      }))
+    }));
+    
+    setCustomSubjects(updatedCustomSubjects);
     setAssignmentRows(newRows);
     setSchedule({});
   };
@@ -571,6 +967,112 @@ export default function App() {
         if (existingCourse.type === 'CM') {
           return `CONFLIT CM : Un autre cours ne peut pas être en parallèle avec un CM pour le même groupe (CM ${existingCourse.subject} et ${draggingCourse.type} ${draggingCourse.subject})`;
         }
+
+        // Interdire les sous-groupes du même numéro d'être en parallèle
+        // TD11 ne peut pas être avec TP11, mais TD11 peut être avec TP12
+        if (draggingCourse.subLabel && existingCourse.subLabel) {
+          const draggingSubGroup = draggingCourse.subLabel;
+          const existingSubGroup = existingCourse.subLabel;
+          
+          console.log('🔍 DEBUG CONFLIT SOUS-GROUPE:', {
+            dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type },
+            existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type }
+          });
+          
+          // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
+          const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
+          const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
+          
+          console.log('🔍 DEBUG REGEX MATCH:', {
+            draggingMatch,
+            existingMatch
+          });
+          
+          if (draggingMatch && existingMatch) {
+            const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
+            const existingSubNumber = existingMatch[2]; // "11", "12", etc.
+            
+            console.log('🔍 DEBUG COMPARAISON:', {
+              draggingSubNumber,
+              existingSubNumber,
+              sameNumber: draggingSubNumber === existingSubNumber,
+              differentTypes: draggingMatch[1] !== existingMatch[1]
+            });
+            
+            // Si même numéro de sous-groupe ET types différents (TD vs TP)
+            if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
+              console.log('🚨 CONFLIT DÉTECTÉ!');
+              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
+            }
+            
+            // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
+            if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
+              console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ!');
+              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec un autre ${existingSubGroup} (même sous-groupe)`;
+            }
+          }
+        }
+      }
+    }
+
+    // NOUVEAU : Vérifier aussi les conflits de sous-groupes dans TOUS les groupes du même niveau
+    // (pas seulement les groupes "similaires")
+    for (const group of dynamicGroups) {
+      // Vérifier seulement si c'est le même groupe principal que le cours qu'on déplace
+      if (group !== draggingCourse.mainGroup) continue;
+      
+      const currentSlotKey = `${semester}|w${currentWeek}|${group}|${day}|${time}`;
+      const existingLocalValue = schedule[currentSlotKey];
+      const existingLocalIds = Array.isArray(existingLocalValue) ? existingLocalValue : (existingLocalValue ? [existingLocalValue] : []);
+
+      // Si le cours est déjà dans ce créneau, permettre le déplacement/remplacement
+      if (existingLocalIds.includes(courseId as string)) {
+        continue;
+      }
+
+      // Vérifier les conflits de sous-groupes avec TOUS les cours du créneau
+      for (const existingCourseId of existingLocalIds) {
+        const existingCourse = assignmentRows.find(r => r.id === existingCourseId);
+        if (!existingCourse) continue;
+
+        // Vérification spéciale pour les sous-groupes (même si pas "similaires")
+        if (draggingCourse.subLabel && existingCourse.subLabel) {
+          const draggingSubGroup = draggingCourse.subLabel;
+          const existingSubGroup = existingCourse.subLabel;
+          
+          console.log('🔍 DEBUG CONFLIT SOUS-GROUPE (GLOBAL):', {
+            dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type, mainGroup: draggingCourse.mainGroup },
+            existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type, mainGroup: existingCourse.mainGroup }
+          });
+          
+          // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
+          const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
+          const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
+          
+          if (draggingMatch && existingMatch) {
+            const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
+            const existingSubNumber = existingMatch[2]; // "11", "12", etc.
+            
+            console.log('🔍 DEBUG COMPARAISON (GLOBAL):', {
+              draggingSubNumber,
+              existingSubNumber,
+              sameNumber: draggingSubNumber === existingSubNumber,
+              differentTypes: draggingMatch[1] !== existingMatch[1]
+            });
+            
+            // Si même numéro de sous-groupe ET types différents (TD vs TP)
+            if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
+              console.log('🚨 CONFLIT SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
+              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
+            }
+            
+            // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
+            if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
+              console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
+              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec un autre ${existingSubGroup} (même sous-groupe)`;
+            }
+          }
+        }
       }
     }
 
@@ -782,85 +1284,7 @@ export default function App() {
     }
   };
 
-  // --- HEADER BANNER ---
-  const HeaderBanner = ({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, setSearchQuery, dynamicGroups, config }: any) => {
-    return (
-      <div className="flex flex-col bg-white shrink-0 shadow-sm z-40 print-header" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
-        <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
-          <div className="shrink-0 pr-2 md:pr-4 h-full flex items-center">
-            <img src="/rim.png" alt="RIM" className="h-6 md:h-8 w-auto object-contain" />
-          </div>
-          <div className="flex-1 flex flex-col items-center justify-center text-center px-2">
-            <h1 className="text-sm md:text-base font-semibold text-gray-800 leading-tight tracking-wide">Institut Supérieur du Numérique</h1>
-            <h2 className="text-[10px] md:text-[11px] font-medium text-gray-700 uppercase tracking-widest">Emploi du temps</h2>
-          </div>
-          <div className="shrink-0 pl-2 md:pl-4 h-full flex items-center">
-            <img src="/supnum.png" alt="SupNum" className="h-6 md:h-8 w-auto object-contain" />
-          </div>
-        </div>
-        <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200 gap-2 w-full">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
-              <span className="mr-1 text-black-800 font-bold text-[10px]">Semestre:</span>
-              <select value={semester} onChange={(e) => setSemester(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
-                {SEMESTERS.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
-              <span className="mr-1 text-black-800 font-bold text-[10px]">Groupe:</span>
-              <select value={group} onChange={(e) => setGroup(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
-                {dynamicGroups.map((g: string) => <option key={g} value={g}>{g.replace("Groupe ", "G")}</option>)}
-              </select>
-            </div>
-            <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
-              <span className="mr-1 text-black-800 font-bold text-[10px]">Semaine:</span>
-              <select value={week} onChange={(e) => setWeek(parseInt(e.target.value))} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
-                {Array.from({ length: totalWeeks }, (_, i) => {
-                  const weekNum = i + 1;
-                  return (
-                    <option key={weekNum} value={weekNum}>
-                      {weekNum}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          </div>
-          <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
-            Du <span className="text-blue-700 font-bold mx-1">{startStr}</span> au <span className="text-blue-700 font-bold mx-1">{endStr}</span>
-          </div>
-          <div className="flex items-center gap-2 no-export">
-            <div className="relative group no-print">
-              <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
-              <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
-            </div>
-            <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
-              <Save size={16} className="mr-1" />
-              SAVE
-            </button>
-            <button onClick={() => handlePrint()} className={`flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Imprimer le planning">
-              <Printer size={16} className="mr-1" />
-              PRINT
-            </button>
-            <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded px-3 py-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
-              <LogOut size={16} className="mr-1" />
-              LOGOUT
-            </button>
-            <button onClick={() => {
-              console.log('Debug info:', {
-                assignmentRowsLength: assignmentRows.length,
-                dynamicGroupsLength: dynamicGroups.length,
-                isClient,
-                semester,
-                activeMainGroup
-              });
-              loadFullDataset(false);
-            }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug">🐛</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // --- HEADER BANNER (déplacé en dehors du composant App) ---
 
 
   // Fonction pour sauvegarder en base de données
@@ -1114,7 +1538,44 @@ export default function App() {
   };
 
   const updateRow = (id: string, field: keyof AssignmentRow, value: any) => {
-    setAssignmentRows(prev => prev.map(r => r.id === id ? { ...r, [field]: value, ...(field === 'mainGroup' ? { sharedGroups: [value] } : {}) } : r));
+    setAssignmentRows(prev => prev.map((r: AssignmentRow) => {
+      if (r.id === id) {
+        let updatedRow = { ...r, [field]: value };
+        
+        // Si on change le type, mettre à jour le subLabel approprié
+        if (field === 'type') {
+          const newType = value as CourseType;
+          
+          if (newType === 'CM') {
+            updatedRow.subLabel = 'CM';
+          } else if (newType.startsWith('TD') || newType.startsWith('TP')) {
+            // Extraire le type de base et le numéro de sous-groupe
+            const baseType = newType.startsWith('TD') ? 'TD' : 'TP';
+            const subGroupNumber = newType.slice(2); // '1', '2', '3', '4'
+            
+            // Générer le subLabel selon le groupe principal
+            const groupNumber = r.mainGroup.replace('Groupe ', '');
+            updatedRow.subLabel = `${baseType}${groupNumber}${subGroupNumber}`;
+          }
+        }
+        
+        // Gestion spéciale pour mainGroup - régénérer le subLabel si nécessaire
+        if (field === 'mainGroup') {
+          updatedRow.sharedGroups = [value];
+          
+          // Si c'est un TD ou TP, régénérer le subLabel avec le nouveau groupe
+          if (r.type.startsWith('TD') || r.type.startsWith('TP')) {
+            const baseType = r.type.startsWith('TD') ? 'TD' : 'TP';
+            const subGroupNumber = r.type.slice(2);
+            const newGroupNumber = value.replace('Groupe ', '');
+            updatedRow.subLabel = `${baseType}${newGroupNumber}${subGroupNumber}`;
+          }
+        }
+        
+        return updatedRow;
+      }
+      return r;
+    }));
   };
 
   const handleResourceChange = (rowId: string, index: number, field: 'teacher' | 'room', value: string) => {
@@ -1216,14 +1677,28 @@ export default function App() {
 
       <div id="export-container" className="flex flex-1 flex-col overflow-hidden bg-white">
         <HeaderBanner
-          semester={semester} setSemester={setSemester}
-          group={activeMainGroup} setGroup={setActiveMainGroup}
-          week={currentWeek} setWeek={setCurrentWeek}
+          semester={semester} setSemester={handleSemesterChange}
+          group={activeMainGroup} setGroup={handleGroupChange}
+          week={currentWeek} setWeek={handleWeekChange}
           totalWeeks={config.totalWeeks}
           startStr={weekDates.startStr} endStr={weekDates.endStr}
-          searchQuery={searchQuery} setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery} handleSearchChange={handleSearchChange}
+          searchInputRef={searchInputRef}
           dynamicGroups={dynamicGroups}
           config={config}
+          handleSaveToDatabase={handleSaveToDatabase}
+          handlePrint={handlePrint}
+          setCurrentUser={setCurrentUser}
+          currentUser={currentUser}
+          loadFullDataset={loadFullDataset}
+          assignmentRows={assignmentRows}
+          isClient={isClient}
+          activeMainGroup={activeMainGroup}
+          diagnoseCourses={diagnoseCourses}
+          migrateToNewSystem={migrateToNewSystem}
+          refreshCardsOnly={refreshCardsOnly}
+          clearScheduleOnly={clearScheduleOnly}
+          fixSubGroups={fixSubGroups}
         />
 
         <div className="flex flex-1 overflow-hidden">
@@ -1352,8 +1827,8 @@ export default function App() {
                       <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
                         {DAYS.map((day, dayIndex) => (
                           <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
-                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '800px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible min-h-[40px] flex-1 export-row`}>
-                            <div className="bg-white flex items-center justify-center py-1 overflow-visible min-h-[36px] border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '800px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible h-auto flex-1 export-row`}>
+                            <div className="bg-white flex items-center justify-center py-1 overflow-visible h-auto border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
                               <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
                             </div>
                             {config.timeSlots.map(time => {
@@ -1444,7 +1919,15 @@ export default function App() {
                             </td>
                             <td className="p-1 border-r border-slate-50 text-center px-1">
                               <select value={row.type} onChange={(e) => updateRow(row.id, 'type', e.target.value as CourseType)} className={`font-black rounded px-1 py-0.5 text-[11px] w-full ${getCourseColor(row.type).badge} text-white shadow-sm outline-none cursor-pointer text-center`}>
-                                <option value="CM">CM</option><option value="TD">TD</option><option value="TP">TP</option>
+                                <option value="CM">CM</option>
+                                <option value="TD1">TD1</option>
+                                <option value="TD2">TD2</option>
+                                <option value="TD3">TD3</option>
+                                <option value="TD4">TD4</option>
+                                <option value="TP1">TP1</option>
+                                <option value="TP2">TP2</option>
+                                <option value="TP3">TP3</option>
+                                <option value="TP4">TP4</option>
                               </select>
                             </td>
                             <td className="p-1 border-r border-slate-50">
@@ -1452,49 +1935,41 @@ export default function App() {
                                 {/* Sélecteur d'enseignant */}
                                 <select
                                   key={`teacher-select-${row.id}-${refreshKey}`}
-                                  value={row.type === 'CM' ?
-                                    (row.teacher.split('/')[0]?.trim() || "") :
-                                    (row.teacher || "")
-                                  }
-                                  onChange={(e) => {
+                                  value={row.teacher || (() => {
+                                    // Valeur par défaut : premier enseignant disponible pour cette matière
+                                    const semesterData = customSubjects.find((s: any) => s.semestre === row.semester);
+                                    const matiereData = semesterData?.matieres.find((m: any) => m.code === row.subject);
+                                    let assignedTeachers: string[] = [];
                                     if (row.type === 'CM') {
-                                      // Pour CM : remplacer l'enseignant
-                                      setAssignmentRows(prev => prev.map(r =>
-                                        r.id === row.id ? { ...r, teacher: e.target.value } : r
-                                      ));
+                                      assignedTeachers = (matiereData?.enseignantsCM || matiereData?.enseignants || '').split('/').map((t: string) => t.trim()).filter((t: string) => t && t !== '?');
                                     } else {
-                                      // Pour TD/TP : ajouter l'enseignant s'il n'existe pas déjà
-                                      const currentTeachers = (row.teacher || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
-                                      if (!currentTeachers.includes(e.target.value) && e.target.value) {
-                                        const newTeacher = currentTeachers.length > 0 ?
-                                          currentTeachers.join('/') + '/' + e.target.value :
-                                          e.target.value;
-                                        setAssignmentRows(prev => prev.map(r =>
-                                          r.id === row.id ? { ...r, teacher: newTeacher } : r
-                                        ));
-                                      } else if (e.target.value) {
-                                        // Si l'enseignant existe déjà, juste le sélectionner
-                                        setAssignmentRows(prev => prev.map(r =>
-                                          r.id === row.id ? { ...r, teacher: e.target.value } : r
-                                        ));
-                                      }
+                                      assignedTeachers = (matiereData?.enseignantsTD || matiereData?.enseignants || '').split('/').map((t: string) => t.trim()).filter((t: string) => t && t !== '?');
                                     }
+                                    return assignedTeachers[0] || 'Non assigné';
+                                  })()}
+                                  onChange={(e) => {
+                                    // Logique simplifiée : remplacer directement la valeur
+                                    updateRow(row.id, 'teacher', e.target.value);
                                     setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
                                   }}
                                   className="flex-1 border border-slate-200 rounded px-2 py-1 bg-white text-[10px] font-bold outline-none focus:ring-1 ring-green-300 shadow-sm"
                                 >
-                                  <option value="">Enseignant...</option>
                                   {/* Enseignants affectés à cette matière */}
                                   {(() => {
-                                    const semesterData = customSubjects.find(s => s.semestre === row.semester);
-                                    const matiereData = semesterData?.matieres.find(m => m.code === row.subject);
+                                    const semesterData = customSubjects.find((s: any) => s.semestre === row.semester);
+                                    const matiereData = semesterData?.matieres.find((m: any) => m.code === row.subject);
 
                                     // Utiliser les enseignants appropriés selon le type de cours
                                     let assignedTeachers: string[] = [];
                                     if (row.type === 'CM') {
-                                      assignedTeachers = (matiereData?.enseignantsCM || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                                      assignedTeachers = (matiereData?.enseignantsCM || matiereData?.enseignants || '').split('/').map((t: string) => t.trim()).filter((t: string) => t && t !== '?');
                                     } else {
-                                      assignedTeachers = (matiereData?.enseignantsTD || matiereData?.enseignants || '').split('/').map(t => t.trim()).filter(t => t && t !== '?');
+                                      assignedTeachers = (matiereData?.enseignantsTD || matiereData?.enseignants || '').split('/').map((t: string) => t.trim()).filter((t: string) => t && t !== '?');
+                                    }
+
+                                    // Si aucun enseignant assigné, afficher une option par défaut
+                                    if (assignedTeachers.length === 0) {
+                                      return [<option key="default" value="Non assigné">Non assigné</option>];
                                     }
 
                                     // Utiliser refreshKey pour forcer la mise à jour
@@ -1512,11 +1987,11 @@ export default function App() {
                                       const teacherName = newTeacher.trim();
 
                                       // Mettre à jour customSubjects pour ajouter l'enseignant à cette matière
-                                      setCustomSubjects(prev => {
+                                      setCustomSubjects((prev: any) => {
                                         const newSubjects = [...prev];
-                                        const semesterIndex = newSubjects.findIndex(s => s.semestre === row.semester);
+                                        const semesterIndex = newSubjects.findIndex((s: any) => s.semestre === row.semester);
                                         if (semesterIndex !== -1) {
-                                          const matiereIndex = newSubjects[semesterIndex].matieres.findIndex(m => m.code === row.subject);
+                                          const matiereIndex = newSubjects[semesterIndex].matieres.findIndex((m: any) => m.code === row.subject);
                                           if (matiereIndex !== -1) {
                                             // Ajouter l'enseignant au bon champ selon le type de cours
                                             if (row.type === 'CM') {
@@ -1550,16 +2025,26 @@ export default function App() {
 
                                 {/* Sélecteur de salle */}
                                 <select
-                                  value={row.room || ""}
+                                  value={row.room || (() => {
+                                    // Salle par défaut selon le type de cours et le groupe
+                                    if (row.type === 'CM') {
+                                      return 'Amphi A';
+                                    } else if (row.type.startsWith('TP')) {
+                                      return row.mainGroup === "Groupe 1" ? "Lab 1" : 
+                                             row.mainGroup === "Groupe 2" ? "Lab 2" : 
+                                             row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                    } else {
+                                      return row.mainGroup === "Groupe 1" ? "101" : 
+                                             row.mainGroup === "Groupe 2" ? "201" : 
+                                             row.mainGroup === "Groupe 3" ? "202" : "203";
+                                    }
+                                  })()}
                                   onChange={(e) => {
-                                    setAssignmentRows(prev => prev.map(r =>
-                                      r.id === row.id ? { ...r, room: e.target.value } : r
-                                    ));
+                                    updateRow(row.id, 'room', e.target.value);
                                     setRefreshKey(prev => prev + 1); // Forcer le re-rendu des cartes
                                   }}
                                   className="w-20 border border-slate-200 rounded px-2 py-1 bg-white font-mono font-bold text-[10px] outline-none focus:ring-1 ring-green-300 shadow-sm text-center"
                                 >
-                                  <option value="">Salle...</option>
                                   {customRooms.map(room => (
                                     <option key={room} value={room}>{room}</option>
                                   ))}
@@ -1570,20 +2055,79 @@ export default function App() {
                               <div className="flex gap-1 justify-center">
                                 <button
                                   onClick={() => {
+                                    // Déterminer le type de la nouvelle ligne selon le nouveau système
+                                    let newType: CourseType = 'CM';
+                                    
+                                    if (row.type === 'CM') {
+                                      newType = 'TD1'; // CM → TD1
+                                    } else if (row.type.startsWith('TD')) {
+                                      // TD1 → TP1, TD2 → TP2, etc.
+                                      const subGroupNumber = row.type.slice(2);
+                                      const tpType = `TP${subGroupNumber}`;
+                                      // Ensure it's a valid CourseType
+                                      if (['TP1', 'TP2', 'TP3', 'TP4'].includes(tpType)) {
+                                        newType = tpType as CourseType;
+                                      } else {
+                                        newType = 'TP1';
+                                      }
+                                    } else if (row.type.startsWith('TP')) {
+                                      // TP1 → TD1, TP2 → TD2, etc. (cycle)
+                                      const subGroupNumber = row.type.slice(2);
+                                      const tdType = `TD${subGroupNumber}`;
+                                      // Ensure it's a valid CourseType
+                                      if (['TD1', 'TD2', 'TD3', 'TD4'].includes(tdType)) {
+                                        newType = tdType as CourseType;
+                                      } else {
+                                        newType = 'TD1';
+                                      }
+                                    }
+                                    
+                                    // Générer le subLabel approprié
+                                    let newSubLabel: string = newType;
+                                    let defaultRoom = '101';
+                                    
+                                    if (newType.startsWith('TD') || newType.startsWith('TP')) {
+                                      const baseType = newType.startsWith('TD') ? 'TD' : 'TP';
+                                      const subGroupNumber = newType.slice(2);
+                                      const groupNumber = row.mainGroup.replace('Groupe ', '');
+                                      newSubLabel = `${baseType}${groupNumber}${subGroupNumber}`;
+                                      
+                                      // Définir une salle par défaut selon le groupe et le type
+                                      if (baseType.startsWith('TP')) {
+                                        defaultRoom = row.mainGroup === "Groupe 1" ? "Lab 1" : 
+                                                     row.mainGroup === "Groupe 2" ? "Lab 2" : 
+                                                     row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                      } else {
+                                        defaultRoom = row.mainGroup === "Groupe 1" ? "101" : 
+                                                     row.mainGroup === "Groupe 2" ? "201" : 
+                                                     row.mainGroup === "Groupe 3" ? "202" : "203";
+                                      }
+                                    }
+                                    
                                     const newRow: AssignmentRow = {
                                       id: 'new-' + Date.now(),
                                       subject: row.subject,
                                       subjectLabel: row.subjectLabel,
-                                      type: row.type === 'CM' ? 'TD' : 'CM',
+                                      type: newType,
                                       mainGroup: row.mainGroup,
                                       sharedGroups: [row.mainGroup],
-                                      subLabel: row.type === 'CM' ? 'TD' : 'CM',
-                                      teacher: row.teacher,
-                                      room: '101',
+                                      subLabel: newSubLabel,
+                                      teacher: row.teacher || 'Non assigné',
+                                      room: newType === 'CM' ? 'Amphi A' : defaultRoom,
                                       semester: row.semester
                                     };
-                                    setAssignmentRows(prev => [...prev, newRow]);
-                                    setToastMessage({ msg: `Nouvelle ligne ${newRow.type} ajoutée pour ${row.subject}`, type: 'success' });
+                                    
+                                    // Trouver l'index de la ligne actuelle dans le tableau complet
+                                    const currentRowIndex = assignmentRows.findIndex(r => r.id === row.id);
+                                    
+                                    // Insérer la nouvelle ligne juste après la ligne actuelle
+                                    setAssignmentRows(prev => {
+                                      const newRows = [...prev];
+                                      newRows.splice(currentRowIndex + 1, 0, newRow);
+                                      return newRows;
+                                    });
+                                    
+                                    setToastMessage({ msg: `Nouvelle ligne ${newSubLabel} ajoutée pour ${row.subject}`, type: 'success' });
                                   }}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-all shadow-sm"
                                   title="Ajouter une ligne"
@@ -1727,8 +2271,8 @@ export default function App() {
 
                     <div className="space-y-4 max-h-96 overflow-y-auto">
                       {customSubjects
-                        .filter(semestre => !dataFilterSemester || semestre.semestre === dataFilterSemester)
-                        .map((semestre, semIdx) => (
+                        .filter((semestre: any) => !dataFilterSemester || semestre.semestre === dataFilterSemester)
+                        .map((semestre: any, semIdx: number) => (
                           <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
                             <div className="flex justify-between items-center mb-3">
                               <h4 className="font-bold text-lg text-blue-700">{semestre.semestre}</h4>
@@ -1768,7 +2312,7 @@ export default function App() {
                                     id: Math.random().toString(36).substr(2, 9),
                                     subject: newMatiere.code,
                                     subjectLabel: newMatiere.libelle,
-                                    type: 'TD',
+                                    type: 'TD1' as CourseType,
                                     mainGroup: group,
                                     sharedGroups: [group],
                                     subLabel: 'TD',
@@ -1790,11 +2334,11 @@ export default function App() {
 
                             <div className="space-y-3">
                               {semestre.matieres
-                                .filter(matiere => !dataFilterSubject ||
+                                .filter((matiere: any) => !dataFilterSubject ||
                                   matiere.code.toLowerCase().includes(dataFilterSubject.toLowerCase()) ||
                                   matiere.libelle.toLowerCase().includes(dataFilterSubject.toLowerCase())
                                 )
-                                .map((matiere, matIdx) => (
+                                .map((matiere: any, matIdx: number) => (
                                   <div key={matIdx} className="bg-white p-4 rounded border shadow-sm">
                                     <div className="grid grid-cols-12 gap-3 items-center mb-3">
                                       <div className="col-span-2">
@@ -2014,13 +2558,13 @@ export default function App() {
                       {dataProgressViewMode === 'subjects' ? (
                         // VUE PAR MATIÈRE (Existant)
                         customSubjects
-                          .filter(semestre => !dataFilterSemester || semestre.semestre === dataFilterSemester)
-                          .map((semestre, semIdx) => (
+                          .filter((semestre: any) => !dataFilterSemester || semestre.semestre === dataFilterSemester)
+                          .map((semestre: any, semIdx: number) => (
                             <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
                               <h4 className="font-bold text-lg text-blue-700 mb-3">{semestre.semestre}</h4>
 
                               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {semestre.matieres.map((matiere, matIdx) => {
+                                {semestre.matieres.map((matiere: any, matIdx: number) => {
                                   // Calculer l'avancement global de la matière
                                   const credit = matiere.credit || 3;
                                   const totalSessions = credit * 8;
@@ -2048,8 +2592,8 @@ export default function App() {
                                               scheduledCourse.semester === semestre.semestre) {
 
                                               if (scheduledCourse.type === 'CM') cmSessions++;
-                                              else if (scheduledCourse.type === 'TD') tdSessions++;
-                                              else if (scheduledCourse.type === 'TP') tpSessions++;
+                                              else if (scheduledCourse.type.startsWith('TD')) tdSessions++;
+                                              else if (scheduledCourse.type.startsWith('TP')) tpSessions++;
                                             }
                                           });
                                         }
@@ -2205,6 +2749,18 @@ export default function App() {
                           onChange={(e) => setConfig({ ...config, numberOfGroups: parseInt(e.target.value) || 4 })}
                           className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
                         />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Sous-groupes TD/TP par groupe</label>
+                        <input
+                          type="number"
+                          min="1"
+                          max="5"
+                          value={config.subGroupsPerGroup || 2}
+                          onChange={(e) => setConfig({ ...config, subGroupsPerGroup: parseInt(e.target.value) || 2 })}
+                          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
+                        />
+                        <p className="text-xs text-slate-500 mt-1">Ex: 2 → TD11, TD12, TP11, TP12 pour le Groupe 1</p>
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Périodes de vacances</label>
@@ -2402,7 +2958,7 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
         {isDragging && isCtrlPressed && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">COPIE</div>}
         <div className="absolute top-2 right-2 flex gap-1">
           <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
-          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${colors.badge}`}>{course.type}</span>
+          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${colors.badge}`}>{course.subLabel || course.type}</span>
         </div>
         <div className="flex justify-between items-start mb-1">
           <div className="flex flex-col">
@@ -2431,7 +2987,7 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
             <span className="text-[9px] font-medium text-slate-900 truncate" style={{ maxWidth: '7rem' }}>{course.subject}</span>
             <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           </div>
-          <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.type}</span>
+          <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.subLabel || course.type}</span>
         </div>
         <div className="text-[8px] font-normal text-slate-700 truncate whitespace-nowrap overflow-hidden" style={{ maxWidth: '10rem' }}>
           {(() => {
@@ -2472,21 +3028,21 @@ function DroppableSlot({ id, children }: any) {
   return (
     <div 
       ref={setNodeRef} 
-      className={`w-full h-full min-h-[65px] transition-colors flex flex-col ${
+      className={`w-full h-full h-auto transition-colors flex flex-col ${
         isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''
       }`}
     >
       {isEmpty ? (
         // Tableau vide avec structure visible en gris
-        <div className="w-full h-full border border-gray-400 bg-gray-100 flex flex-col">
+        <div className="w-full h-full border border-gray-300 bg-slate-50 flex flex-col">
           {/* Première ligne du tableau vide */}
-          <div className="flex h-6 border-b border-gray-400">
-            <div className="flex-1 border-r border-gray-400"></div>
-            <div className="w-12 border-r border-gray-400"></div>
+          <div className="flex h-6 border-b border-gray-300">
+            <div className="flex-1 border-r border-gray-300"></div>
+            <div className="w-12 border-r border-gray-300"></div>
             <div className="w-12"></div>
           </div>
           {/* Deuxième ligne du tableau vide */}
-          <div className="flex-1 border-b border-gray-400"></div>
+          <div className="flex-1 border-b border-gray-300"></div>
           {/* Troisième ligne du tableau vide */}
           <div className="h-6"></div>
         </div>
@@ -2513,7 +3069,7 @@ const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, custom
           <span className="font-bold text-xs text-black text-center truncate">{course.subject}</span>
         </div>
         <div className="w-12 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
-          <span className="font-bold text-xs text-black text-center truncate">{course.type}</span>
+          <span className="font-bold text-xs text-black text-center truncate">{course.subLabel || course.type}</span>
         </div>
         <div className="w-12 px-1 py-0.5 flex items-center justify-center bg-white overflow-hidden">
           <span className="font-bold text-xs text-black text-center truncate">{(() => {
@@ -2544,7 +3100,16 @@ function getCourseColor(type: CourseType | string) {
   if (typeof type === 'string' && type.includes('/')) {
     return { bg: 'bg-purple-50', border: 'border-purple-300', borderLeft: 'border-l-purple-600', badge: 'bg-purple-600' };
   }
-  switch (type) {
+  
+  // Déterminer le type de base (CM, TD, TP)
+  let baseType = type;
+  if (typeof type === 'string') {
+    if (type.startsWith('TD')) baseType = 'TD';
+    else if (type.startsWith('TP')) baseType = 'TP';
+    else if (type === 'CM') baseType = 'CM';
+  }
+  
+  switch (baseType) {
     case 'CM': return { bg: 'bg-emerald-50', border: 'border-emerald-300', borderLeft: 'border-l-emerald-600', badge: 'bg-emerald-600' };
     case 'TD': return { bg: 'bg-blue-50', border: 'border-blue-300', borderLeft: 'border-l-blue-600', badge: 'bg-blue-600' };
     case 'TP': return { bg: 'bg-orange-50', border: 'border-orange-300', borderLeft: 'border-l-orange-600', badge: 'bg-orange-600' };
@@ -2562,7 +3127,7 @@ function TeacherSelector({ value, onChange, allTeachers, placeholder, className 
   };
   return (
     <>
-      <div onClick={() => setIsModalOpen(true)} className={`${className} cursor-pointer min-h-[40px] p-1.5 flex flex-wrap gap-1 items-start bg-white border border-slate-300 rounded overflow-hidden hover:border-blue-400 transition-all group`}>
+      <div onClick={() => setIsModalOpen(true)} className={`${className} cursor-pointer h-auto p-1.5 flex flex-wrap gap-1 items-start bg-white border border-slate-300 rounded overflow-hidden hover:border-blue-400 transition-all group`}>
         {teachers.length > 0 ? (
           teachers.map((t: string) => (
             <span key={t} className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-bold border border-slate-200 hover:bg-red-50 hover:text-red-700 hover:border-red-100 transition-colors group/chip">
