@@ -1343,7 +1343,7 @@ export default function App() {
                       <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: 'white', minWidth: '800px' }} className={`${gridBaseClasses} sticky top-0 z-20`}>
                         <div className="p-1 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>
                         {config.timeSlots.map((t, index) => (
-                          <div key={t} className={`p-1 text-center text-xs font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-4' : ''}`} style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+                          <div key={t} className={`p-1 text-center text-xs font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-1' : ''}`} style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
                             {t}
                           </div>
                         ))}
@@ -1363,7 +1363,7 @@ export default function App() {
                               const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
                               const combinedCourse = getCombinedCourseInfo(courseIds);
                               return (
-                                <div key={time} className="p-1 relative flex items-stretch mr-4 last:mr-0">
+                                <div key={time} className="p-1 relative flex items-stretch mr-1 last:mr-0">
                                   <DroppableSlot id={`${day}|${time}`}>
                                     {combinedCourse && (
                                       <CourseBadge
@@ -2480,7 +2480,7 @@ function DroppableSlot({ id, children }: any) {
         // Tableau vide avec structure visible en gris
         <div className="w-full h-full border border-gray-400 bg-gray-100 flex flex-col">
           {/* Première ligne du tableau vide */}
-          <div className="flex h-8 border-b border-gray-400">
+          <div className="flex h-6 border-b border-gray-400">
             <div className="flex-1 border-r border-gray-400"></div>
             <div className="w-12 border-r border-gray-400"></div>
             <div className="w-12"></div>
@@ -2488,7 +2488,7 @@ function DroppableSlot({ id, children }: any) {
           {/* Deuxième ligne du tableau vide */}
           <div className="flex-1 border-b border-gray-400"></div>
           {/* Troisième ligne du tableau vide */}
-          <div className="h-8"></div>
+          <div className="h-6"></div>
         </div>
       ) : (
         children
@@ -2508,14 +2508,14 @@ const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, custom
       <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className={`absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5 ${currentUser?.role !== 'admin' ? 'hidden' : ''}`}><X size={10} /></button>
       
       {/* Première ligne du tableau : Code matière | Type | Salle */}
-      <div className="flex h-8 border-b border-black">
-        <div className="flex-1 px-1 py-1 border-r border-black flex items-center justify-center bg-white overflow-hidden">
+      <div className="flex h-6 border-b border-black">
+        <div className="flex-1 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
           <span className="font-bold text-xs text-black text-center truncate">{course.subject}</span>
         </div>
-        <div className="w-12 px-1 py-1 border-r border-black flex items-center justify-center bg-white overflow-hidden">
+        <div className="w-12 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
           <span className="font-bold text-xs text-black text-center truncate">{course.type}</span>
         </div>
-        <div className="w-12 px-1 py-1 flex items-center justify-center bg-white overflow-hidden">
+        <div className="w-12 px-1 py-0.5 flex items-center justify-center bg-white overflow-hidden">
           <span className="font-bold text-xs text-black text-center truncate">{(() => {
             const rooms = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
             return rooms || '?';
@@ -2524,12 +2524,12 @@ const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, custom
       </div>
       
       {/* Deuxième ligne du tableau : Nom complet de la matière */}
-      <div className="flex-1 px-1 py-1 border-b border-black flex items-center bg-white overflow-hidden">
+      <div className="flex-1 px-1 py-0.5 border-b border-black flex items-center bg-white overflow-hidden">
         <span className="text-xs text-black font-medium text-center w-full truncate leading-tight">{course.subjectLabel || course.subject}</span>
       </div>
       
       {/* Troisième ligne du tableau : Enseignant */}
-      <div className="h-8 px-1 py-1 flex items-center justify-center bg-white overflow-hidden">
+      <div className="h-6 px-1 py-0.5 flex items-center justify-center bg-white overflow-hidden">
         <span className="text-xs font-bold text-red-600 text-center truncate">{(() => {
           const teachers = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
           return teachers || '?';
