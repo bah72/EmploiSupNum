@@ -13,11 +13,10 @@ import UserManagement from './components/UserManagement';
 // Helper pour les statistiques
 const AssignmentRowService = {
   getTeacherStats: (assignmentRows: AssignmentRow[], schedule: Record<string, string | null | string[]>, semesterFilter?: string) => {
-    const stats: Record<string, { cm: number, td: number, tp: number, total: string }> = {};
+    const stats: Record<string, { cm: number, td: number, tp: number, totalEqCm: string, totalHours: string }> = {};
 
     Object.values(schedule).forEach(courseValue => {
       if (!courseValue) return;
-      // Normaliser la valeur (gérer les cas string | null | string[])
       const courseIds = Array.isArray(courseValue) ? courseValue : [courseValue];
 
       courseIds.forEach(courseId => {
@@ -28,7 +27,7 @@ const AssignmentRowService = {
 
         const teacher = row.teacher || 'Non assigné';
         if (!stats[teacher]) {
-          stats[teacher] = { cm: 0, td: 0, tp: 0, total: '0' };
+          stats[teacher] = { cm: 0, td: 0, tp: 0, totalEqCm: '0', totalHours: '0' };
         }
 
         if (row.type === 'CM') stats[teacher].cm++;
@@ -38,9 +37,12 @@ const AssignmentRowService = {
     });
 
     // Calculer l'équivalent CM : CM + (TD + TP) * 2/3
+    // Et le total d'heures (chaque séance = 1.5h)
     Object.values(stats).forEach(stat => {
       const eqCm = stat.cm + ((stat.td + stat.tp) * 2 / 3);
-      stat.total = eqCm.toFixed(1); // Garder 1 décimale
+      const hours = (stat.cm + stat.td + stat.tp) * 1.5;
+      stat.totalEqCm = eqCm.toFixed(1);
+      stat.totalHours = hours.toFixed(1);
     });
 
     return stats;
@@ -2812,7 +2814,10 @@ export default function App() {
                                 <div className="flex justify-between items-start mb-3 border-b pb-2">
                                   <div>
                                     <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {(stats.total * 1.5).toFixed(2)}</p>
+                                    <div className="flex flex-col gap-0.5 mt-1">
+                                      <p className="text-[10px] text-blue-600 font-black uppercase">Cumul: {stats.totalHours}h</p>
+                                      <p className="text-[10px] text-slate-500 font-bold uppercase">Éq. CM: {stats.totalEqCm}</p>
+                                    </div>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
