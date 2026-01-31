@@ -2811,7 +2811,7 @@ export default function App() {
                                 <div className="flex justify-between items-start mb-3 border-b pb-2">
                                   <div>
                                     <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {stats.total}</p>
+                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {(Number(stats.total) * 1.5).toFixed(2)} h</p>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
