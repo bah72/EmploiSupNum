@@ -859,94 +859,80 @@ export default function App() {
   const conflicts = useMemo(() => {
     const conflictSet = new Set<string>();
 
-    // 1. Conflits locaux (même salle ou même prof dans le même créneau)
+    const getParallelSemesters = (sem: string) => {
+      if (['S1', 'S3', 'S5'].includes(sem)) return ['S1', 'S3', 'S5'];
+      if (['S2', 'S4', 'S6'].includes(sem)) return ['S2', 'S4', 'S6'];
+      return [sem];
+    };
+
+    const parallelSemesters = getParallelSemesters(semester);
+
+    // 1. Conflits locaux et globaux (même salle ou même prof)
     Object.entries(schedule).forEach(([key, courseValue]) => {
       const [sem, week, group, day, time] = key.split('|');
-      if (sem !== semester || week !== `w${currentWeek}` || group !== activeMainGroup) return;
 
-      // Normaliser la valeur (gérer les cas string | null | string[])
-      const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
+      // On ne calcule les conflits QUE pour ce qu'on voit (semestre actuel, semaine actuelle)
+      if (sem !== semester || week !== `w${currentWeek}`) return;
 
-      // Vérifier les conflits entre tous les cours dans ce créneau
-      for (let i = 0; i < courseIds.length; i++) {
-        const courseId1 = courseIds[i];
-        const course1 = assignmentRows.find(r => r.id === courseId1);
-        if (!course1) continue;
-
-        for (let j = i + 1; j < courseIds.length; j++) {
-          const courseId2 = courseIds[j];
-          const course2 = assignmentRows.find(r => r.id === courseId2);
-          if (!course2) continue;
-
-          // Vérifier conflit de salle
-          if (course1.room && course2.room &&
-            course1.room !== '?' && course2.room !== '?' &&
-            course1.room !== '' && course2.room !== '' &&
-            course1.room === course2.room) {
-            conflictSet.add(courseId1);
-            conflictSet.add(courseId2);
-          }
-
-          // Vérifier conflit de prof
-          const teachers1 = course1.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-          const teachers2 = course2.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-          const commonTeacher = teachers1.find(t => teachers2.includes(t));
-          if (commonTeacher) {
-            conflictSet.add(courseId1);
-            conflictSet.add(courseId2);
-          }
-
-          // Conflit CM avec tout autre cours pour le même groupe
-          if (course1.type === 'CM' || course2.type === 'CM') {
-            conflictSet.add(courseId1);
-            conflictSet.add(courseId2);
-          }
-        }
-      }
-    });
-
-    // 2. Conflits globaux (Salle/Prof pris par un autre groupe)
-    Object.entries(schedule).forEach(([key, courseValue]) => {
-      const [sem, week, group, day, time] = key.split('|');
-      if (sem !== semester || week !== `w${currentWeek}` || group !== activeMainGroup) return;
-
-      // Normaliser la valeur (gérer les cas string | null | string[])
       const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
 
       for (const courseId of courseIds) {
         const currentCourse = assignmentRows.find(r => r.id === courseId);
         if (!currentCourse) continue;
 
-        for (const otherGroup of dynamicGroups) {
-          if (otherGroup === activeMainGroup) continue;
+        // --- Vérifier contre TOUS les autres cours du MÊME créneau dans TOUS les semestres parallèles ---
+        for (const semToCheck of parallelSemesters) {
+          for (const otherGroup of MAIN_GROUPS) {
+            const otherSlotKey = `${semToCheck}|w${currentWeek}|${otherGroup}|${day}|${time}`;
+            const otherCourseValue = schedule[otherSlotKey];
+            const otherCourseIds = Array.isArray(otherCourseValue) ? otherCourseValue : (otherCourseValue ? [otherCourseValue] : []);
 
-          const otherSlotKey = `${semester}|w${currentWeek}|${otherGroup}|${day}|${time}`;
-          const otherCourseValue = schedule[otherSlotKey];
-          // Normaliser la valeur (gérer les cas string | null | string[])
-          const otherCourseIds = Array.isArray(otherCourseValue) ? otherCourseValue : (otherCourseValue ? [otherCourseValue] : []);
+            for (const otherId of otherCourseIds) {
+              if (otherId === courseId) continue; // Ne pas se comparer à soi-même
 
-          for (const otherCourseId of otherCourseIds) {
-            const otherCourse = assignmentRows.find(r => r.id === otherCourseId);
-            if (!otherCourse) continue;
+              const otherCourse = assignmentRows.find(r => r.id === otherId);
+              if (!otherCourse) continue;
 
-            const isSharedClass = currentCourse.subject === otherCourse.subject &&
-              currentCourse.type === otherCourse.type &&
-              currentCourse.room === otherCourse.room;
+              // Si c'est literallement le même cours (partagé entre groupes), pas de conflit
+              const isSameManifestedCourse = currentCourse.subject === otherCourse.subject &&
+                currentCourse.type === otherCourse.type &&
+                currentCourse.room === otherCourse.room &&
+                currentCourse.teacher === otherCourse.teacher;
 
-            if (!isSharedClass) {
-              // Vérifier conflit de salle
+              if (isSameManifestedCourse) continue;
+
+              // Conflit de salle
               if (currentCourse.room && otherCourse.room &&
                 currentCourse.room !== '?' && otherCourse.room !== '?' &&
                 currentCourse.room !== '' && otherCourse.room !== '' &&
                 currentCourse.room === otherCourse.room) {
                 conflictSet.add(courseId);
               }
-              // Vérifier conflit de prof
-              const currentTeachers = currentCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-              const otherTeachers = otherCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-              const commonTeacher = currentTeachers.find(t => otherTeachers.includes(t));
+
+              // Conflit de prof
+              const teachers1 = currentCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
+              const teachers2 = otherCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
+              const commonTeacher = teachers1.find(t => teachers2.includes(t));
               if (commonTeacher) {
                 conflictSet.add(courseId);
+              }
+
+              // Conflit CM (si même semestre, un CM bloque tout le groupe)
+              if (semToCheck === semester && otherGroup === group) {
+                if (currentCourse.type === 'CM' || otherCourse.type === 'CM') {
+                  conflictSet.add(courseId);
+                }
+              }
+
+              // Conflit Sous-groupe (si même semestre et même groupe principal)
+              if (semToCheck === semester && currentCourse.mainGroup === otherCourse.mainGroup) {
+                if (currentCourse.subLabel && otherCourse.subLabel) {
+                  const match1 = currentCourse.subLabel.match(/^(TD|TP)(\d+)$/);
+                  const match2 = otherCourse.subLabel.match(/^(TD|TP)(\d+)$/);
+                  if (match1 && match2 && match1[2] === match2[2]) {
+                    conflictSet.add(courseId);
+                  }
+                }
               }
             }
           }
@@ -962,6 +948,15 @@ export default function App() {
   const checkInstantConflict = (courseId: string, day: string, time: string): string | null => {
     const draggingCourse = assignmentRows.find(r => r.id === courseId);
     if (!draggingCourse) return null;
+
+    // Définir les clusters de semestres parallèles
+    const getParallelSemesters = (sem: string) => {
+      if (['S1', 'S3', 'S5'].includes(sem)) return ['S1', 'S3', 'S5'];
+      if (['S2', 'S4', 'S6'].includes(sem)) return ['S2', 'S4', 'S6'];
+      return [sem];
+    };
+
+    const parallelSemesters = getParallelSemesters(semester);
 
     // Trouver tous les cours similaires (même matière, même type, même enseignant, même salle, même semestre)
     const similarCourses = assignmentRows.filter(r =>
@@ -984,7 +979,7 @@ export default function App() {
       groupsToCheck = Array.from(groupsSet);
     }
 
-    // 1. Vérifier les conflits dans le créneau pour tous les groupes concernés
+    // 1. Vérifier les conflits dans le créneau pour tous les groupes concernés (DANS LE SEMESTRE ACTUEL)
     for (const group of groupsToCheck) {
       const currentSlotKey = `${semester}|w${currentWeek}|${group}|${day}|${time}`;
       const existingLocalValue = schedule[currentSlotKey];
@@ -993,7 +988,7 @@ export default function App() {
 
       // Si le cours est déjà dans ce créneau, permettre le déplacement/remplacement
       if (existingLocalIds.includes(courseId as string)) {
-        continue; // Pas de conflit si c'est le même cours, passer au groupe suivant
+        continue;
       }
 
       // Vérifier les conflits avec les autres cours dans le même créneau (même salle ou même prof)
@@ -1010,11 +1005,13 @@ export default function App() {
         }
 
         // Vérifier conflit de prof (même prof)
-        const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-        const existingTeachers = existingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
+        const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
+        const existingTeachers = existingCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
         const commonTeacher = draggingTeachers.find(t => existingTeachers.includes(t));
         if (commonTeacher) {
-          return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà dans ce créneau (${existingCourse.subject}) - ${group}`;
+          // Retrouver le nom d'origine pour l'affichage
+          const displayTeacher = draggingCourse.teacher.split('/').find(t => t.trim().toLowerCase() === commonTeacher) || commonTeacher;
+          return `CONFLIT ENSEIGNANT : ${displayTeacher} enseigne déjà dans ce créneau (${existingCourse.subject}) - ${group}`;
         }
 
         // Interdire un CM en parallèle avec tout autre cours pour le même groupe
@@ -1027,148 +1024,51 @@ export default function App() {
           return `CONFLIT CM : Un autre cours ne peut pas être en parallèle avec un CM pour le même groupe (CM ${existingCourse.subject} et ${draggingCourse.type} ${draggingCourse.subject})`;
         }
 
-        // Interdire les sous-groupes du même numéro d'être en parallèle
-        // TD11 ne peut pas être avec TP11, mais TD11 peut être avec TP12
+        // Conflit de sous-groupe (ex: TD11 vs TP11)
         if (draggingCourse.subLabel && existingCourse.subLabel) {
-          const draggingSubGroup = draggingCourse.subLabel;
-          const existingSubGroup = existingCourse.subLabel;
-
-          console.log('🔍 DEBUG CONFLIT SOUS-GROUPE:', {
-            dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type },
-            existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type }
-          });
-
-          // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
-          const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
-          const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
-
-          console.log('🔍 DEBUG REGEX MATCH:', {
-            draggingMatch,
-            existingMatch
-          });
-
-          if (draggingMatch && existingMatch) {
-            const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
-            const existingSubNumber = existingMatch[2]; // "11", "12", etc.
-
-            console.log('🔍 DEBUG COMPARAISON:', {
-              draggingSubNumber,
-              existingSubNumber,
-              sameNumber: draggingSubNumber === existingSubNumber,
-              differentTypes: draggingMatch[1] !== existingMatch[1]
-            });
-
-            // Si même numéro de sous-groupe ET types différents (TD vs TP)
-            if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
-              console.log('🚨 CONFLIT DÉTECTÉ!');
-              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
-            }
-
-            // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
-            if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
-              console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ!');
-              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec un autre ${existingSubGroup} (même sous-groupe)`;
-            }
+          const draggingMatch = draggingCourse.subLabel.match(/^(TD|TP)(\d+)$/);
+          const existingMatch = existingCourse.subLabel.match(/^(TD|TP)(\d+)$/);
+          if (draggingMatch && existingMatch && draggingMatch[2] === existingMatch[2]) {
+            return `CONFLIT SOUS-GROUPE : ${draggingCourse.subLabel} ne peut pas être en parallèle avec ${existingCourse.subLabel}`;
           }
         }
       }
     }
 
-    // NOUVEAU : Vérifier aussi les conflits de sous-groupes dans TOUS les groupes du même niveau
-    // (pas seulement les groupes "similaires")
-    for (const group of dynamicGroups) {
-      // Vérifier seulement si c'est le même groupe principal que le cours qu'on déplace
-      if (group !== draggingCourse.mainGroup) continue;
+    // 2. Vérifier les conflits globaux (entre TOUS les groupes de TOUS les semestres parallèles)
+    for (const semToCheck of parallelSemesters) {
+      for (const otherGroup of MAIN_GROUPS) { // Vérifier les 4 groupes de base pour chaque semestre parallèle
+        // Ne pas vérifier soi-même (même semestre, même groupe principal ou partagé)
+        if (semToCheck === semester && groupsToCheck.includes(otherGroup)) continue;
 
-      const currentSlotKey = `${semester}|w${currentWeek}|${group}|${day}|${time}`;
-      const existingLocalValue = schedule[currentSlotKey];
-      const existingLocalIds = Array.isArray(existingLocalValue) ? existingLocalValue : (existingLocalValue ? [existingLocalValue] : []);
+        const otherSlotKey = `${semToCheck}|w${currentWeek}|${otherGroup}|${day}|${time}`;
+        const otherCourseValue = schedule[otherSlotKey];
+        const otherCourseIds = Array.isArray(otherCourseValue) ? otherCourseValue : (otherCourseValue ? [otherCourseValue] : []);
 
-      // Si le cours est déjà dans ce créneau, permettre le déplacement/remplacement
-      if (existingLocalIds.includes(courseId as string)) {
-        continue;
-      }
+        for (const otherId of otherCourseIds) {
+          const otherCourse = assignmentRows.find(r => r.id === otherId);
+          if (!otherCourse) continue;
 
-      // Vérifier les conflits de sous-groupes avec TOUS les cours du créneau
-      for (const existingCourseId of existingLocalIds) {
-        const existingCourse = assignmentRows.find(r => r.id === existingCourseId);
-        if (!existingCourse) continue;
+          // Si c'est literallement le même cours partagé, pas de conflit
+          if (draggingCourse.id === otherCourse.id) continue;
 
-        // Vérification spéciale pour les sous-groupes (même si pas "similaires")
-        if (draggingCourse.subLabel && existingCourse.subLabel) {
-          const draggingSubGroup = draggingCourse.subLabel;
-          const existingSubGroup = existingCourse.subLabel;
-
-          console.log('🔍 DEBUG CONFLIT SOUS-GROUPE (GLOBAL):', {
-            dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type, mainGroup: draggingCourse.mainGroup },
-            existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type, mainGroup: existingCourse.mainGroup }
-          });
-
-          // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
-          const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
-          const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
-
-          if (draggingMatch && existingMatch) {
-            const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
-            const existingSubNumber = existingMatch[2]; // "11", "12", etc.
-
-            console.log('🔍 DEBUG COMPARAISON (GLOBAL):', {
-              draggingSubNumber,
-              existingSubNumber,
-              sameNumber: draggingSubNumber === existingSubNumber,
-              differentTypes: draggingMatch[1] !== existingMatch[1]
-            });
-
-            // Si même numéro de sous-groupe ET types différents (TD vs TP)
-            if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
-              console.log('🚨 CONFLIT SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
-              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
-            }
-
-            // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
-            if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
-              console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
-              return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec un autre ${existingSubGroup} (même sous-groupe)`;
-            }
-          }
-        }
-      }
-    }
-
-    // 2. Vérifier les conflits globaux (entre groupes)
-    for (const otherGroup of dynamicGroups) {
-      // Ne pas vérifier les conflits avec les groupes qui partagent déjà ce cours
-      if (groupsToCheck.includes(otherGroup)) continue;
-
-      const otherSlotKey = `${semester}|w${currentWeek}|${otherGroup}|${day}|${time}`;
-      const otherCourseValue = schedule[otherSlotKey];
-      // Normaliser la valeur (gérer les cas string | null | string[])
-      const otherCourseIds = Array.isArray(otherCourseValue) ? otherCourseValue : (otherCourseValue ? [otherCourseValue] : []);
-
-      // Vérifier tous les cours dans le créneau de l'autre groupe
-      for (const otherCourseId of otherCourseIds) {
-        const otherCourse = assignmentRows.find(r => r.id === otherCourseId as string);
-        if (!otherCourse) continue;
-
-        const isSharedClass = draggingCourse.subject === otherCourse.subject &&
-          draggingCourse.type === otherCourse.type &&
-          draggingCourse.room === otherCourse.room;
-
-        if (!isSharedClass) {
           // Vérifier conflit de salle
           if (draggingCourse.room && otherCourse.room &&
             draggingCourse.room !== '?' && otherCourse.room !== '?' &&
             draggingCourse.room !== '' && otherCourse.room !== '' &&
             draggingCourse.room === otherCourse.room) {
-            return `CONFLIT SALLE : ${draggingCourse.room} déjà utilisée par ${otherGroup} (${otherCourse.subject})`;
+            const semLabel = semToCheck !== semester ? ` (${semToCheck})` : "";
+            return `CONFLIT SALLE : ${draggingCourse.room} déjà utilisée par ${otherGroup}${semLabel} (${otherCourse.subject})`;
           }
 
           // Vérifier conflit de prof
-          const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
-          const otherTeachers = otherCourse.teacher.split('/').map(t => t.trim()).filter(t => t && t !== '?');
+          const draggingTeachers = draggingCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
+          const otherTeachers = otherCourse.teacher.split('/').map(t => t.trim().toLowerCase()).filter(t => t && t !== '?');
           const commonTeacher = draggingTeachers.find(t => otherTeachers.includes(t));
           if (commonTeacher) {
-            return `CONFLIT ENSEIGNANT : ${commonTeacher} enseigne déjà en ${otherGroup} (${otherCourse.subject})`;
+            const semLabel = semToCheck !== semester ? ` (${semToCheck})` : "";
+            const displayTeacher = draggingCourse.teacher.split('/').find(t => t.trim().toLowerCase() === commonTeacher) || commonTeacher;
+            return `CONFLIT ENSEIGNANT : ${displayTeacher} enseigne déjà en ${otherGroup}${semLabel} (${otherCourse.subject})`;
           }
         }
       }
