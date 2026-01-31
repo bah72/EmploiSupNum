@@ -118,15 +118,15 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
             });
             loadFullDataset(false);
           }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug (Réinitialise tout)">🐛</button>
-          
+
           <button onClick={refreshCardsOnly} className="flex items-center justify-center bg-cyan-50 hover:bg-cyan-100 text-cyan-600 border border-cyan-200 rounded p-1.5 shadow-sm transition-all no-print" title="Rafraîchir seulement les cartes">🔄</button>
-          
+
           <button onClick={clearScheduleOnly} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all no-print" title="Vider seulement le planning">🗑️</button>
-          
+
           <button onClick={migrateToNewSystem} className="flex items-center justify-center bg-purple-50 hover:bg-purple-100 text-purple-600 border border-purple-200 rounded p-1.5 shadow-sm transition-all no-print" title="Migrer vers TD1/TD2/TP1/TP2 (conserve les affectations)">�</button>
-          
+
           <button onClick={diagnoseCourses} className="flex items-center justify-center bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded p-1.5 shadow-sm transition-all no-print" title="Diagnostiquer les problèmes">🔍</button>
-          
+
           <button onClick={fixSubGroups} className="flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 rounded p-1.5 shadow-sm transition-all no-print" title="Corriger les sous-groupes">🔧</button>
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function App() {
   const [activeMainGroup, setActiveMainGroup] = useState("Groupe 1");
   const [currentWeek, setCurrentWeek] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   // Stabiliser la fonction de changement de recherche pour éviter les re-rendus
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -187,7 +187,18 @@ export default function App() {
     const subjectLabels = [...new Set(courses.map(c => c.subjectLabel))].join('/');
     const teachers = [...new Set(courses.map(c => c.teacher))].join('/');
     const rooms = [...new Set(courses.map(c => c.room))].join('/');
-    const types = [...new Set(courses.map(c => c.type))].join('/');
+
+    // Formater les types intelligemment (ex: TP1 + G1 -> TP11)
+    const formattedTypes = courses.map(c => {
+      const groupNum = (c.mainGroup || '').replace(/[^0-9]/g, '');
+      const typeLetters = (c.type || '').replace(/[0-9]/g, ''); // TP, TD...
+      const typeNum = (c.type || '').replace(/[^0-9]/g, ''); // 1, 2...
+
+      if (typeLetters === 'CM') return 'CM';
+      if (groupNum && typeNum) return `${typeLetters}${groupNum}${typeNum}`;
+      return c.type;
+    });
+    const types = [...new Set(formattedTypes)].join('/');
 
     // Pour les cours parallèles, utiliser le premier type pour la couleur de base
     const primaryType = courses[0].type;
@@ -260,7 +271,14 @@ export default function App() {
     const savedRooms = localStorage.getItem('supnum_custom_rooms');
     if (savedRooms) {
       try {
-        setCustomRooms(JSON.parse(savedRooms));
+        const parsed = JSON.parse(savedRooms);
+        if (Array.isArray(parsed)) {
+          setCustomRooms(parsed);
+        } else {
+          // Si le format est corrompu (ex: ancien format objet), on réinitialise
+          setCustomRooms(ALL_ROOMS);
+          localStorage.removeItem('supnum_custom_rooms');
+        }
       } catch (e) {
         console.error('Erreur lors du chargement des salles:', e);
       }
@@ -270,14 +288,21 @@ export default function App() {
     if (savedSubjects) {
       try {
         const parsedSubjects = JSON.parse(savedSubjects);
-        // MIGRATION: Assurer que les champs enseignantsCM et enseignantsTD existent
-        parsedSubjects.forEach((sem: any) => {
-          sem.matieres.forEach((mat: any) => {
-            if (mat.enseignantsCM === undefined) mat.enseignantsCM = mat.enseignants || '';
-            if (mat.enseignantsTD === undefined) mat.enseignantsTD = mat.enseignants || '';
+
+        if (!Array.isArray(parsedSubjects)) {
+          console.warn('Format de matières invalide dans localStorage, reset.');
+          setCustomSubjects(MASTER_DB);
+        } else {
+          // MIGRATION: Assurer que les champs enseignantsCM et enseignantsTD existent
+
+          parsedSubjects.forEach((sem: any) => {
+            sem.matieres.forEach((mat: any) => {
+              if (mat.enseignantsCM === undefined) mat.enseignantsCM = mat.enseignants || '';
+              if (mat.enseignantsTD === undefined) mat.enseignantsTD = mat.enseignants || '';
+            });
           });
-        });
-        setCustomSubjects(parsedSubjects);
+          setCustomSubjects(parsedSubjects);
+        }
       } catch (e) {
         console.error('Erreur lors du chargement des matières:', e);
       }
@@ -342,7 +367,7 @@ export default function App() {
               sharedGroups: [group],
               subLabel: 'CM',
               teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné', // Prendre seulement le premier enseignant
-              room: 'Amphi A',
+              room: 'Khawarizmi',
               semester: semData.semestre
             });
 
@@ -411,10 +436,10 @@ export default function App() {
   // Génération des sous-groupes TD/TP
   const allSubGroups = useMemo(() => {
     const subGroups: { id: string, label: string, mainGroup: string, type: 'TD' | 'TP' }[] = [];
-    
+
     for (let groupIndex = 1; groupIndex <= config.numberOfGroups; groupIndex++) {
       const mainGroup = `Groupe ${groupIndex}`;
-      
+
       // Générer les sous-groupes TD
       for (let subIndex = 1; subIndex <= config.subGroupsPerGroup; subIndex++) {
         subGroups.push({
@@ -424,7 +449,7 @@ export default function App() {
           type: 'TD'
         });
       }
-      
+
       // Générer les sous-groupes TP
       for (let subIndex = 1; subIndex <= config.subGroupsPerGroup; subIndex++) {
         subGroups.push({
@@ -435,7 +460,7 @@ export default function App() {
         });
       }
     }
-    
+
     return subGroups;
   }, [config.numberOfGroups, config.subGroupsPerGroup]);
 
@@ -447,7 +472,7 @@ export default function App() {
       if (course.type === 'CM' && course.subLabel && course.subLabel !== 'CM') return true;
       return false;
     });
-    
+
     console.log('🔍 Diagnostic des cours problématiques:', {
       total: assignmentRows.length,
       problematic: problematicCourses.length,
@@ -459,11 +484,11 @@ export default function App() {
         mainGroup: c.mainGroup
       }))
     });
-    
+
     if (problematicCourses.length > 0) {
-      setToastMessage({ 
-        msg: `${problematicCourses.length} cours avec incohérence type/label détectés (voir console)`, 
-        type: 'error' 
+      setToastMessage({
+        msg: `${problematicCourses.length} cours avec incohérence type/label détectés (voir console)`,
+        type: 'error'
       });
     } else {
       setToastMessage({ msg: 'Aucun problème détecté !', type: 'success' });
@@ -473,33 +498,33 @@ export default function App() {
   // Fonction de migration vers le nouveau système (SANS perdre les affectations)
   const migrateToNewSystem = () => {
     if (!confirm('Migrer vers le nouveau système TD1/TD2/TP1/TP2 ? (Conserve les affectations d\'enseignants)')) return;
-    
+
     setAssignmentRows(prev => {
       // Créer un compteur pour chaque combinaison type/matière/groupe/semestre
       const counters: Record<string, number> = {};
-      
+
       return prev.map(course => {
         let newType = course.type;
         let newSubLabel = course.subLabel || course.type;
-        
+
         // Migrer les anciens types vers les nouveaux
         if (course.type.startsWith('TD') || course.type.startsWith('TP')) {
           const baseType = course.type.startsWith('TD') ? 'TD' : 'TP';
-          
+
           // Créer une clé unique pour ce type de cours
           const key = `${baseType}-${course.subject}-${course.mainGroup}-${course.semester}`;
-          
+
           // Incrémenter le compteur pour cette combinaison
           counters[key] = (counters[key] || 0) + 1;
-          
+
           // Assigner le nouveau type (TD1, TD2, TP1, TP2, etc.)
           newType = `${baseType}${counters[key]}` as CourseType;
-          
+
           // Générer le nouveau subLabel
           const groupNumber = course.mainGroup.replace('Groupe ', '');
           newSubLabel = `${baseType}${groupNumber}${counters[key]}`;
         }
-        
+
         return {
           ...course,
           type: newType,
@@ -507,84 +532,100 @@ export default function App() {
         };
       });
     });
-    
+
     setToastMessage({ msg: 'Migration vers le nouveau système terminée ! Affectations conservées.', type: 'success' });
   };
 
   // Fonction pour rafraîchir SEULEMENT les cartes (assignmentRows)
   const refreshCardsOnly = () => {
-    if (!confirm('Rafraîchir seulement les cartes ? (Conserve le planning et les affectations)')) return;
-    
+    if (!confirm('Rafraîchir seulement les cartes ? (Conserve le planning et les affectations des profs)')) return;
+
     const newRows: AssignmentRow[] = [];
+
+    // Fonction pour trouver une carte existante correspondante
+    const findExistingCard = (subject: string, type: string, mainGroup: string, semester: string) => {
+      return assignmentRows.find(row =>
+        row.subject === subject &&
+        row.type === type &&
+        row.mainGroup === mainGroup &&
+        row.semester === semester
+      );
+    };
 
     // IMPORTANT: Utiliser customSubjects (données modifiées) au lieu de MASTER_DB
     customSubjects.forEach((semData: any) => {
       semData.matieres.forEach((matiere: any) => {
-        // Utiliser les enseignants CM pour les cours CM
-        const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
-        // Utiliser les enseignants TD pour les cours TD
-        const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+        // Utiliser les enseignants CM pour les cours CM (seulement si pas d'existant)
+        const defaultTeachersCM = matiere.enseignantsCM || matiere.enseignants || '';
+        // Utiliser les enseignants TD pour les cours TD (seulement si pas d'existant)
+        const defaultTeachersTD = matiere.enseignantsTD || matiere.enseignants || '';
 
         // Créer les cours CM pour chaque groupe principal
         dynamicGroups.forEach(group => {
+          const existing = findExistingCard(matiere.code, 'CM', group, semData.semestre);
           newRows.push({
-            id: Math.random().toString(36).substr(2, 9),
+            id: existing?.id || Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
             subjectLabel: matiere.libelle,
             type: 'CM',
             mainGroup: group,
             sharedGroups: [group],
             subLabel: 'CM',
-            teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné',
-            room: 'Amphi A',
+            // CONSERVER l'enseignant et la salle existants si disponibles
+            teacher: existing?.teacher || defaultTeachersCM.split('/')[0]?.trim() || 'Non assigné',
+            room: existing?.room || 'Khawarizmi',
             semester: semData.semestre
           });
         });
 
         // Créer les cours TD pour chaque sous-groupe
         allSubGroups.filter(sg => sg.type === 'TD').forEach((subGroup, index) => {
-          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" : 
-                             subGroup.mainGroup === "Groupe 2" ? "201" : 
-                             subGroup.mainGroup === "Groupe 3" ? "202" : "203";
-          
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" :
+            subGroup.mainGroup === "Groupe 2" ? "201" :
+              subGroup.mainGroup === "Groupe 3" ? "202" : "203";
+
           // Utiliser TD1, TD2, etc. comme type
           const typeIndex = (index % config.subGroupsPerGroup) + 1;
           const courseType = `TD${typeIndex}` as CourseType;
-          
+
+          const existing = findExistingCard(matiere.code, courseType, subGroup.mainGroup, semData.semestre);
           newRows.push({
-            id: Math.random().toString(36).substr(2, 9),
+            id: existing?.id || Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
             subjectLabel: matiere.libelle,
             type: courseType,
             mainGroup: subGroup.mainGroup,
             sharedGroups: [subGroup.mainGroup],
             subLabel: subGroup.label, // TD11, TD12, etc.
-            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
-            room: defaultRoom,
+            // CONSERVER l'enseignant et la salle existants si disponibles
+            teacher: existing?.teacher || defaultTeachersTD.split('/')[0]?.trim() || 'Non assigné',
+            room: existing?.room || defaultRoom,
             semester: semData.semestre
           });
         });
 
         // Créer les cours TP pour chaque sous-groupe
         allSubGroups.filter(sg => sg.type === 'TP').forEach((subGroup, index) => {
-          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" : 
-                             subGroup.mainGroup === "Groupe 2" ? "Lab 2" : 
-                             subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
-          
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" :
+            subGroup.mainGroup === "Groupe 2" ? "Lab 2" :
+              subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+
           // Utiliser TP1, TP2, etc. comme type
           const typeIndex = (index % config.subGroupsPerGroup) + 1;
           const courseType = `TP${typeIndex}` as CourseType;
-          
+
+          const existing = findExistingCard(matiere.code, courseType, subGroup.mainGroup, semData.semestre);
           newRows.push({
-            id: Math.random().toString(36).substr(2, 9),
+            id: existing?.id || Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
             subjectLabel: matiere.libelle,
             type: courseType,
             mainGroup: subGroup.mainGroup,
             sharedGroups: [subGroup.mainGroup],
             subLabel: subGroup.label, // TP11, TP12, etc.
-            teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
-            room: defaultRoom,
+            // CONSERVER l'enseignant et la salle existants si disponibles
+            teacher: existing?.teacher || defaultTeachersTD.split('/')[0]?.trim() || 'Non assigné',
+            room: existing?.room || defaultRoom,
             semester: semData.semestre
           });
         });
@@ -592,13 +633,13 @@ export default function App() {
     });
 
     setAssignmentRows(newRows);
-    setToastMessage({ msg: 'Cartes rafraîchies ! Planning et affectations conservés.', type: 'success' });
+    setToastMessage({ msg: 'Cartes rafraîchies ! Affectations des profs conservées.', type: 'success' });
   };
 
   // Fonction pour vider SEULEMENT le planning (schedule)
   const clearScheduleOnly = () => {
     if (!confirm('Vider seulement le planning ? (Conserve les cartes et affectations)')) return;
-    
+
     setSchedule({});
     setToastMessage({ msg: 'Planning vidé ! Cartes et affectations conservées.', type: 'success' });
   };
@@ -608,12 +649,12 @@ export default function App() {
     setAssignmentRows(prev => {
       // Créer un compteur pour chaque combinaison type/matière/groupe/semestre
       const counters: Record<string, number> = {};
-      
+
       return prev.map(course => {
         // D'abord, extraire le vrai type depuis le subLabel si nécessaire
         let correctedType = course.type;
         let correctedSubLabel = course.subLabel || course.type;
-        
+
         // Si le subLabel contient TD ou TP, s'assurer que le type correspond
         if (course.subLabel && (course.subLabel.startsWith('TD') || course.subLabel.startsWith('TP'))) {
           if (course.subLabel.startsWith('TD')) {
@@ -622,30 +663,30 @@ export default function App() {
             correctedType = 'TP1' as CourseType;
           }
         }
-        
+
         // Maintenant générer le bon subLabel basé sur le type corrigé
         if (correctedType.startsWith('TD') || correctedType.startsWith('TP')) {
           const baseType = correctedType.startsWith('TD') ? 'TD' : 'TP';
           // Créer une clé unique pour ce type de cours
           const key = `${baseType}-${course.subject}-${course.mainGroup}-${course.semester}`;
-          
+
           // Incrémenter le compteur pour cette combinaison
           counters[key] = (counters[key] || 0) + 1;
-          
+
           const groupNumber = course.mainGroup.replace('Groupe ', '');
           correctedSubLabel = `${baseType}${groupNumber}${counters[key]}`;
         } else {
           correctedSubLabel = correctedType; // CM reste CM
         }
-        
-        return { 
-          ...course, 
+
+        return {
+          ...course,
           type: correctedType as CourseType,
-          subLabel: correctedSubLabel 
+          subLabel: correctedSubLabel
         };
       });
     });
-    
+
     setToastMessage({ msg: 'Types et labels des sous-groupes corrigés !', type: 'success' });
   };
 
@@ -672,21 +713,21 @@ export default function App() {
             sharedGroups: [group],
             subLabel: 'CM',
             teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné',
-            room: 'Amphi A',
+            room: 'Khawarizmi',
             semester: semData.semestre
           });
         });
 
         // Créer les cours TD pour chaque sous-groupe
         allSubGroups.filter(sg => sg.type === 'TD').forEach((subGroup, index) => {
-          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" : 
-                             subGroup.mainGroup === "Groupe 2" ? "201" : 
-                             subGroup.mainGroup === "Groupe 3" ? "202" : "203";
-          
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "101" :
+            subGroup.mainGroup === "Groupe 2" ? "201" :
+              subGroup.mainGroup === "Groupe 3" ? "202" : "203";
+
           // Utiliser TD1, TD2, etc. comme type
           const typeIndex = (index % config.subGroupsPerGroup) + 1;
           const courseType = `TD${typeIndex}` as CourseType;
-          
+
           newRows.push({
             id: Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
@@ -703,14 +744,14 @@ export default function App() {
 
         // Créer les cours TP pour chaque sous-groupe
         allSubGroups.filter(sg => sg.type === 'TP').forEach((subGroup, index) => {
-          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" : 
-                             subGroup.mainGroup === "Groupe 2" ? "Lab 2" : 
-                             subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
-          
+          const defaultRoom = subGroup.mainGroup === "Groupe 1" ? "Lab 1" :
+            subGroup.mainGroup === "Groupe 2" ? "Lab 2" :
+              subGroup.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+
           // Utiliser TP1, TP2, etc. comme type
           const typeIndex = (index % config.subGroupsPerGroup) + 1;
           const courseType = `TP${typeIndex}` as CourseType;
-          
+
           newRows.push({
             id: Math.random().toString(36).substr(2, 9),
             subject: matiere.code,
@@ -736,7 +777,7 @@ export default function App() {
         enseignantsTD: matiere.enseignantsTD || matiere.enseignants
       }))
     }));
-    
+
     setCustomSubjects(updatedCustomSubjects);
     setAssignmentRows(newRows);
     setSchedule({});
@@ -962,7 +1003,7 @@ export default function App() {
         if (draggingCourse.type === 'CM') {
           return `CONFLIT CM : Un cours de CM ne peut pas être en parallèle avec un autre cours pour le même groupe (${existingCourse.subject} ${existingCourse.type} et ${draggingCourse.subject} ${draggingCourse.type})`;
         }
-        
+
         // Interdire tout autre cours en parallèle avec un CM pour le même groupe
         if (existingCourse.type === 'CM') {
           return `CONFLIT CM : Un autre cours ne peut pas être en parallèle avec un CM pour le même groupe (CM ${existingCourse.subject} et ${draggingCourse.type} ${draggingCourse.subject})`;
@@ -973,38 +1014,38 @@ export default function App() {
         if (draggingCourse.subLabel && existingCourse.subLabel) {
           const draggingSubGroup = draggingCourse.subLabel;
           const existingSubGroup = existingCourse.subLabel;
-          
+
           console.log('🔍 DEBUG CONFLIT SOUS-GROUPE:', {
             dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type },
             existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type }
           });
-          
+
           // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
           const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
           const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
-          
+
           console.log('🔍 DEBUG REGEX MATCH:', {
             draggingMatch,
             existingMatch
           });
-          
+
           if (draggingMatch && existingMatch) {
             const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
             const existingSubNumber = existingMatch[2]; // "11", "12", etc.
-            
+
             console.log('🔍 DEBUG COMPARAISON:', {
               draggingSubNumber,
               existingSubNumber,
               sameNumber: draggingSubNumber === existingSubNumber,
               differentTypes: draggingMatch[1] !== existingMatch[1]
             });
-            
+
             // Si même numéro de sous-groupe ET types différents (TD vs TP)
             if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
               console.log('🚨 CONFLIT DÉTECTÉ!');
               return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
             }
-            
+
             // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
             if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
               console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ!');
@@ -1020,7 +1061,7 @@ export default function App() {
     for (const group of dynamicGroups) {
       // Vérifier seulement si c'est le même groupe principal que le cours qu'on déplace
       if (group !== draggingCourse.mainGroup) continue;
-      
+
       const currentSlotKey = `${semester}|w${currentWeek}|${group}|${day}|${time}`;
       const existingLocalValue = schedule[currentSlotKey];
       const existingLocalIds = Array.isArray(existingLocalValue) ? existingLocalValue : (existingLocalValue ? [existingLocalValue] : []);
@@ -1039,33 +1080,33 @@ export default function App() {
         if (draggingCourse.subLabel && existingCourse.subLabel) {
           const draggingSubGroup = draggingCourse.subLabel;
           const existingSubGroup = existingCourse.subLabel;
-          
+
           console.log('🔍 DEBUG CONFLIT SOUS-GROUPE (GLOBAL):', {
             dragging: { id: draggingCourse.id, subLabel: draggingSubGroup, type: draggingCourse.type, mainGroup: draggingCourse.mainGroup },
             existing: { id: existingCourse.id, subLabel: existingSubGroup, type: existingCourse.type, mainGroup: existingCourse.mainGroup }
           });
-          
+
           // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
           const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
           const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
-          
+
           if (draggingMatch && existingMatch) {
             const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
             const existingSubNumber = existingMatch[2]; // "11", "12", etc.
-            
+
             console.log('🔍 DEBUG COMPARAISON (GLOBAL):', {
               draggingSubNumber,
               existingSubNumber,
               sameNumber: draggingSubNumber === existingSubNumber,
               differentTypes: draggingMatch[1] !== existingMatch[1]
             });
-            
+
             // Si même numéro de sous-groupe ET types différents (TD vs TP)
             if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
               console.log('🚨 CONFLIT SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
               return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
             }
-            
+
             // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
             if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
               console.log('🚨 CONFLIT MÊME SOUS-GROUPE DÉTECTÉ (GLOBAL)!');
@@ -1288,6 +1329,7 @@ export default function App() {
 
 
   // Fonction pour sauvegarder en base de données
+  // Fonction pour sauvegarder en base de données (Complète)
   const handleSaveToDatabase = async () => {
     if (!currentUser) {
       setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
@@ -1295,29 +1337,31 @@ export default function App() {
     }
 
     try {
-      // Sauvegarder les assignmentRows
-      await fetch('/api/timetable/save', {
-        method: 'POST',
+      const allData = {
+        assignment_rows: assignmentRows,
+        schedule: schedule,
+        config: config,
+        custom_rooms: customRooms,
+        custom_subjects: customSubjects
+      };
+
+      // Sauvegarder tout en une fois
+      const response = await fetch('/api/timetable/save', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           userId: currentUser.username,
-          dataType: 'assignment_rows',
-          dataContent: assignmentRows
+          allData: allData
         }),
       });
 
-      // Sauvegarder le planning
-      await fetch('/api/timetable/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: currentUser.username,
-          dataType: 'schedule',
-          dataContent: schedule
-        }),
-      });
+      const data = await response.json();
 
-      setToastMessage({ msg: 'Données sauvegardées en base avec succès', type: 'success' });
+      if (data.success) {
+        setToastMessage({ msg: 'Toutes les données (profs, salles, planning...) sont sauvegardées !', type: 'success' });
+      } else {
+        setToastMessage({ msg: 'Erreur lors de la sauvegarde : ' + data.message, type: 'error' });
+      }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
       setToastMessage({ msg: 'Erreur lors de la sauvegarde en base', type: 'error' });
@@ -1541,28 +1585,28 @@ export default function App() {
     setAssignmentRows(prev => prev.map((r: AssignmentRow) => {
       if (r.id === id) {
         let updatedRow = { ...r, [field]: value };
-        
+
         // Si on change le type, mettre à jour le subLabel approprié
         if (field === 'type') {
           const newType = value as CourseType;
-          
+
           if (newType === 'CM') {
             updatedRow.subLabel = 'CM';
           } else if (newType.startsWith('TD') || newType.startsWith('TP')) {
             // Extraire le type de base et le numéro de sous-groupe
             const baseType = newType.startsWith('TD') ? 'TD' : 'TP';
             const subGroupNumber = newType.slice(2); // '1', '2', '3', '4'
-            
+
             // Générer le subLabel selon le groupe principal
             const groupNumber = r.mainGroup.replace('Groupe ', '');
             updatedRow.subLabel = `${baseType}${groupNumber}${subGroupNumber}`;
           }
         }
-        
+
         // Gestion spéciale pour mainGroup - régénérer le subLabel si nécessaire
         if (field === 'mainGroup') {
           updatedRow.sharedGroups = [value];
-          
+
           // Si c'est un TD ou TP, régénérer le subLabel avec le nouveau groupe
           if (r.type.startsWith('TD') || r.type.startsWith('TP')) {
             const baseType = r.type.startsWith('TD') ? 'TD' : 'TP';
@@ -1571,7 +1615,7 @@ export default function App() {
             updatedRow.subLabel = `${baseType}${newGroupNumber}${subGroupNumber}`;
           }
         }
-        
+
         return updatedRow;
       }
       return r;
@@ -1655,7 +1699,7 @@ export default function App() {
     return !isPlacedDirectly && !isSimilarPlaced;
   });
 
-  const gridTemplate = `24px repeat(${config.timeSlots.length}, minmax(150px, 1fr))`;
+  const gridTemplate = `24px repeat(${config.timeSlots.length}, minmax(300px, 1fr))`;
   const gridBaseClasses = "grid w-full";
 
   // Show login screen if not authenticated
@@ -1665,6 +1709,42 @@ export default function App() {
 
   return (
     <div id="export-container" className="h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden relative" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @media print {
+          @page { size: landscape; margin: 2mm; }
+          body { -webkit-print-color-adjust: exact !important; }
+          .no-print { display: none !important; }
+          
+          /* Débloquer le scroll pour tout voir */
+          .overflow-auto, .overflow-y-auto, .overflow-x-auto, .overflow-hidden { overflow: visible !important; height: auto !important; }
+          
+          /* Utiliser le zoom pour faire tenir tout le planning en largeur sans déformer les cellules */
+          /* On conserve les proportions "réelles" des cartes (300px) mais on réduit moins (0.7) grâce aux marges réduites */
+          .print-layout-fix {
+             zoom: 0.7 !important;
+             width: max-content !important; /* Force la largeur totale pour éviter la compression */
+             min-width: 100% !important;
+             display: grid !important; /* Garder la grille */
+          }
+          
+          /* Empêcher la coupure des jours au milieu d'une page */
+          .container-export-rows > div {
+             break-inside: avoid;
+             page-break-inside: avoid;
+          }
+          
+          /* Empêcher la déformation : les colonnes fixes ne doivent jamais rétrécir */
+          .w-12, .w-16, .w-24 { flex-shrink: 0 !important; }
+          
+          /* Supprimer l'espace vide en bas : hauteur automatique */
+          .h-screen { height: auto !important; min-height: 0 !important; }
+          #export-container { height: auto !important; }
+          
+          /* Cacher explicitement les zones de scroll inutiles */
+          .data-menu-container, .sidebar-container { display: none !important; }
+       }
+      `}} />
       {toastMessage && (
         <div className="absolute top-20 left-1/2 -translate-x-1/2 z-[9999]">
           <div className={`px-4 py-2 rounded-lg shadow-xl font-bold text-white flex items-center gap-2 ${toastMessage.type === 'error' ? 'bg-red-600' : 'bg-green-600'}`}>
@@ -1711,7 +1791,7 @@ export default function App() {
                 setCardsSidebarVisible(true);
               }
             }} className={`p-2 rounded-xl transition-colors ${activeTab === 'planning' ? 'bg-blue-600 text-white shadow-lg' : 'hover:bg-slate-800'}`} title="Planning"><Calendar size={20} /></button>
-            
+
             {/* Admin-only buttons */}
             {currentUser?.role === 'admin' && (
               <>
@@ -1808,14 +1888,14 @@ export default function App() {
                       </div>
 
                       <div className="flex-1 overflow-y-auto p-3 space-y-3">
-                        {sidebarCourses.map(c => <DraggableCard key={`${c.id}-${refreshKey}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
+                        {sidebarCourses.map((c, idx) => <DraggableCard key={`${c.id}-${refreshKey}-${idx}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
                       </div>
                     </div>
                   )}
 
-                  <div className="flex-1 p-2 bg-slate-200 overflow-hidden flex flex-col min-h-0 planning-container">
+                  <div className="flex-1 p-1 bg-slate-200 overflow-hidden flex flex-col min-h-0 planning-container">
                     <div id="calendar-capture-zone" className="flex-1 bg-white rounded-lg shadow border border-slate-300 overflow-x-auto overflow-y-auto flex flex-col min-h-0">
-                      <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: 'white', minWidth: '800px' }} className={`${gridBaseClasses} sticky top-0 z-20`}>
+                      <div style={{ gridTemplateColumns: gridTemplate, backgroundColor: 'white', minWidth: '800px' }} className={`${gridBaseClasses} sticky top-0 z-20 print-layout-fix`}>
                         <div className="p-1 text-center text-[10px] font-bold text-gray-800 bg-white border border-black"></div>
                         {config.timeSlots.map((t, index) => (
                           <div key={t} className={`p-1 text-center text-xs font-black text-gray-800 uppercase border border-black ${index < config.timeSlots.length - 1 ? 'mr-1' : ''}`} style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
@@ -1827,38 +1907,38 @@ export default function App() {
                       <div className="flex-1 flex flex-col items-stretch bg-slate-50/30 gap-1 min-h-0 container-export-rows">
                         {DAYS.map((day, dayIndex) => (
                           <div key={day} className={dayIndex > 0 && (day === 'Mercredi' || day === 'Jeudi') ? 'mt-4' : ''}>
-                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '800px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible h-auto flex-1 export-row`}>
-                            <div className="bg-white flex items-center justify-center py-1 overflow-visible h-auto border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
-                              <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
+                            <div style={{ gridTemplateColumns: gridTemplate, minWidth: '800px' }} className={`${gridBaseClasses} w-full bg-white items-stretch overflow-visible h-auto flex-1 export-row print-layout-fix`}>
+                              <div className="bg-white flex items-center justify-center py-1 overflow-visible h-auto border border-black" style={{ backgroundColor: '#c4d79b', fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
+                                <span className="inline-block font-black text-gray-800 text-[11px] -rotate-90 uppercase tracking-widest leading-none whitespace-nowrap">{day}</span>
+                              </div>
+                              {config.timeSlots.map(time => {
+                                const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
+                                const courseValue = schedule[slotKey];
+                                // Normaliser la valeur (gérer les cas string | null | string[])
+                                const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
+                                const combinedCourse = getCombinedCourseInfo(courseIds);
+                                return (
+                                  <div key={time} className="p-1 relative flex items-stretch mr-1 last:mr-0">
+                                    <DroppableSlot id={`${day}|${time}`}>
+                                      {combinedCourse && (
+                                        <CourseBadge
+                                          course={{ ...combinedCourse, id: courseIds[0] }}
+                                          onUnassign={() => handleUnassignBatch(courseIds)}
+                                          isMatch={isCourseMatch(combinedCourse)}
+                                          hasConflict={hasConflict(day, time, courseIds)}
+                                          compact={compact}
+                                          customSubjects={customSubjects}
+                                          schedule={schedule}
+                                          assignmentRows={assignmentRows}
+                                          currentUser={currentUser}
+                                          className="flex-1"
+                                        />
+                                      )}
+                                    </DroppableSlot>
+                                  </div>
+                                );
+                              })}
                             </div>
-                            {config.timeSlots.map(time => {
-                              const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${day}|${time}`;
-                              const courseValue = schedule[slotKey];
-                              // Normaliser la valeur (gérer les cas string | null | string[])
-                              const courseIds = Array.isArray(courseValue) ? courseValue : (courseValue ? [courseValue] : []);
-                              const combinedCourse = getCombinedCourseInfo(courseIds);
-                              return (
-                                <div key={time} className="p-1 relative flex items-stretch mr-1 last:mr-0">
-                                  <DroppableSlot id={`${day}|${time}`}>
-                                    {combinedCourse && (
-                                      <CourseBadge
-                                        course={{ ...combinedCourse, id: courseIds[0] }}
-                                        onUnassign={() => handleUnassignBatch(courseIds)}
-                                        isMatch={isCourseMatch(combinedCourse)}
-                                        hasConflict={hasConflict(day, time, courseIds)}
-                                        compact={compact}
-                                        customSubjects={customSubjects}
-                                        schedule={schedule}
-                                        assignmentRows={assignmentRows}
-                                        currentUser={currentUser}
-                                        className="flex-1"
-                                      />
-                                    )}
-                                  </DroppableSlot>
-                                </div>
-                              );
-                            })}
-                          </div>
                           </div>
                         ))}
                       </div>
@@ -1904,9 +1984,9 @@ export default function App() {
                         r.mainGroup === activeMainGroup &&
                         r.semester === semester &&
                         r.subject.toLowerCase().includes(manageFilterCode.toLowerCase())
-                      ).map(row => {
+                      ).map((row, rowIdx) => {
                         return (
-                          <tr key={row.id} className="hover:bg-slate-50 transition-colors group">
+                          <tr key={`${row.id}-${rowIdx}`} className="hover:bg-slate-50 transition-colors group">
                             <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
                             <td className="p-1 border-r border-slate-50 font-black text-slate-700 text-center text-xs">
                               <span className="text-[11px] uppercase tracking-wide whitespace-nowrap">{row.mainGroup.replace("Groupe ", "G")}</span>
@@ -2028,15 +2108,15 @@ export default function App() {
                                   value={row.room || (() => {
                                     // Salle par défaut selon le type de cours et le groupe
                                     if (row.type === 'CM') {
-                                      return 'Amphi A';
+                                      return 'Khawarizmi';
                                     } else if (row.type.startsWith('TP')) {
-                                      return row.mainGroup === "Groupe 1" ? "Lab 1" : 
-                                             row.mainGroup === "Groupe 2" ? "Lab 2" : 
-                                             row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                      return row.mainGroup === "Groupe 1" ? "Lab 1" :
+                                        row.mainGroup === "Groupe 2" ? "Lab 2" :
+                                          row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
                                     } else {
-                                      return row.mainGroup === "Groupe 1" ? "101" : 
-                                             row.mainGroup === "Groupe 2" ? "201" : 
-                                             row.mainGroup === "Groupe 3" ? "202" : "203";
+                                      return row.mainGroup === "Groupe 1" ? "101" :
+                                        row.mainGroup === "Groupe 2" ? "201" :
+                                          row.mainGroup === "Groupe 3" ? "202" : "203";
                                     }
                                   })()}
                                   onChange={(e) => {
@@ -2057,7 +2137,7 @@ export default function App() {
                                   onClick={() => {
                                     // Déterminer le type de la nouvelle ligne selon le nouveau système
                                     let newType: CourseType = 'CM';
-                                    
+
                                     if (row.type === 'CM') {
                                       newType = 'TD1'; // CM → TD1
                                     } else if (row.type.startsWith('TD')) {
@@ -2081,29 +2161,29 @@ export default function App() {
                                         newType = 'TD1';
                                       }
                                     }
-                                    
+
                                     // Générer le subLabel approprié
                                     let newSubLabel: string = newType;
                                     let defaultRoom = '101';
-                                    
+
                                     if (newType.startsWith('TD') || newType.startsWith('TP')) {
                                       const baseType = newType.startsWith('TD') ? 'TD' : 'TP';
                                       const subGroupNumber = newType.slice(2);
                                       const groupNumber = row.mainGroup.replace('Groupe ', '');
                                       newSubLabel = `${baseType}${groupNumber}${subGroupNumber}`;
-                                      
+
                                       // Définir une salle par défaut selon le groupe et le type
                                       if (baseType.startsWith('TP')) {
-                                        defaultRoom = row.mainGroup === "Groupe 1" ? "Lab 1" : 
-                                                     row.mainGroup === "Groupe 2" ? "Lab 2" : 
-                                                     row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                        defaultRoom = row.mainGroup === "Groupe 1" ? "Lab 1" :
+                                          row.mainGroup === "Groupe 2" ? "Lab 2" :
+                                            row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
                                       } else {
-                                        defaultRoom = row.mainGroup === "Groupe 1" ? "101" : 
-                                                     row.mainGroup === "Groupe 2" ? "201" : 
-                                                     row.mainGroup === "Groupe 3" ? "202" : "203";
+                                        defaultRoom = row.mainGroup === "Groupe 1" ? "101" :
+                                          row.mainGroup === "Groupe 2" ? "201" :
+                                            row.mainGroup === "Groupe 3" ? "202" : "203";
                                       }
                                     }
-                                    
+
                                     const newRow: AssignmentRow = {
                                       id: 'new-' + Date.now(),
                                       subject: row.subject,
@@ -2113,20 +2193,20 @@ export default function App() {
                                       sharedGroups: [row.mainGroup],
                                       subLabel: newSubLabel,
                                       teacher: row.teacher || 'Non assigné',
-                                      room: newType === 'CM' ? 'Amphi A' : defaultRoom,
+                                      room: newType === 'CM' ? 'Khawarizmi' : defaultRoom,
                                       semester: row.semester
                                     };
-                                    
+
                                     // Trouver l'index de la ligne actuelle dans le tableau complet
                                     const currentRowIndex = assignmentRows.findIndex(r => r.id === row.id);
-                                    
+
                                     // Insérer la nouvelle ligne juste après la ligne actuelle
                                     setAssignmentRows(prev => {
                                       const newRows = [...prev];
                                       newRows.splice(currentRowIndex + 1, 0, newRow);
                                       return newRows;
                                     });
-                                    
+
                                     setToastMessage({ msg: `Nouvelle ligne ${newSubLabel} ajoutée pour ${row.subject}`, type: 'success' });
                                   }}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-all shadow-sm"
@@ -2302,7 +2382,7 @@ export default function App() {
                                     sharedGroups: [group],
                                     subLabel: 'CM',
                                     teacher: newMatiere.enseignantsCM.split('/')[0]?.trim() || '',
-                                    room: 'Amphi A',
+                                    room: 'Khawarizmi',
                                     semester: semestre.semestre
                                   });
 
@@ -2863,19 +2943,69 @@ export default function App() {
                       />
                     </label>
 
+
+
+
+
                     <div className="border-l border-slate-300 mx-2"></div>
 
                     <button
-                      onClick={saveToConstantsFile}
-                      className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
-                      title="Écrase le fichier source constants.ts"
+                      onClick={() => {
+                        if (!confirm("Attention : Cela va écraser vos données actuelles avec la dernière sauvegarde serveur. Continuer ?")) return;
+
+                        fetch('/api/timetable/load?userId=admin')
+                          .then(res => res.json())
+                          .then(data => {
+                            if (data.success && data.data) {
+                              const serverData = data.data;
+
+                              if (serverData.assignment_rows) {
+                                setAssignmentRows(serverData.assignment_rows);
+                                localStorage.setItem('supnum_assignment_rows', JSON.stringify(serverData.assignment_rows));
+                              }
+
+                              if (serverData.schedule) {
+                                setSchedule(serverData.schedule);
+                                localStorage.setItem('supnum_schedule', JSON.stringify(serverData.schedule));
+                              }
+
+                              if (serverData.custom_rooms) {
+                                setCustomRooms(serverData.custom_rooms);
+                                localStorage.setItem('supnum_custom_rooms', JSON.stringify(serverData.custom_rooms));
+                              } else {
+                                // Reset to default rooms if not in server data
+                                setCustomRooms(ALL_ROOMS);
+                                localStorage.setItem('supnum_custom_rooms', JSON.stringify(ALL_ROOMS));
+                              }
+
+                              if (serverData.custom_subjects) {
+                                setCustomSubjects(serverData.custom_subjects);
+                                localStorage.setItem('supnum_custom_subjects', JSON.stringify(serverData.custom_subjects));
+                              } else {
+                                // Reset to default subjects (MASTER_DB) if not in server data
+                                setCustomSubjects(MASTER_DB);
+                                localStorage.setItem('supnum_custom_subjects', JSON.stringify(MASTER_DB));
+                              }
+
+                              setToastMessage({ msg: "Données récupérées du serveur avec succès !", type: 'success' });
+                            } else {
+                              setToastMessage({ msg: "Erreur lors de la récupération : " + (data.message || "Inconnue"), type: 'error' });
+                            }
+                          })
+                          .catch(err => {
+                            console.error(err);
+                            setToastMessage({ msg: "Erreur réseau lors de la récupération", type: 'error' });
+                          });
+                      }}
+                      className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-bold transition-colors flex items-center gap-2"
+                      title="Récupérer les données sauvegardées sur le serveur"
                     >
-                      <Save size={18} />
-                      Sauvegarder dans le fichier (Permanent)
+                      <Database size={18} />
+                      Charger depuis le serveur
                     </button>
                   </div>
                   <p className="text-sm text-slate-500 mt-2 italic">
-                    "Exporter Backup" crée un fichier .json local. "Sauvegarder dans le fichier" met à jour le code source de l'application (constants.ts) pour que les changements soient effectifs pour tous les utilisateurs au redémarrage.
+                    "Exporter Backup" crée un fichier .json local. "Sauvegarder dans le fichier" met à jour le code source. "Charger depuis le serveur" récupère les données de timetable.json.
                   </p>
                 </div>
 
@@ -3024,13 +3154,12 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
 function DroppableSlot({ id, children }: any) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const isEmpty = !children;
-  
+
   return (
-    <div 
-      ref={setNodeRef} 
-      className={`w-full h-full h-auto transition-colors flex flex-col ${
-        isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''
-      }`}
+    <div
+      ref={setNodeRef}
+      className={`w-full h-full h-auto transition-colors flex flex-col ${isOver ? 'bg-blue-100 ring-2 ring-blue-400 z-10' : ''
+        }`}
     >
       {isEmpty ? (
         // Tableau vide avec structure visible en gris
@@ -3056,42 +3185,51 @@ function DroppableSlot({ id, children }: any) {
 const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, currentUser, className = "" }: any) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
   const style = { opacity: isDragging ? 0.4 : 1 };
-  
+
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}
       className={`relative w-full h-full border border-black bg-white flex flex-col group hover:shadow-lg transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
-      
+
       <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className={`absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5 ${currentUser?.role !== 'admin' ? 'hidden' : ''}`}><X size={10} /></button>
-      
+
       {/* Première ligne du tableau : Code matière | Type | Salle */}
-      <div className="flex h-6 border-b border-black">
-        <div className="flex-1 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
-          <span className="font-bold text-xs text-black text-center truncate">{course.subject}</span>
+      <div className="flex min-h-[1.75rem] border-b border-black">
+        <div className="flex-1 px-1 py-0.5 border-r border-black flex items-center bg-white overflow-hidden">
+          <span className="font-bold text-xs text-black text-left w-full whitespace-normal break-words leading-tight pl-1">{course.subject}</span>
         </div>
-        <div className="w-12 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
-          <span className="font-bold text-xs text-black text-center truncate">{course.subLabel || course.type}</span>
+        <div className="w-16 px-1 py-0.5 border-r border-black flex items-center justify-center bg-white overflow-hidden">
+          <span className="font-bold text-[10px] text-black text-center whitespace-normal break-words leading-tight">
+            {course.subLabel || (() => {
+              const groupNum = (course.mainGroup || '').replace(/[^0-9]/g, '');
+              const typeLetters = (course.type || '').replace(/[0-9]/g, '');
+              const typeNum = (course.type || '').replace(/[^0-9]/g, '');
+              if (typeLetters === 'CM') return 'CM';
+              if (groupNum && typeNum) return `${typeLetters}${groupNum}${typeNum}`;
+              return course.type;
+            })()}
+          </span>
         </div>
-        <div className="w-12 px-1 py-0.5 flex items-center justify-center bg-white overflow-hidden">
-          <span className="font-bold text-xs text-black text-center truncate">{(() => {
+        <div className="w-24 px-1 py-0.5 flex items-center bg-white overflow-hidden">
+          <span className="font-bold text-[10px] text-black text-left w-full whitespace-normal break-words leading-tight pl-1">{(() => {
             const rooms = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
             return rooms || '?';
           })()}</span>
         </div>
       </div>
-      
+
       {/* Deuxième ligne du tableau : Nom complet de la matière */}
       <div className="flex-1 px-1 py-0.5 border-b border-black flex items-center bg-white overflow-hidden">
-        <span className="text-xs text-black font-medium text-center w-full truncate leading-tight">{course.subjectLabel || course.subject}</span>
+        <span className="text-xs text-black font-bold text-left w-full whitespace-normal break-words leading-tight pl-1">{course.subjectLabel || course.subject}</span>
       </div>
-      
+
       {/* Troisième ligne du tableau : Enseignant */}
-      <div className="h-6 px-1 py-0.5 flex items-center justify-center bg-white overflow-hidden">
-        <span className="text-xs font-bold text-red-600 text-center truncate">{(() => {
+      <div className="min-h-[1.75rem] px-1 py-0.5 flex items-center bg-white overflow-hidden">
+        <span className="text-xs font-bold text-red-600 text-left w-full whitespace-normal break-words leading-tight pl-1">{(() => {
           const teachers = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
           return teachers || '?';
         })()}</span>
       </div>
-      
+
     </div>
   );
 };
@@ -3100,7 +3238,7 @@ function getCourseColor(type: CourseType | string) {
   if (typeof type === 'string' && type.includes('/')) {
     return { bg: 'bg-purple-50', border: 'border-purple-300', borderLeft: 'border-l-purple-600', badge: 'bg-purple-600' };
   }
-  
+
   // Déterminer le type de base (CM, TD, TP)
   let baseType = type;
   if (typeof type === 'string') {
@@ -3108,7 +3246,7 @@ function getCourseColor(type: CourseType | string) {
     else if (type.startsWith('TP')) baseType = 'TP';
     else if (type === 'CM') baseType = 'CM';
   }
-  
+
   switch (baseType) {
     case 'CM': return { bg: 'bg-emerald-50', border: 'border-emerald-300', borderLeft: 'border-l-emerald-600', badge: 'bg-emerald-600' };
     case 'TD': return { bg: 'bg-blue-50', border: 'border-blue-300', borderLeft: 'border-l-blue-600', badge: 'bg-blue-600' };

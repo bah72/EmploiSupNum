@@ -18,7 +18,7 @@ export default function DroppableSlot({ slotKey, children, onUnassign, isMatch =
     <div
       ref={setNodeRef}
       style={{ opacity: isOver ? 0.8 : 1 }}
-      className={`relative w-full h-full min-h-[60px] border-2 border-dashed ${isMatch ? 'border-blue-400 bg-blue-50' : 'border-slate-200'} rounded-lg transition-all ${isOver ? 'bg-blue-100 border-blue-500' : ''} ${className}`}
+      className={`relative w-full h-full h-auto border-2 border-dashed ${isMatch ? 'border-blue-400 bg-blue-50' : 'border-slate-200'} rounded-lg transition-all ${isOver ? 'bg-blue-100 border-blue-500' : ''} ${className}`}
       onDoubleClick={() => {
         if (children && onUnassign) {
           // Extract course ID from children if needed

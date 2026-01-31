@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Affichage des cours parallèles amélioré</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .before {
+            background-color: #ffebee;
+            border-color: #f44336;
+        }
+        .after {
+            background-color: #e8f5e8;
+            border-color: #4caf50;
+        }
+        .course-card {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            min-width: 150px;
+            vertical-align: top;
+        }
+        .course-type {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        .course-subject {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .course-details {
+            font-size: 9px;
+            background: rgba(255,255,255,0.6);
+            padding: 3px;
+            border-radius: 3px;
+        }
+        .teacher {
+            color: #d32f2f;
+            margin-bottom: 2px;
+        }
+        .room {
+            color: #1976d2;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        h3 {
+            margin-top: 0;
+            color: #666;
+        }
+        .truncated {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test - Amélioration de l'affichage des cours parallèles</h1>
+        
+        <h2>Problème résolu</h2>
+        <p>Lorsque plusieurs cours sont programmés dans le même créneau horaire (cours parallèles), l'affichage était tronqué et difficile à lire.</p>
+        
+        <div class="section before">
+            <h3>❌ AVANT - Affichage tronqué (problématique)</h3>
+            <div class="course-card">
+                <div class="course-type">TD1/TD2/TP1</div>
+                <div class="course-subject truncated">Math/Physique/Informatique</div>
+                <div class="course-details">
+                    <div class="teacher truncated">Dupont/Martin/Bernard</div>
+                    <div class="room truncated">101/201/Lab1</div>
+                </div>
+            </div>
+            <p><strong>Problèmes :</strong></p>
+            <ul>
+                <li>Noms des salles tronqués ("101/201/Lab1" → "101/201/L...")</li>
+                <li>Types de cours illisibles ("TD1/TD2/TP1")</li>
+                <li>Noms d'enseignants coupés</li>
+                <li>Difficile de comprendre combien de cours sont en parallèle</li>
+            </ul>
+        </div>
+        
+        <div class="section after">
+            <h3>✅ APRÈS - Affichage optimisé (solution)</h3>
+            <div class="course-card">
+                <div class="course-type">3 cours</div>
+                <div class="course-subject">Math + Physique...</div>
+                <div class="course-details">
+                    <div class="teacher">Dupont + Martin...</div>
+                    <div class="room">101 + 201...</div>
+                </div>
+            </div>
+            <p><strong>Améliorations :</strong></p>
+            <ul>
+                <li>Indication claire du nombre de cours ("3 cours")</li>
+                <li>Séparateur "+" plus lisible que "/"</li>
+                <li>Troncature intelligente avec "..." pour indiquer qu'il y a plus</li>
+                <li>Limite à 2 éléments visibles + "..." si plus</li>
+                <li>Tooltips avec informations complètes au survol</li>
+            </ul>
+        </div>
+        
+        <h2>Modifications techniques apportées</h2>
+        <div class="section">
+            <h3>1. Fonction getCombinedCourseInfo améliorée</h3>
+            <ul>
+                <li>Changement des séparateurs "/" vers " + " pour plus de lisibilité</li>
+                <li>Ajout de métadonnées pour l'affichage optimisé (combinedCount, combinedTypes, etc.)</li>
+                <li>Utilisation du type principal pour la couleur de base</li>
+            </ul>
+            
+            <h3>2. Composant CourseBadge optimisé</h3>
+            <ul>
+                <li>Détection des cours combinés via course.isCombined</li>
+                <li>Affichage "X cours" au lieu des types combinés</li>
+                <li>Limitation à 2 éléments + "..." pour éviter la troncature</li>
+                <li>Ajout d'attributs title pour les tooltips</li>
+                <li>Masquage du compteur de sessions pour les cours combinés</li>
+            </ul>
+            
+            <h3>3. Corrections TypeScript</h3>
+            <ul>
+                <li>Mise à jour des comparaisons de types pour le nouveau système TD1/TD2/TP1/TP2</li>
+                <li>Ajout d'exclusions dans tsconfig.json pour les fichiers de sauvegarde</li>
+                <li>Corrections des assertions de type pour éviter les erreurs de compilation</li>
+            </ul>
+        </div>
+        
+        <h2>Résultat</h2>
+        <p>Les cours parallèles sont maintenant affichés de manière claire et lisible, avec une indication du nombre de cours et des informations tronquées intelligemment.</p>
+    </div>
+</body>
+</html>

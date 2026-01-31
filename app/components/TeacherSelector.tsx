@@ -23,7 +23,7 @@ export default function TeacherSelector({ value, onChange, allTeachers, placehol
   return (
     <div className="relative">
       <div 
-        className={`flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg cursor-pointer min-h-[40px] items-center ${className}`}
+        className={`flex flex-wrap gap-2 p-2 bg-white border border-slate-200 rounded-lg cursor-pointer h-auto items-center ${className}`}
         onClick={() => setIsModalOpen(true)}
       >
         {teachers.length === 0 ? (

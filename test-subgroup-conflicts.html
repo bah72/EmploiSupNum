@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Règles de Conflit des Sous-Groupes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .rule-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .forbidden {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+        .allowed {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+        .test-case {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.7);
+        }
+        .course-box {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 0 5px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .td-course {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            color: #1e40af;
+        }
+        .tp-course {
+            background: #fed7aa;
+            border: 2px solid #f97316;
+            color: #c2410c;
+        }
+        .vs {
+            margin: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .result {
+            margin-left: 20px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .forbidden-result {
+            background: #fecaca;
+            color: #dc2626;
+        }
+        .allowed-result {
+            background: #bbf7d0;
+            color: #16a34a;
+        }
+        .rule-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .status-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+        .explanation {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            border-left: 4px solid #64748b;
+        }
+        .code-logic {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Test - Règles de Conflit des Sous-Groupes</h1>
+        <p>Validation des règles de conflit pour les sous-groupes TD/TP dans le système de planning.</p>
+
+        <div class="rule-section forbidden">
+            <div class="rule-title">
+                <span class="status-icon">❌</span>
+                Règles INTERDITES
+            </div>
+            
+            <div class="explanation">
+                <strong>Principe 1 :</strong> Les sous-groupes avec le même numéro ne peuvent pas être en parallèle 
+                (TD11 vs TP11), car ils représentent les mêmes étudiants divisés entre TD et TP.
+                <br><br>
+                <strong>Principe 2 :</strong> Les cours du même sous-groupe ne peuvent pas être en parallèle 
+                (TD11 vs TD11), car c'est le même groupe d'étudiants.
+            </div>
+
+            <h4>🚫 Même numéro, types différents :</h4>
+            <div class="test-case">
+                <span class="course-box td-course">TD11</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP11</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD12</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP12</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD21</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP21</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <h4>🚫 Même sous-groupe exact :</h4>
+            <div class="test-case">
+                <span class="course-box td-course">TD11</span>
+                <span class="vs">VS</span>
+                <span class="course-box td-course">TD11</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box tp-course">TP11</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP11</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD12</span>
+                <span class="vs">VS</span>
+                <span class="course-box td-course">TD12</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box tp-course">TP22</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP22</span>
+                <span class="result forbidden-result">❌ INTERDIT</span>
+            </div>
+        </div>
+
+        <div class="rule-section allowed">
+            <div class="rule-title">
+                <span class="status-icon">✅</span>
+                Règle AUTORISÉE : Numéros de sous-groupes différents
+            </div>
+            
+            <div class="explanation">
+                <strong>Principe :</strong> Les sous-groupes avec des numéros différents peuvent être en parallèle, 
+                car ils représentent des étudiants différents.
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD11</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP12</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD12</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP11</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD21</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP22</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD22</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP21</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD11</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP21</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+
+            <div class="test-case">
+                <span class="course-box td-course">TD12</span>
+                <span class="vs">VS</span>
+                <span class="course-box tp-course">TP22</span>
+                <span class="result allowed-result">✅ AUTORISÉ</span>
+            </div>
+        </div>
+
+        <div class="rule-section">
+            <div class="rule-title">
+                <span class="status-icon">🔧</span>
+                Implémentation Technique
+            </div>
+            
+            <div class="explanation">
+                <strong>Logique ajoutée dans la fonction checkInstantConflict :</strong>
+            </div>
+
+            <div class="code-logic">
+// Interdire les sous-groupes du même numéro d'être en parallèle
+// TD11 ne peut pas être avec TP11, mais TD11 peut être avec TP12
+// TD11 ne peut pas être avec TD11, TP11 ne peut pas être avec TP11
+if (draggingCourse.subLabel && existingCourse.subLabel) {
+  const draggingSubGroup = draggingCourse.subLabel;
+  const existingSubGroup = existingCourse.subLabel;
+  
+  // Extraire le numéro de sous-groupe (ex: TD11 → 11, TP12 → 12)
+  const draggingMatch = draggingSubGroup.match(/^(TD|TP)(\d+)$/);
+  const existingMatch = existingSubGroup.match(/^(TD|TP)(\d+)$/);
+  
+  if (draggingMatch && existingMatch) {
+    const draggingSubNumber = draggingMatch[2]; // "11", "12", etc.
+    const existingSubNumber = existingMatch[2]; // "11", "12", etc.
+    
+    // Si même numéro de sous-groupe ET types différents (TD vs TP)
+    if (draggingSubNumber === existingSubNumber && draggingMatch[1] !== existingMatch[1]) {
+      return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec ${existingSubGroup} (même numéro de sous-groupe)`;
+    }
+    
+    // Si exactement le même sous-groupe (TD11 avec TD11, TP11 avec TP11)
+    if (draggingSubNumber === existingSubNumber && draggingMatch[1] === existingMatch[1]) {
+      return `CONFLIT SOUS-GROUPE : ${draggingSubGroup} ne peut pas être en parallèle avec un autre ${existingSubGroup} (même sous-groupe)`;
+    }
+  }
+}
+            </div>
+
+            <div class="explanation">
+                <strong>Points clés de l'implémentation :</strong>
+                <ul>
+                    <li>✅ Utilise une regex pour extraire le type (TD/TP) et le numéro (11, 12, etc.)</li>
+                    <li>✅ Compare les numéros de sous-groupes ET les types</li>
+                    <li>✅ Interdit TD11 vs TP11 (même numéro, types différents)</li>
+                    <li>✅ Interdit TD11 vs TD11 (même sous-groupe exact)</li>
+                    <li>✅ Interdit TP11 vs TP11 (même sous-groupe exact)</li>
+                    <li>✅ Messages d'erreur explicites pour l'utilisateur</li>
+                    <li>✅ Fonctionne avec tous les groupes (G1, G2, G3, G4)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="rule-section">
+            <div class="rule-title">
+                <span class="status-icon">📋</span>
+                Exemples de Messages d'Erreur
+            </div>
+            
+            <div class="explanation">
+                Quand l'utilisateur essaie de placer des cours en conflit, il verra :
+            </div>
+
+            <div class="test-case">
+                <strong>Tentative :</strong> Placer TP11 dans un créneau où TD11 existe déjà
+                <br>
+                <strong>Message :</strong> 
+                <span style="color: #dc2626; font-weight: bold;">
+                    "CONFLIT SOUS-GROUPE : TP11 ne peut pas être en parallèle avec TD11 (même numéro de sous-groupe)"
+                </span>
+            </div>
+
+            <div class="test-case">
+                <strong>Tentative :</strong> Placer TD11 dans un créneau où TD11 existe déjà
+                <br>
+                <strong>Message :</strong> 
+                <span style="color: #dc2626; font-weight: bold;">
+                    "CONFLIT SOUS-GROUPE : TD11 ne peut pas être en parallèle avec un autre TD11 (même sous-groupe)"
+                </span>
+            </div>
+
+            <div class="test-case">
+                <strong>Tentative :</strong> Placer TP22 dans un créneau où TP22 existe déjà
+                <br>
+                <strong>Message :</strong> 
+                <span style="color: #dc2626; font-weight: bold;">
+                    "CONFLIT SOUS-GROUPE : TP22 ne peut pas être en parallèle avec un autre TP22 (même sous-groupe)"
+                </span>
+            </div>
+        </div>
+
+        <div class="rule-section">
+            <div class="rule-title">
+                <span class="status-icon">✅</span>
+                Validation et Tests
+            </div>
+            
+            <div class="explanation">
+                <strong>Pour tester cette fonctionnalité :</strong>
+                <ol>
+                    <li>Créer des cours TD11 et TP11 pour la même matière</li>
+                    <li>Essayer de les placer dans le même créneau horaire</li>
+                    <li>Vérifier que le message de conflit apparaît</li>
+                    <li>Essayer de placer TD11 avec TP12 → doit fonctionner</li>
+                    <li>Répéter avec d'autres combinaisons de sous-groupes</li>
+                </ol>
+            </div>
+
+            <div class="explanation">
+                <strong>Statut de compilation :</strong>
+                <span style="color: #16a34a; font-weight: bold;">✅ Aucune erreur TypeScript</span>
+                <br>
+                <strong>Intégration :</strong>
+                <span style="color: #16a34a; font-weight: bold;">✅ Règle ajoutée dans checkInstantConflict</span>
+                <br>
+                <strong>Compatibilité :</strong>
+                <span style="color: #16a34a; font-weight: bold;">✅ Compatible avec les règles existantes</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

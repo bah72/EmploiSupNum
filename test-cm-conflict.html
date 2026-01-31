@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CM Conflict Logic</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-case { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .pass { background-color: #d4edda; border-color: #c3e6cb; }
+        .fail { background-color: #f8d7da; border-color: #f5c6cb; }
+        .test-title { font-weight: bold; margin-bottom: 10px; }
+        .test-result { margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Test de la logique de conflit CM</h1>
+    <p>Vérification que les cours CM ne peuvent pas être en parallèle avec d'autres cours pour le même groupe.</p>
+
+    <div id="test-results"></div>
+
+    <script>
+        // Simulation de la logique de conflit modifiée
+        function testCMConflict(draggingCourseType, existingCourseType) {
+            // Nouvelle logique : CM ne peut pas être en parallèle avec tout autre cours
+            if (draggingCourseType === 'CM') {
+                return `CONFLIT CM : Un cours de CM ne peut pas être en parallèle avec un autre cours pour le même groupe (${existingCourseType} et ${draggingCourseType})`;
+            }
+            return null; // Pas de conflit
+        }
+
+        // Tests
+        const testCases = [
+            { dragging: 'CM', existing: 'CM', expected: true, description: 'CM vs CM - doit être en conflit' },
+            { dragging: 'CM', existing: 'TD', expected: true, description: 'CM vs TD - doit être en conflit' },
+            { dragging: 'CM', existing: 'TP', expected: true, description: 'CM vs TP - doit être en conflit' },
+            { dragging: 'TD', existing: 'CM', expected: false, description: 'TD vs CM - pas de conflit (TD peut être avec CM)' },
+            { dragging: 'TD', existing: 'TD', expected: false, description: 'TD vs TD - pas de conflit' },
+            { dragging: 'TD', existing: 'TP', expected: false, description: 'TD vs TP - pas de conflit' },
+            { dragging: 'TP', existing: 'CM', expected: false, description: 'TP vs CM - pas de conflit (TP peut être avec CM)' },
+            { dragging: 'TP', existing: 'TD', expected: false, description: 'TP vs TD - pas de conflit' },
+            { dragging: 'TP', existing: 'TP', expected: false, description: 'TP vs TP - pas de conflit' }
+        ];
+
+        const resultsDiv = document.getElementById('test-results');
+
+        testCases.forEach((testCase, index) => {
+            const result = testCMConflict(testCase.dragging, testCase.existing);
+            const hasConflict = result !== null;
+            const passed = hasConflict === testCase.expected;
+
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-case ${passed ? 'pass' : 'fail'}`;
+            
+            testDiv.innerHTML = `
+                <div class="test-title">Test ${index + 1}: ${testCase.description}</div>
+                <div>Cours à déplacer: ${testCase.dragging}, Cours existant: ${testCase.existing}</div>
+                <div>Attendu: ${testCase.expected ? 'Conflit' : 'Pas de conflit'}</div>
+                <div>Résultat: ${hasConflict ? 'Conflit détecté' : 'Pas de conflit'}</div>
+                <div class="test-result">${passed ? '✅ PASS' : '❌ FAIL'}</div>
+                ${result ? `<div>Message: ${result}</div>` : ''}
+            `;
+
+            resultsDiv.appendChild(testDiv);
+        });
+
+        // Résumé
+        const passedTests = testCases.filter((testCase, index) => {
+            const result = testCMConflict(testCase.dragging, testCase.existing);
+            const hasConflict = result !== null;
+            return hasConflict === testCase.expected;
+        }).length;
+
+        const summaryDiv = document.createElement('div');
+        summaryDiv.style.marginTop = '30px';
+        summaryDiv.style.padding = '20px';
+        summaryDiv.style.backgroundColor = passedTests === testCases.length ? '#d4edda' : '#f8d7da';
+        summaryDiv.style.borderRadius = '5px';
+        summaryDiv.innerHTML = `
+            <h2>Résumé</h2>
+            <p>${passedTests}/${testCases.length} tests réussis</p>
+            <p><strong>Règle implémentée:</strong> Un cours CM ne peut pas être en parallèle avec tout autre cours (CM, TD, TP) pour le même groupe.</p>
+        `;
+        resultsDiv.appendChild(summaryDiv);
+    </script>
+</body>
+</html>

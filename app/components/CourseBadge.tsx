@@ -53,14 +53,34 @@ export default function CourseBadge({ course, compact, customSubjects, schedule,
 
   const sessionsInfo = getSessionsInfo();
 
-  // Forcer l'affichage d'un seul enseignant pour les CM
-  let teacher, room;
-  if (course.type === 'CM') {
-    teacher = (course.teacher || '').split('/')[0]?.trim() || '';
-    room = (course.room || '').split('/')[0]?.trim() || '';
+  // Gérer l'affichage des cours combinés
+  let displayType, displaySubject, teacher, room;
+  
+  if (course.isCombined && course.combinedCount > 1) {
+    // Cours parallèles - affichage optimisé avec valeurs uniques
+    displayType = `${course.combinedCount} cours`;
+    
+    // Utiliser les valeurs uniques déjà calculées
+    const uniqueSubjects = course.combinedSubjects || [];
+    const uniqueTeachers = course.combinedTeachers || [];
+    const uniqueRooms = course.combinedRooms || [];
+    
+    displaySubject = uniqueSubjects.slice(0, 2).join('/') + (uniqueSubjects.length > 2 ? '...' : '');
+    teacher = uniqueTeachers.slice(0, 2).join('/') + (uniqueTeachers.length > 2 ? '...' : '');
+    room = uniqueRooms.slice(0, 2).join('/') + (uniqueRooms.length > 2 ? '...' : '');
   } else {
-    teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
-    room = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    // Cours unique - affichage normal
+    displayType = course.type;
+    displaySubject = course.subject;
+    
+    // Forcer l'affichage d'un seul enseignant pour les CM
+    if (course.type === 'CM') {
+      teacher = (course.teacher || '').split('/')[0]?.trim() || '';
+      room = (course.room || '').split('/')[0]?.trim() || '';
+    } else {
+      teacher = (course.teacher || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+      room = (course.room || '').split('/').map((s: string) => s.trim()).filter((s: string) => s && s !== '?').join('/');
+    }
   }
 
   return (
@@ -68,22 +88,24 @@ export default function CourseBadge({ course, compact, customSubjects, schedule,
       <div className="flex flex-col gap-1 min-w-0">
         <div className="flex items-center justify-between gap-1 min-w-0">
           <div className="flex items-center gap-1 min-w-0">
-            <span className={`${compactTextClasses} font-black text-slate-800 leading-tight truncate flex-1`}>{course.type}</span>
-            <span className={`${compactSmallTextClasses} font-black px-1 py-0.5 rounded shadow-sm shrink-0 ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-              {sessionsInfo.realized}/{sessionsInfo.total}
-            </span>
+            <span className={`${compactTextClasses} font-black text-slate-800 leading-tight truncate flex-1`}>{displayType}</span>
+            {!course.isCombined && (
+              <span className={`${compactSmallTextClasses} font-black px-1 py-0.5 rounded shadow-sm shrink-0 ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                {sessionsInfo.realized}/{sessionsInfo.total}
+              </span>
+            )}
           </div>
-          <span title={course.subject} className={`${compactTextClasses} text-slate-700 leading-tight break-all mt-0.5`}>{course.subject}</span>
+          <span title={displaySubject} className={`${compactTextClasses} text-slate-700 leading-tight break-all mt-0.5`}>{displaySubject}</span>
         </div>
         <div className="flex flex-col gap-0.5 mt-auto min-w-0">
           <div className="flex flex-col bg-white/60 rounded px-1 py-0.5 border border-slate-100/50 min-w-0">
             <div className="flex items-center gap-1 min-w-0">
               <Users size={8} className="text-slate-400 shrink-0" />
-              <span className={`${compactSmallTextClasses} font-normal text-red-600 truncate min-w-0 flex-1`}>{teacher || '?'}</span>
+              <span className={`${compactSmallTextClasses} font-normal text-red-600 truncate min-w-0 flex-1`} title={teacher}>{teacher || '?'}</span>
             </div>
             <div className="flex items-center gap-1 border-t border-slate-100/30 mt-0.5 pt-0.5 min-w-0">
               <MapPin size={8} className="text-slate-400 shrink-0" />
-              <span className={`${compactSmallTextClasses} font-normal text-blue-800 truncate min-w-0 flex-1`}>{room || '?'}</span>
+              <span className={`${compactSmallTextClasses} font-normal text-blue-800 truncate min-w-0 flex-1`} title={room}>{room || '?'}</span>
             </div>
           </div>
         </div>

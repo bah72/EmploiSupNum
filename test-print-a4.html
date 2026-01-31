@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Impression A4 Paysage</title>
+    <style>
+        body {
+            font-family: "Comic Sans MS", cursive, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        #export-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar {
+            width: 200px;
+            background: #1e293b;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+        }
+        
+        .main-content {
+            margin-left: 220px;
+            padding: 20px;
+            background: white;
+        }
+        
+        .print-header {
+            background: #c4d79b;
+            padding: 15px 20px;
+            margin: -20px -20px 20px -20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .no-print {
+            background: #ef4444;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-size: 14px;
+        }
+        
+        .planning-container {
+            background: white;
+            border: 2px solid #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .planning-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(5, 1fr);
+            gap: 0;
+        }
+        
+        .time-slot, .day-header, .course-cell {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+            font-size: 12px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .day-header, .time-slot {
+            background: #c4d79b;
+            font-weight: bold;
+        }
+        
+        .course-cell {
+            background: white;
+        }
+        
+        .course-card {
+         

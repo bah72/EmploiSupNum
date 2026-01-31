@@ -30,5 +30,15 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.backup",
+    "**/*.backup.*",
+    "**/page-original.tsx",
+    "**/page.tsx.backup",
+    "**/page.tsx.corrupted",
+    "**/page.tsx.current_backup",
+    "**/page_backup.tsx",
+    "**/*.js"
+  ]
 }

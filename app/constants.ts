@@ -1,6 +1,6 @@
-export const ALL_ROOMS = ["101", "102", "103", "201", "202", "203", "205", "301", "302", "303", "Amphi A", "Amphi B", "Khawarizmi", "Hamidoune", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Salle Visio", "Atelier"];
+export const ALL_ROOMS = ["101", "102", "103", "201", "202", "203", "205", "301", "302", "303", "Khawarizmi", "Hamidoune", "Lab 1", "Lab 2", "Lab 3", "Lab 4", "Lab 5", "Lab 6", "Lab 7", "Salle Visio", "Atelier"];
 export const MAIN_GROUPS = ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"];
-export const DAYS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM'];
+export const DAYS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
 export const SEMESTERS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
 
 // Utilisateurs par défaut
@@ -13,7 +13,7 @@ export const DEFAULT_USERS = [
     name: "Administrateur"
   },
   {
-    id: "2", 
+    id: "2",
     username: "etudiant",
     password: "etudiant123",
     role: "student" as const,
@@ -25,16 +25,19 @@ export const MASTER_DB = [
   {
     "semestre": "S1",
     "matieres": [
-        { "code": "DEV110", "libelle": "Algo et programmation", "enseignants": "Cheikh/Sidi Med", "credit": 6 },
-        { "code": "DEV111", "libelle": "Bases de données 1", "enseignants": "Moussa", "credit": 4 },
-        { "code": "DEV112", "libelle": "Technologies web", "enseignants": "Sidi Med", "credit": 4 },
-        { "code": "SYR110", "libelle": "Bases informatiques", "enseignants": "Sass", "credit": 3 },
-        { "code": "SYR111", "libelle": "Concepts de Base de Réseaux", "enseignants": "Tourad", "credit": 3 },
-        { "code": "MAI110", "libelle": "Algèbre", "enseignants": "Habeb", "credit": 4 },
-        { "code": "MAI111", "libelle": "Analyse", "enseignants": "Habeb", "credit": 4 },
-        { "code": "MAI112", "libelle": "PIX 1", "enseignants": "Equipe", "credit": 2 },
-        { "code": "DPR110", "libelle": "Communication/Anglais", "enseignants": "Lam/Bouha", "credit": 3 },
-        { "code": "OME110", "libelle": "Intro. Économie Générale", "enseignants": "Hamadi", "credit": 2 }
+      { "code": "DEV110", "libelle": "Algo et prog.", "enseignants": "Cheikh/Sidi Med", "credit": 6 },
+      { "code": "DEV111", "libelle": "B. de données 1", "enseignants": "Moussa", "credit": 4 },
+      { "code": "DEV112", "libelle": "Tech. web", "enseignants": "Sidi Med", "credit": 4 },
+      { "code": "SYR110", "libelle": "Bases info.", "enseignants": "Sass", "credit": 3 },
+      { "code": "SYR111", "libelle": "C.B. de Réseaux", "enseignants": "Tourad", "credit": 3 },
+      { "code": "MAI110", "libelle": "Algèbre", "enseignants": "Habeb", "credit": 4 },
+      { "code": "MAI111", "libelle": "Analyse", "enseignants": "Habeb", "credit": 4 },
+      { "code": "MAI112", "libelle": "PIX 1", "enseignants": "Equipe", "credit": 2 },
+      { "code": "DPR110", "libelle": "Communication", "enseignants": "Djeinaba", "credit": 3 },
+      { "code": "DPR111", "libelle": "Alglais", "enseignants": "Blake", "credit": 3 },
+      { "code": "DPR1012", "libelle": "PPP1", "enseignants": "Soueina", "credit": 1 },
+      { "code": "OME110", "libelle": "Intro. Économie Gén.", "enseignants": "Sadvi", "credit": 2 },
+      { "code": "OME110", "libelle": "Proba. & Statistique", "enseignants": "Bakar", "credit": 2 }
     ]
   },
   {
