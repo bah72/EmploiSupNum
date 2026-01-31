@@ -36,13 +36,12 @@ const AssignmentRowService = {
       });
     });
 
-    // Calculer l'équivalent CM : CM + (TD + TP) * 2/3
-    // Et le total d'heures (chaque séance = 1.5h)
+    // Chaque séance = 1.5h
     Object.values(stats).forEach(stat => {
-      const eqCm = stat.cm + ((stat.td + stat.tp) * 2 / 3);
-      const hours = (stat.cm + stat.td + stat.tp) * 1.5;
-      stat.totalEqCm = eqCm.toFixed(1);
-      stat.totalHours = hours.toFixed(1);
+      const eqCmSessions = stat.cm + ((stat.td + stat.tp) * 2 / 3);
+      const totalSessions = stat.cm + stat.td + stat.tp;
+      stat.totalEqCm = (eqCmSessions * 1.5).toFixed(2);
+      stat.totalHours = (totalSessions * 1.5).toFixed(2);
     });
 
     return stats;
@@ -2815,8 +2814,8 @@ export default function App() {
                                   <div>
                                     <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
                                     <div className="flex flex-col gap-0.5 mt-1">
-                                      <p className="text-[10px] text-blue-600 font-black uppercase">Cumul: {stats.totalHours}h</p>
-                                      <p className="text-[10px] text-slate-500 font-bold uppercase">Éq. CM: {stats.totalEqCm}</p>
+                                      <p className="text-[10px] text-blue-600 font-black uppercase">Total: {stats.totalHours} h</p>
+                                      <p className="text-[10px] text-slate-500 font-bold uppercase">Éq. CM: {stats.totalEqCm} h</p>
                                     </div>
                                   </div>
                                 </div>
