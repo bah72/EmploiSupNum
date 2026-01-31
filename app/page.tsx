@@ -102,32 +102,36 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
             <Save size={16} />
           </button>
-          <button onClick={() => handlePrint()} className={`flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Imprimer le planning">
+          <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
             <Printer size={16} />
           </button>
           <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
             <LogOut size={16} />
           </button>
-          <button onClick={() => {
-            console.log('Debug info:', {
-              assignmentRowsLength: assignmentRows.length,
-              dynamicGroupsLength: dynamicGroups.length,
-              isClient,
-              semester,
-              activeMainGroup
-            });
-            loadFullDataset(false);
-          }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug (Réinitialise tout)">🐛</button>
+          {currentUser?.role === 'admin' && (
+            <>
+              <button onClick={() => {
+                console.log('Debug info:', {
+                  assignmentRowsLength: assignmentRows.length,
+                  dynamicGroupsLength: dynamicGroups.length,
+                  isClient,
+                  semester,
+                  activeMainGroup
+                });
+                loadFullDataset(false);
+              }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug (Réinitialise tout)">🐛</button>
 
-          <button onClick={refreshCardsOnly} className="flex items-center justify-center bg-cyan-50 hover:bg-cyan-100 text-cyan-600 border border-cyan-200 rounded p-1.5 shadow-sm transition-all no-print" title="Rafraîchir seulement les cartes">🔄</button>
+              <button onClick={refreshCardsOnly} className="flex items-center justify-center bg-cyan-50 hover:bg-cyan-100 text-cyan-600 border border-cyan-200 rounded p-1.5 shadow-sm transition-all no-print" title="Rafraîchir seulement les cartes">🔄</button>
 
-          <button onClick={clearScheduleOnly} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all no-print" title="Vider seulement le planning">🗑️</button>
+              <button onClick={clearScheduleOnly} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all no-print" title="Vider seulement le planning">🗑️</button>
 
-          <button onClick={migrateToNewSystem} className="flex items-center justify-center bg-purple-50 hover:bg-purple-100 text-purple-600 border border-purple-200 rounded p-1.5 shadow-sm transition-all no-print" title="Migrer vers TD1/TD2/TP1/TP2 (conserve les affectations)">�</button>
+              <button onClick={migrateToNewSystem} className="flex items-center justify-center bg-purple-50 hover:bg-purple-100 text-purple-600 border border-purple-200 rounded p-1.5 shadow-sm transition-all no-print" title="Migrer vers TD1/TD2/TP1/TP2 (conserve les affectations)">MC</button>
 
-          <button onClick={diagnoseCourses} className="flex items-center justify-center bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded p-1.5 shadow-sm transition-all no-print" title="Diagnostiquer les problèmes">🔍</button>
+              <button onClick={diagnoseCourses} className="flex items-center justify-center bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded p-1.5 shadow-sm transition-all no-print" title="Diagnostiquer les problèmes">🔍</button>
 
-          <button onClick={fixSubGroups} className="flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 rounded p-1.5 shadow-sm transition-all no-print" title="Corriger les sous-groupes">🔧</button>
+              <button onClick={fixSubGroups} className="flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 rounded p-1.5 shadow-sm transition-all no-print" title="Corriger les sous-groupes">🔧</button>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -3181,6 +3185,8 @@ function DroppableSlot({ id, children }: any) {
     </div>
   );
 }
+
+
 
 const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, currentUser, className = "" }: any) => {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
