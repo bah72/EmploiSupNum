@@ -37,11 +37,15 @@ const AssignmentRowService = {
     });
 
     // Chaque séance = 1.5h
+    // Équivalent CM : 1 TD/TP = 2/3 CM
     Object.values(stats).forEach(stat => {
-      const eqCmSessions = stat.cm + ((stat.td + stat.tp) * 2 / 3);
-      const totalSessions = stat.cm + stat.td + stat.tp;
-      stat.totalEqCm = (eqCmSessions * 1.5).toFixed(2);
-      stat.totalHours = (totalSessions * 1.5).toFixed(2);
+      const hoursCM = stat.cm * 1.5;
+      const hoursTDTP = (stat.td + stat.tp) * 1.5;
+      const hoursEqCM = hoursCM + (hoursTDTP * 2 / 3);
+      const totalHoursReal = (stat.cm + stat.td + stat.tp) * 1.5;
+
+      stat.totalEqCm = hoursEqCM.toFixed(2);
+      stat.totalHours = totalHoursReal.toFixed(2);
     });
 
     return stats;
