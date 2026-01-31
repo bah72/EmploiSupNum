@@ -15,10 +15,10 @@ export async function GET(request: Request) {
     }
 
     let targetUserId = userId;
-    
+
     // Si l'utilisateur n'est pas admin, essayer de charger les données de l'admin
     if (userId !== 'admin') {
-      const userData = TimetableDatabase.loadAllData(userId);
+      const userData = await TimetableDatabase.loadAllData(userId);
       if (!userData || Object.keys(userData).length === 0) {
         // Pas de données pour cet utilisateur, essayer de charger les données de l'admin
         targetUserId = 'admin';
@@ -27,7 +27,8 @@ export async function GET(request: Request) {
 
     if (dataType) {
       // Charger un type de données spécifique
-      const data = TimetableDatabase.loadData(targetUserId, dataType as any);
+      const data = await TimetableDatabase.loadData(targetUserId, dataType as any);
+      console.log(`Chargement de ${dataType} pour ${targetUserId}: ${data ? 'trouvé' : 'non trouvé'}`);
       return NextResponse.json({
         success: true,
         data: data,
@@ -36,7 +37,8 @@ export async function GET(request: Request) {
       });
     } else {
       // Charger toutes les données
-      const allData = TimetableDatabase.loadAllData(targetUserId);
+      const allData = await TimetableDatabase.loadAllData(targetUserId);
+      console.log(`Chargement global pour ${targetUserId}: ${Object.keys(allData).length} types trouvés`);
       return NextResponse.json({
         success: true,
         data: allData,
@@ -65,7 +67,7 @@ export async function POST(request: Request) {
 
     if (dataType) {
       // Charger un type de données spécifique
-      const data = TimetableDatabase.loadData(userId, dataType);
+      const data = await TimetableDatabase.loadData(userId, dataType);
       return NextResponse.json({
         success: true,
         data: data,
@@ -73,7 +75,7 @@ export async function POST(request: Request) {
       });
     } else {
       // Charger toutes les données
-      const allData = TimetableDatabase.loadAllData(userId);
+      const allData = await TimetableDatabase.loadAllData(userId);
       return NextResponse.json({
         success: true,
         data: allData

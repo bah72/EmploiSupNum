@@ -12,23 +12,24 @@ export async function POST(request: Request) {
       );
     }
 
-    const success = TimetableDatabase.saveData(userId, dataType, dataContent);
+    const result = await TimetableDatabase.saveData(userId, dataType, dataContent);
 
-    if (success) {
+    if (result.success) {
       return NextResponse.json({
         success: true,
-        message: `Données ${dataType} sauvegardées avec succès`
+        source: result.source,
+        message: `Données ${dataType} sauvegardées avec succès sur ${result.source === 'cloud' ? 'le Cloud' : 'le serveur local'}`
       });
     } else {
       return NextResponse.json(
-        { success: false, message: 'Erreur lors de la sauvegarde' },
+        { success: false, message: 'Erreur lors de la sauvegarde: ' + (result.error || 'Inconnue'), source: result.source },
         { status: 500 }
       );
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur API sauvegarde:', error);
     return NextResponse.json(
-      { success: false, message: 'Erreur serveur' },
+      { success: false, message: 'Erreur serveur: ' + (error.message || 'Inconnue') },
       { status: 500 }
     );
   }
@@ -46,25 +47,25 @@ export async function PUT(request: Request) {
       );
     }
 
-    let successCount = 0;
-    const dataTypes = ['assignment_rows', 'schedule', 'config', 'custom_rooms', 'custom_subjects'];
+    const result = await TimetableDatabase.saveAllData(userId, allData);
 
-    for (const dataType of dataTypes) {
-      if (allData[dataType] !== undefined) {
-        const success = TimetableDatabase.saveData(userId, dataType as any, allData[dataType]);
-        if (success) successCount++;
-      }
+    if (result.success) {
+      return NextResponse.json({
+        success: true,
+        source: result.source,
+        message: `Toutes les données ont été sauvegardées avec succès sur ${result.source === 'cloud' ? 'le Cloud (Supabase)' : 'le serveur local'}`
+      });
+    } else {
+      return NextResponse.json({
+        success: false,
+        message: 'Erreur lors de la sauvegarde complète: ' + (result.error || 'Inconnue'),
+        source: result.source
+      }, { status: 500 });
     }
-
-    return NextResponse.json({
-      success: true,
-      message: `${successCount} types de données sauvegardés avec succès`,
-      savedCount: successCount
-    });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erreur API sauvegarde complète:', error);
     return NextResponse.json(
-      { success: false, message: 'Erreur serveur' },
+      { success: false, message: 'Erreur serveur: ' + (error.message || 'Inconnue') },
       { status: 500 }
     );
   }

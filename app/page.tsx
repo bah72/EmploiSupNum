@@ -351,17 +351,13 @@ export default function App() {
       const subjectsToUse = savedSubjects ? JSON.parse(savedSubjects) : customSubjects;
       subjectsToUse.forEach((semData: any) => {
         semData.matieres.forEach((matiere: any) => {
-          // Utiliser un nombre fixe de groupes pour l'instant
           const groups = ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"];
           groups.forEach(group => {
-            // Utiliser les enseignants CM pour les cours CM
             const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
-            // Utiliser les enseignants TD pour les cours TD
             const teachersTD = matiere.enseignantsTD || matiere.enseignants || '';
+            const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
 
-            let defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
-
-            // Ligne CM pour chaque matière/groupe
+            // Ligne CM
             newRows.push({
               id: Math.random().toString(36).substr(2, 9),
               subject: matiere.code,
@@ -370,23 +366,42 @@ export default function App() {
               mainGroup: group,
               sharedGroups: [group],
               subLabel: 'CM',
-              teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné', // Prendre seulement le premier enseignant
+              teacher: teachersCM.split('/')[0]?.trim() || 'Non assigné',
               room: 'Khawarizmi',
               semester: semData.semestre
             });
 
-            // Ligne TD pour chaque matière/groupe
-            newRows.push({
-              id: Math.random().toString(36).substr(2, 9),
-              subject: matiere.code,
-              subjectLabel: matiere.libelle,
-              type: 'TD1' as CourseType,
-              mainGroup: group,
-              sharedGroups: [group],
-              subLabel: 'TD',
-              teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné', // Prendre seulement le premier enseignant
-              room: defaultRoom,
-              semester: semData.semestre
+            // Lignes TD (1 et 2 par défaut)
+            [1, 2].forEach(num => {
+              newRows.push({
+                id: Math.random().toString(36).substr(2, 9),
+                subject: matiere.code,
+                subjectLabel: matiere.libelle,
+                type: `TD${num}` as CourseType,
+                mainGroup: group,
+                sharedGroups: [group],
+                subLabel: `TD${group.replace('Groupe ', '')}${num}`,
+                teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
+                room: defaultRoom,
+                semester: semData.semestre
+              });
+            });
+
+            // Lignes TP (1 et 2 par défaut)
+            [1, 2].forEach(num => {
+              const tpRoom = group === "Groupe 1" ? "Lab 1" : group === "Groupe 2" ? "Lab 2" : group === "Groupe 3" ? "Lab 3" : "Lab 4";
+              newRows.push({
+                id: Math.random().toString(36).substr(2, 9),
+                subject: matiere.code,
+                subjectLabel: matiere.libelle,
+                type: `TP${num}` as CourseType,
+                mainGroup: group,
+                sharedGroups: [group],
+                subLabel: `TP${group.replace('Groupe ', '')}${num}`,
+                teacher: teachersTD.split('/')[0]?.trim() || 'Non assigné',
+                room: tpRoom,
+                semester: semData.semestre
+              });
             });
           });
         });
@@ -1362,13 +1377,19 @@ export default function App() {
       const data = await response.json();
 
       if (data.success) {
-        setToastMessage({ msg: 'Toutes les données (profs, salles, planning...) sont sauvegardées !', type: 'success' });
+        setToastMessage({
+          msg: data.message || 'Sauvegarde Cloud réussie !',
+          type: 'success'
+        });
       } else {
-        setToastMessage({ msg: 'Erreur lors de la sauvegarde : ' + data.message, type: 'error' });
+        setToastMessage({
+          msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
+          type: 'error'
+        });
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      setToastMessage({ msg: 'Erreur lors de la sauvegarde en base', type: 'error' });
+      setToastMessage({ msg: 'Erreur de connexion lors de la sauvegarde', type: 'error' });
     }
   };
 
@@ -1381,19 +1402,20 @@ export default function App() {
 
       if (result.success && result.data) {
         const data = result.data;
-
-        // Charger les assignmentRows si disponibles
-        if (data.assignment_rows) {
-          setAssignmentRows(data.assignment_rows);
-        }
-
-        // Charger le planning si disponible
-        if (data.schedule) {
-          setSchedule(data.schedule);
-        }
-
         console.log('Données chargées depuis la base de données:', data);
-        setToastMessage({ msg: `Données chargées depuis ${result.sourceUser === 'admin' ? 'l\'administrateur' : 'votre profil'}`, type: 'success' });
+
+        // Charger toutes les données si disponibles
+        if (data.assignment_rows) setAssignmentRows(data.assignment_rows);
+        if (data.schedule) setSchedule(data.schedule);
+        if (data.config) setConfig(data.config);
+        if (data.custom_rooms) setCustomRooms(data.custom_rooms);
+        if (data.custom_subjects) setCustomSubjects(data.custom_subjects);
+
+        const sourceLabel = result.sourceUser === 'admin' ? 'l\'administrateur' : 'votre profil';
+        setToastMessage({
+          msg: `Données chargées depuis ${sourceLabel}`,
+          type: 'success'
+        });
       } else {
         // Si aucune donnée n'est trouvée, charger le dataset par défaut pour les étudiants
         if (user.role === 'student' && assignmentRows.length === 0) {
@@ -1985,10 +2007,18 @@ export default function App() {
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {assignmentRows.filter(r =>
-                        r.mainGroup === activeMainGroup &&
                         r.semester === semester &&
-                        r.subject.toLowerCase().includes(manageFilterCode.toLowerCase())
-                      ).map((row, rowIdx) => {
+                        (
+                          r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
+                        )
+                      ).sort((a, b) => {
+                        // Trier par groupe puis par matière
+                        if (a.mainGroup !== b.mainGroup) return a.mainGroup.localeCompare(b.mainGroup);
+                        return a.subject.localeCompare(b.subject);
+                      }).map((row, rowIdx) => {
                         return (
                           <tr key={`${row.id}-${rowIdx}`} className="hover:bg-slate-50 transition-colors group">
                             <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
@@ -2373,7 +2403,7 @@ export default function App() {
                                 newSubjects[semIdx].matieres.push(newMatiere);
                                 setCustomSubjects(newSubjects);
 
-                                // Créer automatiquement les cartes pour tous les groupes
+                                // Créer automatiquement les cartes pour tous les groupes (CM, TD1, TD2, TP1, TP2)
                                 const newCourses: AssignmentRow[] = [];
                                 dynamicGroups.forEach(group => {
                                   // Cours CM
@@ -2390,19 +2420,40 @@ export default function App() {
                                     semester: semestre.semestre
                                   });
 
-                                  // Cours TD
-                                  const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
-                                  newCourses.push({
-                                    id: Math.random().toString(36).substr(2, 9),
-                                    subject: newMatiere.code,
-                                    subjectLabel: newMatiere.libelle,
-                                    type: 'TD1' as CourseType,
-                                    mainGroup: group,
-                                    sharedGroups: [group],
-                                    subLabel: 'TD',
-                                    teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
-                                    room: defaultRoom,
-                                    semester: semestre.semestre
+                                  const groupNum = group.replace('Groupe ', '');
+
+                                  // Lignes TD (1 et 2)
+                                  [1, 2].forEach(num => {
+                                    const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
+                                    newCourses.push({
+                                      id: Math.random().toString(36).substr(2, 9),
+                                      subject: newMatiere.code,
+                                      subjectLabel: newMatiere.libelle,
+                                      type: `TD${num}` as CourseType,
+                                      mainGroup: group,
+                                      sharedGroups: [group],
+                                      subLabel: `TD${groupNum}${num}`,
+                                      teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
+                                      room: defaultRoom,
+                                      semester: semestre.semestre
+                                    });
+                                  });
+
+                                  // Lignes TP (1 et 2)
+                                  [1, 2].forEach(num => {
+                                    const tpRoom = group === "Groupe 1" ? "Lab 1" : group === "Groupe 2" ? "Lab 2" : group === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                    newCourses.push({
+                                      id: Math.random().toString(36).substr(2, 9),
+                                      subject: newMatiere.code,
+                                      subjectLabel: newMatiere.libelle,
+                                      type: `TP${num}` as CourseType,
+                                      mainGroup: group,
+                                      sharedGroups: [group],
+                                      subLabel: `TP${groupNum}${num}`,
+                                      teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
+                                      room: tpRoom,
+                                      semester: semestre.semestre
+                                    });
                                   });
                                 });
 
@@ -2761,7 +2812,7 @@ export default function App() {
                                 <div className="flex justify-between items-start mb-3 border-b pb-2">
                                   <div>
                                     <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {stats.total}</p>
+                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {(stats.total * 1.5).toFixed(2)}</p>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-center">

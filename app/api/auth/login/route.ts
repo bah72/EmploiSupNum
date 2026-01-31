@@ -1,22 +1,9 @@
-
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
-import { User } from '../../../types';
+import { TimetableDatabase } from '@/lib/database';
+import { User } from '@/app/types';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-
-function getUsers(): User[] {
-    if (!fs.existsSync(USERS_FILE)) {
-        return [];
-    }
-    try {
-        const data = fs.readFileSync(USERS_FILE, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        return [];
-    }
+async function getAppUsers(): Promise<User[]> {
+    return await TimetableDatabase.getAppUsers();
 }
 
 export async function POST(request: Request) {
@@ -27,8 +14,8 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing credentials' }, { status: 400 });
         }
 
-        const users = getUsers();
-        const user = users.find(u => u.username === username && u.password === password);
+        const users = await getAppUsers();
+        const user = users.find((u: any) => u.username === username && u.password === password);
 
         if (!user) {
             return NextResponse.json({ error: 'Invalid credentials or inactive account' }, { status: 401 });

@@ -1,16 +1,6 @@
-
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { TimetableDatabase } from '@/lib/database';
 import { User, UserRole } from '@/app/types';
-
-const DATA_DIR = path.join(process.cwd(), 'data');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-}
 
 // Initial default users
 const DEFAULT_ADMIN: User = {
@@ -31,30 +21,24 @@ const DEFAULT_STUDENT: User = {
     name: 'Étudiant'
 };
 
-
-function getUsers(): User[] {
-    if (!fs.existsSync(USERS_FILE)) {
+async function getAppUsers(): Promise<User[]> {
+    const users = await TimetableDatabase.getAppUsers();
+    if (users.length === 0) {
         const initialUsers = [DEFAULT_ADMIN, DEFAULT_STUDENT];
-        fs.writeFileSync(USERS_FILE, JSON.stringify(initialUsers, null, 2));
+        await TimetableDatabase.saveAppUsers(initialUsers);
         return initialUsers;
     }
-    try {
-        const data = fs.readFileSync(USERS_FILE, 'utf-8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error("Error reading users file:", error);
-        return [DEFAULT_ADMIN, DEFAULT_STUDENT];
-    }
+    return users;
 }
 
-function saveUsers(users: User[]) {
-    fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+async function saveAppUsers(users: User[]) {
+    await TimetableDatabase.saveAppUsers(users);
 }
 
 export async function GET() {
-    const users = getUsers();
+    const users = await getAppUsers();
     // Don't return passwords
-    const safeUsers = users.map(({ password, ...user }) => user);
+    const safeUsers = users.map(({ password, ...user }: any) => user);
     return NextResponse.json(safeUsers);
 }
 
@@ -67,9 +51,9 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const users = getUsers();
+        const users = await getAppUsers();
 
-        if (users.find(u => u.username === username)) {
+        if (users.find((u: any) => u.username === username)) {
             return NextResponse.json({ error: 'Username already exists' }, { status: 409 });
         }
 
@@ -83,7 +67,7 @@ export async function POST(request: Request) {
         };
 
         users.push(newUser);
-        saveUsers(users);
+        await saveAppUsers(users);
 
         const { password: _, ...safeUser } = newUser;
         return NextResponse.json(safeUser);
@@ -99,8 +83,8 @@ export async function PUT(request: Request) {
 
         if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
-        const users = getUsers();
-        const index = users.findIndex(u => u.id === id);
+        const users = await getAppUsers();
+        const index = users.findIndex((u: any) => u.id === id);
 
         if (index === -1) {
             return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -115,7 +99,7 @@ export async function PUT(request: Request) {
         }
 
         users[index] = updatedUser;
-        saveUsers(users);
+        await saveAppUsers(users);
 
         const { password: _, ...safeUser } = updatedUser;
         return NextResponse.json(safeUser);
@@ -131,8 +115,8 @@ export async function DELETE(request: Request) {
 
         if (!id) return NextResponse.json({ error: 'Missing ID' }, { status: 400 });
 
-        let users = getUsers();
-        const userToDelete = users.find(u => u.id === id);
+        let users = await getAppUsers();
+        const userToDelete = users.find((u: any) => u.id === id);
 
         if (!userToDelete) return NextResponse.json({ error: 'User not found' }, { status: 404 });
 
@@ -141,8 +125,8 @@ export async function DELETE(request: Request) {
             return NextResponse.json({ error: 'Cannot delete default users' }, { status: 403 });
         }
 
-        users = users.filter(u => u.id !== id);
-        saveUsers(users);
+        users = users.filter((u: any) => u.id !== id);
+        await saveAppUsers(users);
 
         return NextResponse.json({ success: true });
     } catch (error) {
