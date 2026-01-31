@@ -2832,17 +2832,17 @@ export default function App() {
                                   </div>
 
                                   <div className="grid grid-cols-3 gap-2">
-                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-blue-100 hover:bg-blue-50/50 transition-all">
-                                      <span className="text-[9px] text-blue-500 font-bold uppercase mb-1">CM</span>
-                                      <span className="text-lg font-black text-blue-700 leading-none">{stats.cm}</span>
+                                    <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-transparent hover:border-blue-100 hover:bg-blue-50/50 transition-all">
+                                      <span className="text-[10px] text-blue-500 font-black uppercase">CM:</span>
+                                      <span className="text-sm font-black text-blue-700 leading-none">{stats.cm}</span>
                                     </div>
-                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-emerald-100 hover:bg-emerald-50/50 transition-all">
-                                      <span className="text-[9px] text-emerald-500 font-bold uppercase mb-1">TD</span>
-                                      <span className="text-lg font-black text-emerald-700 leading-none">{stats.td}</span>
+                                    <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-transparent hover:border-emerald-100 hover:bg-emerald-50/50 transition-all">
+                                      <span className="text-[10px] text-emerald-500 font-black uppercase">TD:</span>
+                                      <span className="text-sm font-black text-emerald-700 leading-none">{stats.td}</span>
                                     </div>
-                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-purple-100 hover:bg-purple-50/50 transition-all">
-                                      <span className="text-[9px] text-purple-500 font-bold uppercase mb-1">TP</span>
-                                      <span className="text-lg font-black text-purple-700 leading-none">{stats.tp}</span>
+                                    <div className="flex items-center justify-center gap-1.5 p-2 rounded-lg border border-transparent hover:border-purple-100 hover:bg-purple-50/50 transition-all">
+                                      <span className="text-[10px] text-purple-500 font-black uppercase">TP:</span>
+                                      <span className="text-sm font-black text-purple-700 leading-none">{stats.tp}</span>
                                     </div>
                                   </div>
                                 </div>
