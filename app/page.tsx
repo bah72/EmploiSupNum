@@ -1,4 +1,4 @@
-"use client";
+"use client"; // UI Improvement Task Started
 
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { DndContext, DragEndEvent, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
@@ -2807,25 +2807,43 @@ export default function App() {
                                 dataFilterSemester || undefined
                               )
                             ).map(([teacher, stats]: any) => (
-                              <div key={teacher} className="bg-white p-4 rounded border shadow-sm">
-                                <div className="flex justify-between items-start mb-3 border-b pb-2">
-                                  <div>
-                                    <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {(Number(stats.total) * 1.5).toFixed(2)} h</p>
+                              <div key={teacher} className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden">
+                                <div className="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-blue-100 rounded-lg text-blue-600">
+                                      <Users size={16} />
+                                    </div>
+                                    <h5 className="font-bold text-slate-800 text-sm leading-tight">{teacher}</h5>
+                                  </div>
+                                  <div className="flex flex-col items-end">
+                                    <div className="bg-blue-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                                      {(Number(stats.total) * 1.5).toFixed(1)} H
+                                    </div>
+                                    <span className="text-[9px] text-slate-400 font-bold uppercase mt-1">Total Eq. CM</span>
                                   </div>
                                 </div>
-                                <div className="grid grid-cols-3 gap-2 text-center">
-                                  <div className="bg-blue-50 p-2 rounded">
-                                    <div className="text-xs text-blue-600 font-bold uppercase">CM</div>
-                                    <div className="text-md font-black text-blue-800">{stats.cm}</div>
+
+                                <div className="p-4 space-y-4">
+                                  {/* Distribution Bar */}
+                                  <div className="h-1.5 w-full bg-slate-100 rounded-full flex overflow-hidden">
+                                    {stats.cm > 0 && <div className="h-full bg-blue-500 transition-all" style={{ width: `${(stats.cm / (stats.cm + stats.td + stats.tp)) * 100}%` }} />}
+                                    {stats.td > 0 && <div className="h-full bg-emerald-500 transition-all" style={{ width: `${(stats.td / (stats.cm + stats.td + stats.tp)) * 100}%` }} />}
+                                    {stats.tp > 0 && <div className="h-full bg-purple-500 transition-all" style={{ width: `${(stats.tp / (stats.cm + stats.td + stats.tp)) * 100}%` }} />}
                                   </div>
-                                  <div className="bg-green-50 p-2 rounded">
-                                    <div className="text-xs text-green-600 font-bold uppercase">TD</div>
-                                    <div className="text-md font-black text-green-800">{stats.td}</div>
-                                  </div>
-                                  <div className="bg-purple-50 p-2 rounded">
-                                    <div className="text-xs text-purple-600 font-bold uppercase">TP</div>
-                                    <div className="text-md font-black text-purple-800">{stats.tp}</div>
+
+                                  <div className="grid grid-cols-3 gap-2">
+                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-blue-100 hover:bg-blue-50/50 transition-all">
+                                      <span className="text-[9px] text-blue-500 font-bold uppercase mb-1">CM</span>
+                                      <span className="text-lg font-black text-blue-700 leading-none">{stats.cm}</span>
+                                    </div>
+                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-emerald-100 hover:bg-emerald-50/50 transition-all">
+                                      <span className="text-[9px] text-emerald-500 font-bold uppercase mb-1">TD</span>
+                                      <span className="text-lg font-black text-emerald-700 leading-none">{stats.td}</span>
+                                    </div>
+                                    <div className="flex flex-col items-center p-2 rounded-lg border border-transparent hover:border-purple-100 hover:bg-purple-50/50 transition-all">
+                                      <span className="text-[9px] text-purple-500 font-bold uppercase mb-1">TP</span>
+                                      <span className="text-lg font-black text-purple-700 leading-none">{stats.tp}</span>
+                                    </div>
                                   </div>
                                 </div>
                               </div>
