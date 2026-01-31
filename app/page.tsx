@@ -13,7 +13,7 @@ import UserManagement from './components/UserManagement';
 // Helper pour les statistiques
 const AssignmentRowService = {
   getTeacherStats: (assignmentRows: AssignmentRow[], schedule: Record<string, string | null | string[]>, semesterFilter?: string) => {
-    const stats: Record<string, { cm: number, td: number, tp: number, totalEqCm: string, totalHours: string }> = {};
+    const stats: Record<string, { cm: number, td: number, tp: number, total: string }> = {};
 
     Object.values(schedule).forEach(courseValue => {
       if (!courseValue) return;
@@ -27,7 +27,7 @@ const AssignmentRowService = {
 
         const teacher = row.teacher || 'Non assigné';
         if (!stats[teacher]) {
-          stats[teacher] = { cm: 0, td: 0, tp: 0, totalEqCm: '0', totalHours: '0' };
+          stats[teacher] = { cm: 0, td: 0, tp: 0, total: '0' };
         }
 
         if (row.type === 'CM') stats[teacher].cm++;
@@ -36,16 +36,10 @@ const AssignmentRowService = {
       });
     });
 
-    // Chaque séance = 1.5h
-    // Équivalent CM : 1 TD/TP = 2/3 CM
+    // Calculer l'équivalent CM : CM + (TD + TP) * 2/3 (en nombre de séances)
     Object.values(stats).forEach(stat => {
-      const hoursCM = stat.cm * 1.5;
-      const hoursTDTP = (stat.td + stat.tp) * 1.5;
-      const hoursEqCM = hoursCM + (hoursTDTP * 2 / 3);
-      const totalHoursReal = (stat.cm + stat.td + stat.tp) * 1.5;
-
-      stat.totalEqCm = hoursEqCM.toFixed(2);
-      stat.totalHours = totalHoursReal.toFixed(2);
+      const eqCm = stat.cm + ((stat.td + stat.tp) * 2 / 3);
+      stat.total = eqCm.toFixed(1); // Garder 1 décimale
     });
 
     return stats;
@@ -2817,10 +2811,7 @@ export default function App() {
                                 <div className="flex justify-between items-start mb-3 border-b pb-2">
                                   <div>
                                     <h5 className="font-bold text-sm text-slate-800">{teacher}</h5>
-                                    <div className="flex flex-col gap-0.5 mt-1">
-                                      <p className="text-[10px] text-blue-600 font-black uppercase">Total: {stats.totalHours} h</p>
-                                      <p className="text-[10px] text-slate-500 font-bold uppercase">Éq. CM: {stats.totalEqCm} h</p>
-                                    </div>
+                                    <p className="text-xs text-slate-500 font-bold uppercase">Total Éq. CM: {stats.total}</p>
                                   </div>
                                 </div>
                                 <div className="grid grid-cols-3 gap-2 text-center">
