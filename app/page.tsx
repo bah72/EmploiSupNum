@@ -93,7 +93,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
         <div className="hidden sm:flex text-[12px] text-slate-600 font-medium">
           Du&nbsp;<span className="text-blue-700 font-bold mx-1">{startStr}</span>&nbsp;au&nbsp;<span className="text-blue-700 font-bold mx-1">{endStr}</span>
         </div>
-        <div className="flex items-center gap-2 no-export">
+        <div className="flex items-center gap-1 no-export">
           <div className="relative group no-print">
             <Search className="absolute left-2 top-1.5 text-slate-400" size={12} />
             <input ref={searchInputRef} type="text" value={searchQuery} onChange={handleSearchChange} placeholder="Chercher..." className="w-28 focus:w-40 bg-white border border-slate-300 rounded-full py-1 pl-6 pr-4 text-[12px] font-medium transition-all outline-none" />
