@@ -1962,6 +1962,7 @@ export default function App() {
                     <tbody className="divide-y divide-slate-100">
                       {assignmentRows.filter(r =>
                         r.semester === semester &&
+                        r.mainGroup === activeMainGroup &&
                         (
                           r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
                           r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
