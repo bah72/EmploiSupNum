@@ -102,15 +102,11 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
             <Save size={16} />
           </button>
 
-          {currentUser?.role === 'admin' && (
+          {currentUser?.role === 'admin' && isSaving && (
             <div className="hidden md:flex flex-col items-end mr-0 no-print">
               <div className="flex items-center gap-1.5 min-w-[120px] justify-end">
-                {isSaving ? (
-                  <>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
-                  </>
-                ) : null}
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
               </div>
             </div>
           )}
