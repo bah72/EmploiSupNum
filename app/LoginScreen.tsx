@@ -23,16 +23,54 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     console.log('Password provided:', password ? '***' : 'none');
 
     try {
-      const result = await AuthService.signIn(email, password);
-      console.log('AuthService result:', result);
-      
-      if (result.user) {
-        console.log('Login successful, user:', result.user);
-        onLogin(result.user);
-      } else {
-        console.log('Login failed, error:', result.error);
-        setError(result.error || 'Erreur de connexion');
+      // Validation simple de l'email @supnum.mr
+      if (!email.endsWith('@supnum.mr')) {
+        setError('Seuls les emails @supnum.mr sont autorisés');
+        setIsLoading(false);
+        return;
       }
+
+      // Validation du mot de passe selon l'utilisateur
+      const username = email.split('@')[0];
+      let isValidPassword = false;
+      let role: 'admin' | 'prof' | 'student' = 'student';
+
+      if (email === 'moussa.ba@supnum.mr') {
+        isValidPassword = password === 'moussa.ba';
+        role = 'admin';
+      } else if (email === 'cheikh.dhib@supnum.mr') {
+        isValidPassword = password === 'cheikh.dhib';
+        role = 'prof';
+      } else if (email === '25064@supnum.mr') {
+        isValidPassword = password === '12345678';
+        role = 'student';
+      } else if (/^\d{6,}$/.test(username)) {
+        // Matricule : 6 chiffres ou plus
+        isValidPassword = password === '12345678';
+        role = 'student';
+      } else {
+        // Pour les autres utilisateurs
+        isValidPassword = password === '12345678';
+        role = 'student';
+      }
+
+      if (!isValidPassword) {
+        setError('Mot de passe incorrect');
+        setIsLoading(false);
+        return;
+      }
+
+      // Créer l'utilisateur
+      const user = {
+        id: username,
+        username,
+        email,
+        role,
+        isActive: true
+      };
+
+      console.log('Login successful, user:', user);
+      onLogin(user);
     } catch (error) {
       console.error('Login exception:', error);
       setError('Une erreur est survenue');
