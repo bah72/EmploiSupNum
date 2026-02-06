@@ -103,7 +103,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           </button>
 
           {currentUser?.role === 'admin' && (
-            <div className="hidden md:flex flex-col items-end mr-2 no-print">
+            <div className="hidden md:flex flex-col items-end mr-1 no-print">
               <div className="flex items-center gap-1.5 min-w-[120px] justify-end">
                 {isSaving ? (
                   <>
