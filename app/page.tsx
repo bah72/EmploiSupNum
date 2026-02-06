@@ -153,7 +153,7 @@ export default function App() {
   const [isClient, setIsClient] = useState(false);
   const [semester, setSemester] = useState<string>('S1');
   const [activeTab, setActiveTab] = useState<'manage' | 'planning' | 'config' | 'data' | 'users'>('planning');
-  const [activeMainGroup, setActiveMainGroup] = useState("Groupe 1");
+  const [activeMainGroup, setActiveMainGroup] = useState("Tous");
   const [currentWeek, setCurrentWeek] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
 
