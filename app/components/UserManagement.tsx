@@ -16,20 +16,41 @@ export default function UserManagement() {
     const [newUserName, setNewUserName] = useState('');
 
     useEffect(() => {
-        fetchUsers();
+        // Charger directement les utilisateurs par défaut
+        const defaultUsers = [
+            {
+                id: 'moussa.ba',
+                username: 'moussa.ba',
+                email: 'moussa.ba@supnum.mr',
+                role: 'admin' as UserRole,
+                name: 'Moussa Ba',
+                isActive: true,
+                isDefault: true
+            },
+            {
+                id: 'cheikh.dhib',
+                username: 'cheikh.dhib',
+                email: 'cheikh.dhib@supnum.mr',
+                role: 'prof' as UserRole,
+                name: 'Cheikh Dhib',
+                isActive: true,
+                isDefault: true
+            },
+            {
+                id: '25064',
+                username: '25064',
+                email: '25064@supnum.mr',
+                role: 'student' as UserRole,
+                name: 'Étudiant 25064',
+                isActive: true,
+                isDefault: true
+            }
+        ];
+        
+        console.log('Setting default users:', defaultUsers);
+        setUsers(defaultUsers);
+        setLoading(false);
     }, []);
-
-    const fetchUsers = async () => {
-        try {
-            const res = await fetch('/api/users');
-            const data = await res.json();
-            setUsers(data);
-        } catch (error) {
-            console.error('Error fetching users:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const notify = (text: string, type: 'success' | 'error') => {
         setMsg({ type, text });
@@ -43,8 +64,8 @@ export default function UserManagement() {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    username: newUserUsername,
-                    password: newUserPassword,
+                    username: newUserUsername.split('@')[0], // Extraire username de l'email
+                    email: newUserUsername,
                     role: newUserRole,
                     name: newUserName
                 }),
@@ -53,11 +74,11 @@ export default function UserManagement() {
             if (res.ok) {
                 notify('Utilisateur créé avec succès', 'success');
                 setNewUserUsername('');
-                setNewUserPassword('');
                 setNewUserName('');
                 setNewUserRole('student');
                 setShowAddForm(false);
-                fetchUsers();
+                // Recharger les utilisateurs
+                window.location.reload();
             } else {
                 const data = await res.json();
                 notify(data.error || 'Erreur lors de la création', 'error');
@@ -74,7 +95,8 @@ export default function UserManagement() {
             const res = await fetch(`/api/users?id=${id}`, { method: 'DELETE' });
             if (res.ok) {
                 notify('Utilisateur supprimé', 'success');
-                fetchUsers();
+                // Recharger la page pour voir les changements
+                window.location.reload();
             } else {
                 const data = await res.json();
                 notify(data.error || 'Erreur lors de la suppression', 'error');
@@ -97,7 +119,8 @@ export default function UserManagement() {
             });
 
             if (res.ok) {
-                fetchUsers();
+                // Recharger la page pour voir les changements
+                window.location.reload();
             } else {
                 notify("Erreur lors de la mise à jour", 'error');
             }
@@ -126,6 +149,49 @@ export default function UserManagement() {
                 </button>
             </div>
 
+            {/* Section utilisateurs par défaut */}
+            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                <h3 className="font-semibold text-amber-800 mb-2 flex items-center gap-2">
+                    <Shield size={16} />
+                    Utilisateurs par défaut
+                </h3>
+                <p className="text-sm text-amber-700 mb-3">
+                    Les comptes suivants sont prédéfinis et ne peuvent pas être modifiés ou supprimés :
+                </p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                    <div className="flex items-center gap-2 p-2 bg-white rounded border border-amber-300">
+                        <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                            <Shield size={14} className="text-green-600" />
+                        </div>
+                        <div>
+                            <div className="font-medium text-slate-800">Moussa Ba</div>
+                            <div className="text-slate-500 text-xs">moussa.ba@supnum.mr</div>
+                            <div className="text-green-600 text-xs">Administrateur</div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white rounded border border-amber-300">
+                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                            <GraduationCap size={14} className="text-purple-600" />
+                        </div>
+                        <div>
+                            <div className="font-medium text-slate-800">Cheikh Dhib</div>
+                            <div className="text-slate-500 text-xs">cheikh.dhib@supnum.mr</div>
+                            <div className="text-purple-600 text-xs">Professeur</div>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-2 p-2 bg-white rounded border border-amber-300">
+                        <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                            <GraduationCap size={14} className="text-blue-600" />
+                        </div>
+                        <div>
+                            <div className="font-medium text-slate-800">Étudiant 25064</div>
+                            <div className="text-slate-500 text-xs">25064@supnum.mr</div>
+                            <div className="text-blue-600 text-xs">Étudiant</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {msg && (
                 <div className={`p-4 rounded-md mb-6 ${msg.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                     {msg.text}
@@ -147,36 +213,33 @@ export default function UserManagement() {
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Identifiant</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Email institutionnel</label>
                             <input
-                                type="text"
+                                type="email"
                                 value={newUserUsername}
                                 onChange={e => setNewUserUsername(e.target.value)}
                                 className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder="Ex: etudiant1"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Mot de passe</label>
-                            <input
-                                type="password"
-                                value={newUserPassword}
-                                onChange={e => setNewUserPassword(e.target.value)}
-                                className="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none"
-                                placeholder="••••••••"
+                                placeholder="Ex: jean.dupont@supnum.mr"
                                 required
                             />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Rôle</label>
-                            <div className="flex bg-white rounded border border-slate-300 overflow-hidden">
+                            <div className="flex gap-2 p-1 bg-slate-100 rounded-lg">
                                 <button
                                     type="button"
                                     onClick={() => setNewUserRole('admin')}
                                     className={`flex-1 py-2 flex items-center justify-center gap-2 text-sm font-medium transition-colors ${newUserRole === 'admin' ? 'bg-green-100 text-green-700' : 'hover:bg-slate-50'}`}
                                 >
                                     <Shield size={16} /> Admin
+                                </button>
+                                <div className="w-px bg-slate-300"></div>
+                                <button
+                                    type="button"
+                                    onClick={() => setNewUserRole('prof')}
+                                    className={`flex-1 py-2 flex items-center justify-center gap-2 text-sm font-medium transition-colors ${newUserRole === 'prof' ? 'bg-purple-100 text-purple-700' : 'hover:bg-slate-50'}`}
+                                >
+                                    <GraduationCap size={16} /> Prof
                                 </button>
                                 <div className="w-px bg-slate-300"></div>
                                 <button
@@ -209,29 +272,46 @@ export default function UserManagement() {
                     </thead>
                     <tbody className="text-sm">
                         {users.map(user => (
-                            <tr key={user.id} className="border-b border-slate-100 hover:bg-slate-50">
+                            <tr key={user.id} className={`border-b border-slate-100 hover:bg-slate-50 ${(user as any).isDefault ? 'bg-blue-50' : ''}`}>
                                 <td className="py-3 px-4">
-                                    <div className="font-medium text-slate-800">{user.name || user.username}</div>
-                                    <div className="text-slate-400 text-xs">@{user.username}</div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="font-medium text-slate-800">{user.name || user.username}</div>
+                                        {(user as any).isDefault && (
+                                            <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs rounded-full font-medium">
+                                                Par défaut
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="text-slate-400 text-xs">{user.email || `@${user.username}`}</div>
                                 </td>
                                 <td className="py-3 px-4">
-                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
-                                        {user.role === 'admin' ? <Shield size={12} /> : <GraduationCap size={12} />}
-                                        {user.role === 'admin' ? 'Administrateur' : 'Étudiant'}
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
+                                        user.role === 'admin' ? 'bg-green-100 text-green-700' : 
+                                        user.role === 'prof' ? 'bg-purple-100 text-purple-700' :
+                                        'bg-blue-100 text-blue-700'
+                                    }`}>
+                                        {user.role === 'admin' ? <Shield size={12} /> : 
+                                         user.role === 'prof' ? <GraduationCap size={12} /> :
+                                         <GraduationCap size={12} />}
+                                        {user.role === 'admin' ? 'Administrateur' : 
+                                         user.role === 'prof' ? 'Professeur' :
+                                         'Étudiant'}
                                     </span>
                                 </td>
                                 <td className="py-3 px-4">
                                     <button
                                         onClick={() => toggleUserStatus(user)}
-                                        disabled={user.username === 'admin'}
-                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${user.isActive ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                                        disabled={(user as any).isDefault}
+                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${
+                                            user.isActive ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                                        } ${(user as any).isDefault ? 'opacity-50 cursor-not-allowed' : ''}`}
                                     >
                                         {user.isActive ? <Check size={12} /> : <Power size={12} />}
                                         {user.isActive ? 'Actif' : 'Désactivé'}
                                     </button>
                                 </td>
                                 <td className="py-3 px-4 text-right">
-                                    {user.username !== 'admin' && (
+                                    {!(user as any).isDefault && (
                                         <button
                                             onClick={() => handleDeleteUser(user.id, user.username)}
                                             className="p-1.5 text-red-500 hover:bg-red-50 rounded transition-colors"
