@@ -1961,25 +1961,16 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {assignmentRows.filter(r => {
-                        const matchesSemester = r.semester === semester;
-                        const matchesGroup = activeMainGroup === "Tous" || r.mainGroup === activeMainGroup;
-                        console.log('Debug filtre:', { 
-                          rowGroup: r.mainGroup, 
-                          activeGroup: activeMainGroup, 
-                          matchesGroup,
-                          rowSubject: r.subject,
-                          semester: r.semester,
-                          activeSemester: semester
-                        });
-                        return matchesSemester && matchesGroup &&
+                      {assignmentRows.filter(r =>
+                        r.semester === semester &&
+                        (activeMainGroup === "Tous" || r.mainGroup === activeMainGroup) &&
                         (
                           r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
                           r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
                           (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
                           (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
-                        );
-                      }).sort((a, b) => {
+                        )
+                      ).sort((a, b) => {
                         // Trier par groupe puis par matière
                         if (a.mainGroup !== b.mainGroup) return a.mainGroup.localeCompare(b.mainGroup);
                         return a.subject.localeCompare(b.subject);
