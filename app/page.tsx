@@ -73,6 +73,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           <div className="flex items-center bg-white px-2 py-1 rounded border border-blue-200 shadow-sm">
             <span className="mr-1 text-black-800 font-bold text-[10px]">Groupe:</span>
             <select value={group} onChange={(e) => setGroup(e.target.value)} className="text-blue-700 font-bold bg-transparent outline-none cursor-pointer text-xs">
+              <option value="Tous">Tous</option>
               {dynamicGroups.map((g: string) => <option key={g} value={g}>{g.replace("Groupe ", "G")}</option>)}
             </select>
           </div>
@@ -1962,7 +1963,7 @@ export default function App() {
                     <tbody className="divide-y divide-slate-100">
                       {assignmentRows.filter(r => {
                         const matchesSemester = r.semester === semester;
-                        const matchesGroup = r.mainGroup === activeMainGroup;
+                        const matchesGroup = activeMainGroup === "Tous" || r.mainGroup === activeMainGroup;
                         console.log('Debug filtre:', { 
                           rowGroup: r.mainGroup, 
                           activeGroup: activeMainGroup, 
