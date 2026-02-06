@@ -179,16 +179,101 @@ export class TimetableDatabase {
           .select('value')
           .eq('key', 'app_users')
           .maybeSingle();
-        if (!error && data) return data.value;
-      } catch (e) { }
+        
+        if (!error && data && data.value && data.value.length > 0) {
+          console.log('Utilisateurs chargés depuis Supabase:', data.value);
+          return data.value;
+        }
+        
+        // Si Supabase est vide, retourner les utilisateurs par défaut
+        console.log('Supabase vide ou erreur, utilisation des utilisateurs par défaut');
+        const defaultUsers = [
+          {
+            id: 'moussa.ba',
+            username: 'moussa.ba',
+            email: 'moussa.ba@supnum.mr',
+            role: 'admin',
+            name: 'Moussa Ba',
+            isActive: true
+          },
+          {
+            id: 'cheikh.dhib',
+            username: 'cheikh.dhib',
+            email: 'cheikh.dhib@supnum.mr',
+            role: 'prof',
+            name: 'Cheikh Dhib',
+            isActive: true
+          },
+          {
+            id: '25064',
+            username: '25064',
+            email: '25064@supnum.mr',
+            role: 'student',
+            name: 'Étudiant 25064',
+            isActive: true
+          }
+        ];
+        
+        // Sauvegarder les utilisateurs par défaut dans Supabase pour les prochaines fois
+        try {
+          await supabase
+            .from('timetable_storage')
+            .upsert({ 
+              key: 'app_users', 
+              value: defaultUsers, 
+              updated_at: new Date().toISOString() 
+            });
+          console.log('Utilisateurs par défaut sauvegardés dans Supabase');
+        } catch (saveError) {
+          console.warn('Impossible de sauvegarder les utilisateurs par défaut dans Supabase:', saveError);
+        }
+        
+        return defaultUsers;
+      } catch (e) {
+        console.error('Erreur Supabase, fallback vers utilisateurs par défaut:', e);
+      }
     }
+    
+    // Fallback local
     const usersPath = path.join(dataDir, 'users.json');
     try {
       if (fs.existsSync(usersPath)) {
-        return JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+        const localUsers = JSON.parse(fs.readFileSync(usersPath, 'utf-8'));
+        console.log('Utilisateurs chargés depuis le stockage local:', localUsers);
+        return localUsers;
       }
     } catch (e) { }
-    return [];
+    
+    // Dernier fallback : utilisateurs par défaut
+    console.log('Aucun utilisateur trouvé, utilisation des utilisateurs par défaut');
+    const defaultUsers = [
+      {
+        id: 'moussa.ba',
+        username: 'moussa.ba',
+        email: 'moussa.ba@supnum.mr',
+        role: 'admin',
+        name: 'Moussa Ba',
+        isActive: true
+      },
+      {
+        id: 'cheikh.dhib',
+        username: 'cheikh.dhib',
+        email: 'cheikh.dhib@supnum.mr',
+        role: 'prof',
+        name: 'Cheikh Dhib',
+        isActive: true
+      },
+      {
+        id: '25064',
+        username: '25064',
+        email: '25064@supnum.mr',
+        role: 'student',
+        name: 'Étudiant 25064',
+        isActive: true
+      }
+    ];
+    
+    return defaultUsers;
   }
 
   static async saveAppUsers(users: any[]): Promise<{ success: boolean, source: string, error?: string }> {
