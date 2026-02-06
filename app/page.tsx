@@ -1367,11 +1367,7 @@ export default function App() {
         if (data.custom_rooms) setCustomRooms(data.custom_rooms);
         if (data.custom_subjects) setCustomSubjects(data.custom_subjects);
 
-        const sourceLabel = result.sourceUser === 'admin' ? 'l\'administrateur' : 'votre profil';
-        setToastMessage({
-          msg: `Données chargées depuis ${sourceLabel}`,
-          type: 'success'
-        });
+        // Message de chargement supprimé
       } else {
         // Si aucune donnée n'est trouvée, charger le dataset par défaut pour les étudiants
         if (user.role === 'student' && assignmentRows.length === 0) {
