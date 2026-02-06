@@ -101,11 +101,6 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                         {loading ? 'Connexion en cours...' : 'Se connecter'}
                     </button>
                 </form>
-                <div className="mt-6 text-center text-xs text-slate-400">
-                    <div>Comptes par défaut :</div>
-                    <div className="mt-1">Admin : admin / admin123</div>
-                    <div>Étudiant : etudiant / 12345678</div>
-                </div>
             </div>
         </div>
     );

@@ -110,17 +110,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                     <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
                   </>
-                ) : lastSaved ? (
-                  <>
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sauvegardé à {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
-                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">Non sauvegardé</span>
-                  </>
-                )}
+                ) : null}
               </div>
             </div>
           )}
