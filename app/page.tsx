@@ -1972,9 +1972,20 @@ export default function App() {
                         // Trier par groupe puis par matière
                         if (a.mainGroup !== b.mainGroup) return a.mainGroup.localeCompare(b.mainGroup);
                         return a.subject.localeCompare(b.subject);
-                      }).map((row, rowIdx) => {
+                      }).map((row, rowIdx, filteredRows) => {
+                        // Vérifier si c'est la première ligne ou si la matière a changé
+                        const isFirstRow = rowIdx === 0;
+                        const previousRow = filteredRows[rowIdx - 1];
+                        const subjectChanged = !isFirstRow && previousRow && previousRow.subject !== row.subject;
+                        
                         return (
-                          <tr key={`${row.id}-${rowIdx}`} className="hover:bg-slate-50 transition-colors group">
+                          <React.Fragment key={`${row.id}-${rowIdx}`}>
+                            {subjectChanged && (
+                              <tr>
+                                <td colSpan={6} className="border-t-2 border-slate-300 bg-slate-100 h-1"></td>
+                              </tr>
+                            )}
+                            <tr className="hover:bg-slate-50 transition-colors group">
                             <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
                             <td className="p-1 border-r border-slate-50 font-black text-slate-700 text-center text-xs">
                               <span className="text-[11px] uppercase tracking-wide whitespace-nowrap">{row.mainGroup.replace("Groupe ", "G")}</span>
@@ -2208,6 +2219,7 @@ export default function App() {
                               </div>
                             </td>
                           </tr>
+                          </React.Fragment>
                         )
                       })}
                     </tbody>
