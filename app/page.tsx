@@ -47,7 +47,7 @@ const AssignmentRowService = {
 };
 
 // --- HEADER BANNER (en dehors du composant App pour éviter les re-rendus) ---
-const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups }: any) => {
+const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups, isSaving, lastSaved }: any) => {
   return (
     <div className="flex flex-col bg-white shrink-0 shadow-sm z-40 print-header" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
@@ -101,6 +101,30 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
             <Save size={16} />
           </button>
+
+          {currentUser?.role === 'admin' && (
+            <div className="hidden md:flex flex-col items-end mr-2 no-print">
+              <div className="flex items-center gap-1.5 min-w-[120px] justify-end">
+                {isSaving ? (
+                  <>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
+                  </>
+                ) : lastSaved ? (
+                  <>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sauvegardé à {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
+                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">Non sauvegardé</span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
             <Printer size={16} />
           </button>
@@ -162,6 +186,8 @@ export default function App() {
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
   const [compact, setCompact] = useState(true);
   const [cardsSidebarVisible, setCardsSidebarVisible] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // États pour la gestion des données
   const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
@@ -260,6 +286,17 @@ export default function App() {
   // Initialisation côté client
   useEffect(() => {
     setIsClient(true);
+
+    // Charger l'utilisateur depuis localStorage
+    const savedUser = localStorage.getItem('supnum_user');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Erreur lors du chargement de l\'utilisateur:', e);
+      }
+    }
+
     // Charger la configuration depuis localStorage
     const savedConfig = localStorage.getItem('supnum_config_v67');
     if (savedConfig) {
@@ -1216,6 +1253,31 @@ export default function App() {
     }
   }, [toastMessage]);
 
+  // Sauvegarde persistante de l'utilisateur
+  useEffect(() => {
+    if (isClient) {
+      if (currentUser) {
+        localStorage.setItem('supnum_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('supnum_user');
+      }
+    }
+  }, [currentUser, isClient]);
+
+  // Sauvegarde automatique Cloud avec debounce
+  useEffect(() => {
+    if (!currentUser || !isClient || currentUser.role !== 'admin') return;
+
+    // Ne pas auto-sauvegarder si rien n'a été chargé encore
+    if (assignmentRows.length === 0 && Object.keys(schedule).length === 0) return;
+
+    const timer = setTimeout(() => {
+      handleSaveToDatabase(true);
+    }, 5000); // 5 secondes de debounce pour le cloud
+
+    return () => clearTimeout(timer);
+  }, [assignmentRows, schedule, config, customRooms, customSubjects, currentUser, isClient]);
+
   // Charger les données depuis la base quand l'utilisateur se connecte
   useEffect(() => {
     if (currentUser && isClient) {
@@ -1248,11 +1310,13 @@ export default function App() {
 
   // Fonction pour sauvegarder en base de données
   // Fonction pour sauvegarder en base de données (Complète)
-  const handleSaveToDatabase = async () => {
+  const handleSaveToDatabase = async (isAutoSave = false) => {
     if (!currentUser) {
-      setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
+      if (!isAutoSave) setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
       return;
     }
+
+    if (isAutoSave) setIsSaving(true);
 
     try {
       const allData = {
@@ -1276,19 +1340,26 @@ export default function App() {
       const data = await response.json();
 
       if (data.success) {
-        setToastMessage({
-          msg: data.message || 'Sauvegarde Cloud réussie !',
-          type: 'success'
-        });
+        if (!isAutoSave) {
+          setToastMessage({
+            msg: data.message || 'Sauvegarde Cloud réussie !',
+            type: 'success'
+          });
+        }
+        setLastSaved(new Date());
       } else {
-        setToastMessage({
-          msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
-          type: 'error'
-        });
+        if (!isAutoSave) {
+          setToastMessage({
+            msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
+            type: 'error'
+          });
+        }
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      setToastMessage({ msg: 'Erreur de connexion lors de la sauvegarde', type: 'error' });
+      if (!isAutoSave) setToastMessage({ msg: 'Erreur de connexion lors de la sauvegarde', type: 'error' });
+    } finally {
+      if (isAutoSave) setIsSaving(false);
     }
   };
 
@@ -1704,6 +1775,8 @@ export default function App() {
           refreshCardsOnly={refreshCardsOnly}
           clearScheduleOnly={clearScheduleOnly}
           fixSubGroups={fixSubGroups}
+          isSaving={isSaving}
+          lastSaved={lastSaved}
         />
 
         <div className="flex flex-1 overflow-hidden">
