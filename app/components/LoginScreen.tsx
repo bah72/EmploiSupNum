@@ -13,6 +13,10 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
+    console.log('=== LoginScreen Component Mounted ===');
+    console.log('Current email state:', email);
+    console.log('Current password state:', password ? '***' : 'none');
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
