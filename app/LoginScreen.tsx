@@ -19,15 +19,22 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setIsLoading(true);
     setError('');
 
+    console.log('Login attempt with email:', email);
+    console.log('Password provided:', password ? '***' : 'none');
+
     try {
       const result = await AuthService.signIn(email, password);
+      console.log('AuthService result:', result);
       
       if (result.user) {
+        console.log('Login successful, user:', result.user);
         onLogin(result.user);
       } else {
+        console.log('Login failed, error:', result.error);
         setError(result.error || 'Erreur de connexion');
       }
     } catch (error) {
+      console.error('Login exception:', error);
       setError('Une erreur est survenue');
     } finally {
       setIsLoading(false);

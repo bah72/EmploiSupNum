@@ -1713,7 +1713,14 @@ export default function App() {
 
   // Show login screen if not authenticated
   if (!currentUser) {
-    return <LoginScreen onLogin={setCurrentUser} />;
+    return <LoginScreen onLogin={(user) => {
+      if (user) {
+        console.log('User logged in:', user);
+        setCurrentUser(user);
+      } else {
+        console.error('Login failed');
+      }
+    }} />;
   }
 
   return (
@@ -1902,7 +1909,7 @@ export default function App() {
             {activeTab === 'planning' && (
               <DndContext onDragStart={(e) => setActiveDragItem(assignmentRows.find(r => r.id === e.active.id) || null)} onDragEnd={handleDragEnd}>
                 <div className="flex flex-1 overflow-hidden h-full">
-                  {cardsSidebarVisible && RoleManager.hasPermission(currentUser, 'edit_schedule') && (
+                  {cardsSidebarVisible && RoleManager.hasPermission(currentUser, 'view_schedule') && (
                     <div className="w-48 bg-white border-r border-slate-200 flex flex-col shrink-0 p-2 no-export">
                       <div className="px-3 py-2 border-b text-[12px] font-bold text-slate-700 uppercase text-left bg-white">À Placer <span className="text-sm text-slate-400">({sidebarCourses.length})</span></div>
 
