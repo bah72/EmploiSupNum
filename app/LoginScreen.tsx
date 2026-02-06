@@ -19,12 +19,15 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setIsLoading(true);
     setError('');
 
-    console.log('Login attempt with email:', email);
-    console.log('Password provided:', password ? '***' : 'none');
+    console.log('=== LOGIN ATTEMPT ===');
+    console.log('Email:', email);
+    console.log('Password:', password ? '***' : 'none');
+    console.log('Email ends with @supnum.mr:', email.endsWith('@supnum.mr'));
 
     try {
       // Validation simple de l'email @supnum.mr
       if (!email.endsWith('@supnum.mr')) {
+        console.log('Email validation failed');
         setError('Seuls les emails @supnum.mr sont autorisés');
         setIsLoading(false);
         return;
@@ -32,29 +35,42 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
       // Validation du mot de passe selon l'utilisateur
       const username = email.split('@')[0];
+      console.log('Username extracted:', username);
+      
       let isValidPassword = false;
       let role: 'admin' | 'prof' | 'student' = 'student';
 
       if (email === 'moussa.ba@supnum.mr') {
+        console.log('Checking admin password');
         isValidPassword = password === 'moussa.ba';
         role = 'admin';
+        console.log('Admin password valid:', isValidPassword);
       } else if (email === 'cheikh.dhib@supnum.mr') {
+        console.log('Checking prof password');
         isValidPassword = password === 'cheikh.dhib';
         role = 'prof';
+        console.log('Prof password valid:', isValidPassword);
       } else if (email === '25064@supnum.mr') {
+        console.log('Checking student password');
         isValidPassword = password === '12345678';
         role = 'student';
+        console.log('Student password valid:', isValidPassword);
       } else if (/^\d{6,}$/.test(username)) {
         // Matricule : 6 chiffres ou plus
+        console.log('Checking matricule password');
         isValidPassword = password === '12345678';
         role = 'student';
+        console.log('Matricule password valid:', isValidPassword);
       } else {
         // Pour les autres utilisateurs
+        console.log('Checking default password');
         isValidPassword = password === '12345678';
         role = 'student';
+        console.log('Default password valid:', isValidPassword);
       }
 
       if (!isValidPassword) {
+        console.log('Password validation failed');
         setError('Mot de passe incorrect');
         setIsLoading(false);
         return;
@@ -69,10 +85,12 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         isActive: true
       };
 
-      console.log('Login successful, user:', user);
+      console.log('=== LOGIN SUCCESS ===');
+      console.log('User created:', user);
       onLogin(user);
     } catch (error) {
-      console.error('Login exception:', error);
+      console.error('=== LOGIN ERROR ===');
+      console.error('Exception:', error);
       setError('Une erreur est survenue');
     } finally {
       setIsLoading(false);

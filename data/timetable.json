@@ -4338,5 +4338,4345 @@
       ],
       "updated_at": "2026-02-01T22:43:45.026Z"
     }
+  },
+  "moussa.ba": {
+    "assignment_rows": {
+      "data_content": [
+        {
+          "id": "sjibcm27p",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769858897171",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TD1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD11",
+          "teacher": "Sidi Med",
+          "room": "Lab 1",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769862949656",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TP1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP11",
+          "teacher": "Sidi Med",
+          "room": "Lab 1",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769862953035",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TD2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD12",
+          "teacher": "Meya",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769858912485",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TP2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP12",
+          "teacher": "Meya",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "itkgf3csx",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Hamidoune",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859171978",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TD1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD21",
+          "teacher": "Sidi Med",
+          "room": "Lab 3",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859190696",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TP1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP21",
+          "teacher": "Sidi Med",
+          "room": "Lab 3",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859197055",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TD2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD22",
+          "teacher": "Meya",
+          "room": "Lab 4",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859240026",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "TP2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP22",
+          "teacher": "Meya",
+          "room": "Lab 4",
+          "semester": "S1"
+        },
+        {
+          "id": "a9wct46bv",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "hyc50sohm",
+          "subject": "DEV110",
+          "subjectLabel": "Algo et prog.",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "sqtgwizvm",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769858967882",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TD1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD11",
+          "teacher": "Med Lemine",
+          "room": "Lab 3",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769858980917",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TP1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP11",
+          "teacher": "Med Lemine",
+          "room": "Lab 3",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769858987589",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TD2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD12",
+          "teacher": "Massra",
+          "room": "Lab 4",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859050405",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TP2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP12",
+          "teacher": "Massra",
+          "room": "Lab 4",
+          "semester": "S1"
+        },
+        {
+          "id": "1am3a7l7l",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Hamidoune",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859256295",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TD1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD21",
+          "teacher": "Med Lemine",
+          "room": "102",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859264399",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TP1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP21",
+          "teacher": "Med Lemine",
+          "room": "102",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859282356",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TD2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD22",
+          "teacher": "Aicha",
+          "room": "103",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859297167",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "TP2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP22",
+          "teacher": "Aicha",
+          "room": "103",
+          "semester": "S1"
+        },
+        {
+          "id": "a1upixkvw",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "08t208shi",
+          "subject": "DEV111",
+          "subjectLabel": "B. de données 1",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "e416gx7dy",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859111151",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TD1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD11",
+          "teacher": "Aicha",
+          "room": "Lab 5",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859122155",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TP1",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP11",
+          "teacher": "Aicha",
+          "room": "Lab 5",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859129639",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TD2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TD12",
+          "teacher": "Cheikhane",
+          "room": "Lab 6",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769859146388",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TP2",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "TP12",
+          "teacher": "Cheikhane",
+          "room": "Lab 6",
+          "semester": "S1"
+        },
+        {
+          "id": "ft9o4ifm6",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Esseyssah",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769863328818",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TD1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD21",
+          "teacher": "Cheikhane",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769863373161",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TP1",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP21",
+          "teacher": "Cheikhane",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769863380425",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TD2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TD22",
+          "teacher": "Esseyssah",
+          "room": "201",
+          "semester": "S1"
+        },
+        {
+          "id": "new-1769863406769",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "TP2",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "TP22",
+          "teacher": "Esseyssah",
+          "room": "Lab 2",
+          "semester": "S1"
+        },
+        {
+          "id": "ux5zic8a1",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "r7imepesa",
+          "subject": "DEV112",
+          "subjectLabel": "Tech. web",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "mqeryb9dd",
+          "subject": "SYR110",
+          "subjectLabel": "Bases info.",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "4kcjs5hkm",
+          "subject": "SYR110",
+          "subjectLabel": "Bases info.",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "em7z7jmy3",
+          "subject": "SYR110",
+          "subjectLabel": "Bases info.",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "9stucaywe",
+          "subject": "SYR110",
+          "subjectLabel": "Bases info.",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "efj7xahwx",
+          "subject": "SYR111",
+          "subjectLabel": "C.B. de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "p8romqsyy",
+          "subject": "SYR111",
+          "subjectLabel": "C.B. de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "qusg33v2z",
+          "subject": "SYR111",
+          "subjectLabel": "C.B. de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "eisz86cvp",
+          "subject": "SYR111",
+          "subjectLabel": "C.B. de Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "bmzsdvtqe",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "kskwilion",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "q2x35fm91",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "2lbsty49j",
+          "subject": "MAI110",
+          "subjectLabel": "Algèbre",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "fshz7k6v8",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "ntj9tftd6",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "5hsh0j7pq",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "t3cs87jdx",
+          "subject": "MAI111",
+          "subjectLabel": "Analyse",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "7xaz5ew6l",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "zurws7k31",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "fkwe5h3a8",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "yxeuaezbt",
+          "subject": "MAI112",
+          "subjectLabel": "PIX 1",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Equipe",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "0mdfe8mwo",
+          "subject": "DPR110",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Djeinaba",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "qaj8u01o4",
+          "subject": "DPR110",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Djeinaba",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "vd9nd3qa5",
+          "subject": "DPR110",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Djeinaba",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "y6r4ocz33",
+          "subject": "DPR110",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Djeinaba",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "8jsyvdj5u",
+          "subject": "DPR111",
+          "subjectLabel": "Alglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "ar3btlr6l",
+          "subject": "DPR111",
+          "subjectLabel": "Alglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "p0mu7e53g",
+          "subject": "DPR111",
+          "subjectLabel": "Alglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "blbt0cvtv",
+          "subject": "DPR111",
+          "subjectLabel": "Alglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "1q9rwwt1p",
+          "subject": "DPR1012",
+          "subjectLabel": "PPP1",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Soueina",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "gh9l536mu",
+          "subject": "DPR1012",
+          "subjectLabel": "PPP1",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Soueina",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "zo1n7lypd",
+          "subject": "DPR1012",
+          "subjectLabel": "PPP1",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Soueina",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "ashqimlfk",
+          "subject": "DPR1012",
+          "subjectLabel": "PPP1",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Soueina",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "xj6pnifzk",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Gén.",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sadvi",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "vh35wy9d0",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Gén.",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sadvi",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "gwn55y54v",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Gén.",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sadvi",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "yvg690j4q",
+          "subject": "OME110",
+          "subjectLabel": "Intro. Économie Gén.",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sadvi",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "4v2sz5rvy",
+          "subject": "OME110",
+          "subjectLabel": "Proba. & Statistique",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bakar",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "o77qs47yd",
+          "subject": "OME110",
+          "subjectLabel": "Proba. & Statistique",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bakar",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "echvnlksl",
+          "subject": "OME110",
+          "subjectLabel": "Proba. & Statistique",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bakar",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "3hh9oydiu",
+          "subject": "OME110",
+          "subjectLabel": "Proba. & Statistique",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bakar",
+          "room": "Khawarizmi",
+          "semester": "S1"
+        },
+        {
+          "id": "qw7592vg8",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "saft1vq2f",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "adve5d9ed",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "j4einy4rx",
+          "subject": "DEV210",
+          "subjectLabel": "Prog. Python",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hafedh",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "8wn439g0x",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "prg9hdrhx",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "8zuij7uky",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "1ljalljvx",
+          "subject": "DEV211",
+          "subjectLabel": "Langages web",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "SidiMed",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "86vhijq0i",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "fqatff2ib",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "0a8f0vbog",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "zyw3w3cnp",
+          "subject": "SPE210",
+          "subjectLabel": "BD2/CMS-PAOI /Syst. Réseaux",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "q557y93is",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "3c5hr4o74",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "dz2wkov1s",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "ma171mzhp",
+          "subject": "DSI210",
+          "subjectLabel": "SGBD I",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "3nf22pfne",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "7s3c5zu2p",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "ol6gh2juj",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "73mwmfl2u",
+          "subject": "RSS210",
+          "subjectLabel": "LAN",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "rk9anumpr",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "l0x1et0u6",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "cg81nd1p4",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "o0o1agt32",
+          "subject": "CNM210",
+          "subjectLabel": "CMS et PAOI",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidati",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "529ol9p2o",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "lr81a7cdf",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "qvpsw70jd",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "mc1g6mn4j",
+          "subject": "SYR210",
+          "subjectLabel": "Système logique",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sass",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "6ukmziidw",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "5cxp4nklp",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "r501gozkk",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "mvo9s5aul",
+          "subject": "SYR211",
+          "subjectLabel": "Systeme d'Exploitation I",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "ewheaborb",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "pw2wtzeae",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "wi9loheol",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "0swa9dqv3",
+          "subject": "MAI210",
+          "subjectLabel": "Algèbre 2",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Habeb",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "jzee208p5",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "wz041wjv3",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "kj3c4px0a",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "hdx4tyohv",
+          "subject": "MAI211",
+          "subjectLabel": "Proba. & statistiques",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "S.Maouloud",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "uamh0cuuv",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "80v7vcbsg",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "z6q1bnel0",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "804jgel03",
+          "subject": "MAI212",
+          "subjectLabel": "Certification PIX 2",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Aicha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "pd5g2ozh8",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "obh053bym",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "ybk2g2w0j",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "q1mko8mt9",
+          "subject": "DPR210",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Lam",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "nzjx3gvx2",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "7861yj8b9",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "ecmmzrl7j",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "y3pmfilwc",
+          "subject": "DPR211",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Bouha",
+          "room": "Khawarizmi",
+          "semester": "S2"
+        },
+        {
+          "id": "80tlm4du7",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "ilt0blww0",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "c4ib9mgpb",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "p6cngtlwe",
+          "subject": "PAV310",
+          "subjectLabel": "POO JAVA",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Debagh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "lmqk5f6so",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "6yw2se46e",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "rhsnwk9mz",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "l5p9aiaih",
+          "subject": "PAV311",
+          "subjectLabel": "SD & Comp. Algo",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Cheikh",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "la12odhon",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "zqh0ny8vr",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "ppus33fr6",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "he4dddnnv",
+          "subject": "DAS310",
+          "subjectLabel": "Machine learning",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Louly",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "xaabwfyp1",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "yadru18gx",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "idpbjwkto",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "aowho5rjs",
+          "subject": "DAS311",
+          "subjectLabel": "RO",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Meya",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "gyoahwolu",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "94w0yg8ed",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "2ti5euimj",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "lo00abn4m",
+          "subject": "RSS321",
+          "subjectLabel": "BD & CSI",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Med Lemine",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "4tyolp7cz",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "kw8y68ldz",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "i6mturg5l",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "x1xacjoik",
+          "subject": "DPR310",
+          "subjectLabel": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "w2esdgn24",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "uu8yutaud",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "sr49kty2j",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "wc7voy5fj",
+          "subject": "DPR311",
+          "subjectLabel": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "c950fyefl",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "a4wjierxe",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "eaq50e8qq",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "2gr8p50i9",
+          "subject": "DPR313",
+          "subjectLabel": "Gestion d'entreprise (En ligne)",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Hamadi",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "nq73lob9g",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "st3rlz3vp",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "nydjoh9yo",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "st2fwce7v",
+          "subject": "DSI310",
+          "subjectLabel": "Génie logiciel",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "izg5fl957",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "v0nhsn53c",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "2mpk6s9tg",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "lltbxkhck",
+          "subject": "DSI311",
+          "subjectLabel": "Bases de données avancées",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "hv3tni8so",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "693ssepig",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "1vmmogwnz",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "6yyybb9z7",
+          "subject": "DSI320",
+          "subjectLabel": "Dev. Web avec Python",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Med",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "cu9j5xnzd",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "olbksxvnh",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "bduswg800",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "vcbrd07bt",
+          "subject": "DSI321",
+          "subjectLabel": "DevOps",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Vatimetou",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "3ftxay5h4",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "r90xhzocg",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "gn7h58z1f",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "2qynsu3a5",
+          "subject": "DSI330",
+          "subjectLabel": "Projet Intégrateur",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadreur",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "fz5mcl8yj",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "jw4c0eu1u",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "i2n16tfwp",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "cq1u2bhq0",
+          "subject": "CNM310",
+          "subjectLabel": "Numérisation et codage",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Bennany",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "f45khpi2e",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "i6amosc2y",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "o4bvxxca7",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "pjg9b5wfo",
+          "subject": "RSS310",
+          "subjectLabel": "Réseaux Mobiles",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "mivvhqdug",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "zozh4uhn4",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "2cyh1sedw",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "g3bmc71fy",
+          "subject": "RSS320",
+          "subjectLabel": "Intro Sécurité info.",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mohamed Said",
+          "room": "Khawarizmi",
+          "semester": "S3"
+        },
+        {
+          "id": "3eedrpsk2",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "epak8cqfm",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "i1a3242dg",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "kejutijq8",
+          "subject": "PAV411",
+          "subjectLabel": "J2E",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Yehdih",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "brkgoy8z3",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "jte0bv14r",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "18r79byoo",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "koaurec7d",
+          "subject": "PAV412",
+          "subjectLabel": "Dév Mobile",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Salem",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "4e4be7jdt",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "px6qkyf4o",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "pnfnscvc3",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "r5173yagt",
+          "subject": "DPR410",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "grrq9j6bm",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "ulryxd8la",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "pk7s63y8q",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "dez6vsbkb",
+          "subject": "DPR411",
+          "subjectLabel": "Anglais",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Blake",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "3z0nx2m0h",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "b9g4jf068",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "friasnkyc",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "4b383lr0j",
+          "subject": "DPR412",
+          "subjectLabel": "Droit informatique",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Mamadou Sow",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "o0s5a2ppx",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "42x09p4ya",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "2s9hzh2nd",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "7et5ye7x8",
+          "subject": "DSI410",
+          "subjectLabel": "Réseaux avancés et sécu",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Biha",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "wk0wxb5wc",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "by5ezieo7",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "k41ivoool",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "0mre19sud",
+          "subject": "DSI411",
+          "subjectLabel": "Bases de données NOSQL",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Moussa",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "axhs5e62z",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "3yc5macpy",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "658p2ljq1",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "b1a0d3m2p",
+          "subject": "CNM411",
+          "subjectLabel": "Infographie 2D/3D",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Nadra",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "e87ccs6uu",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "s63cgxtyf",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "hgcm8uhzq",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "4lvps4xs1",
+          "subject": "RSS411",
+          "subjectLabel": "Voix et ToIP",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "El Aoun",
+          "room": "Khawarizmi",
+          "semester": "S4"
+        },
+        {
+          "id": "ebz1gk4fy",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "034zqcrdx",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "g1d9l4wim",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "t14g9efj8",
+          "subject": "BWC510",
+          "subjectLabel": "A. SOA et Web services",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mahmoud",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "cqzbwnxg4",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "1r83bblaq",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "7wkywecj4",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "5wuax6nrl",
+          "subject": "BWC511",
+          "subjectLabel": "Big Data",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sidi Mohamed RHIL",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "4z7rlr3tl",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "srbb2yxzj",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "d2s3bbxkm",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "hf7x1zr0s",
+          "subject": "BWC512",
+          "subjectLabel": "Virtualisation et cloud",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Tourad",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "woqzxua4q",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "m6uvmhxlq",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "rz9eiswl8",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "hufssxt9g",
+          "subject": "DPR510",
+          "subjectLabel": "Communication",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Dieynaba",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "8fjp77ujk",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "no8qvboip",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "ot6j4fbry",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "l7i8ybu25",
+          "subject": "DPR512",
+          "subjectLabel": "Entreprenariat",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kébé",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "mvdk2p870",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "86b9f7utt",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "444b0onud",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "rc16nvm3l",
+          "subject": "DSI520",
+          "subjectLabel": "Prep. Certif. Oracle",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Kaber",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "xm3ywro97",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "3i1pfr109",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "swl0zi5p3",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "uham2q90s",
+          "subject": "DSI510",
+          "subjectLabel": "J2E avancé",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Abderrahmane",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "vzsu7pobf",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "z38mq3zhe",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "9gaislk3d",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "l271pt5wh",
+          "subject": "DSI511",
+          "subjectLabel": "Projet fin cursus",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Encadrants",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "ej7zcz906",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 1",
+          "sharedGroups": [
+            "Groupe 1"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "8jjytcpjj",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 2",
+          "sharedGroups": [
+            "Groupe 2"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "rkqitmolz",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 3",
+          "sharedGroups": [
+            "Groupe 3"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        },
+        {
+          "id": "3h2ah5vq3",
+          "subject": "RSS520",
+          "subjectLabel": "Prep. Certif. CCNA",
+          "type": "CM",
+          "mainGroup": "Groupe 4",
+          "sharedGroups": [
+            "Groupe 4"
+          ],
+          "subLabel": "CM",
+          "teacher": "Sow",
+          "room": "Khawarizmi",
+          "semester": "S5"
+        }
+      ],
+      "updated_at": "2026-02-06T22:29:04.758Z"
+    },
+    "schedule": {
+      "data_content": {
+        "S1|w1|Groupe 1|MAR|08:30-09:45": [
+          "new-1769858897171",
+          "new-1769858912485"
+        ],
+        "S1|w1|Groupe 1|MER|08:30-09:45": [
+          "new-1769797884655",
+          "new-1769858927551"
+        ],
+        "S1|w1|Groupe 1|MER|09:50-11:15": [
+          "mqeryb9dd"
+        ],
+        "S1|w1|Groupe 1|JEU|08:30-09:45": [
+          "new-1769798144008",
+          "sqtgwizvm"
+        ],
+        "S1|w1|Groupe 1|LUN|08:30-09:45": [
+          "sjibcm27p"
+        ],
+        "S1|w1|Groupe 1|VEN|08:30-09:45": [
+          "e416gx7dy"
+        ],
+        "S1|w1|Groupe 1|SAM|08:30-09:45": [
+          "new-1769859111151",
+          "new-1769859129639"
+        ],
+        "S1|w1|Groupe 1|VEN|09:50-11:15": [
+          "new-1769859122155",
+          "new-1769858987589"
+        ],
+        "S1|w1|Groupe 1|JEU|11:30-13:00": [
+          "new-1769859050405"
+        ],
+        "S1|w1|Groupe 1|MER|11:30-13:00": [
+          "new-1769859146388",
+          "new-1769858980917"
+        ],
+        "S1|w1|Groupe 1|LUN|09:50-11:15": null,
+        "S1|w1|Groupe 2|LUN|08:30-09:45": [
+          "itkgf3csx"
+        ],
+        "S1|w1|Groupe 2|JEU|08:30-09:45": [
+          "1am3a7l7l"
+        ],
+        "S1|w1|Groupe 2|SAM|08:30-09:45": [
+          "ft9o4ifm6"
+        ],
+        "S1|w1|Groupe 2|MAR|08:30-09:45": null,
+        "S1|w1|Groupe 2|MAR|09:50-11:15": [
+          "new-1769859297167",
+          "new-1769863328818"
+        ],
+        "S1|w1|Groupe 2|MAR|11:30-13:00": null,
+        "S1|w1|Groupe 2|MER|08:30-09:45": [
+          "new-1769859264399",
+          "new-1769859282356"
+        ],
+        "S1|w1|Groupe 1|MER|17:00-18:30": [
+          "efj7xahwx"
+        ],
+        "S1|w1|Groupe 1|JEU|17:00-18:30": [
+          "bmzsdvtqe"
+        ],
+        "S1|w1|Groupe 1|MER|15:00-16:30": [
+          "fshz7k6v8"
+        ],
+        "S1|w1|Groupe 1|LUN|15:00-16:30": [
+          "new-1769862949656"
+        ],
+        "S1|w1|Groupe 1|MAR|09:50-11:15": [
+          "new-1769858967882"
+        ],
+        "S1|w1|Groupe 1|LUN|11:30-13:00": [
+          "new-1769862953035"
+        ],
+        "S1|w1|Groupe 1|SAM|11:30-13:00": [
+          "0mdfe8mwo"
+        ],
+        "S1|w1|Groupe 1|VEN|15:00-16:30": [
+          "1q9rwwt1p"
+        ]
+      },
+      "updated_at": "2026-02-06T22:29:04.759Z"
+    },
+    "config": {
+      "data_content": {
+        "startDate": "2025-09-02",
+        "totalWeeks": 16,
+        "numberOfGroups": 4,
+        "vacationPeriods": [],
+        "timeSlots": [
+          "08:30-09:45",
+          "09:50-11:15",
+          "11:30-13:00",
+          "15:00-16:30",
+          "17:00-18:30"
+        ]
+      },
+      "updated_at": "2026-02-06T22:29:04.759Z"
+    },
+    "custom_rooms": {
+      "data_content": [
+        "101",
+        "102",
+        "103",
+        "201",
+        "202",
+        "203",
+        "205",
+        "301",
+        "302",
+        "303",
+        "Khawarizmi",
+        "Hamidoune",
+        "Lab 1",
+        "Lab 2",
+        "Lab 3",
+        "Lab 4",
+        "Lab 5",
+        "Lab 6",
+        "Lab 7",
+        "Salle Visio",
+        "Atelier"
+      ],
+      "updated_at": "2026-02-06T22:29:04.759Z"
+    },
+    "custom_subjects": {
+      "data_content": [
+        {
+          "semestre": "S1",
+          "matieres": [
+            {
+              "code": "DEV110",
+              "libelle": "Algo et prog.",
+              "enseignants": "Cheikh/Sidi Med",
+              "credit": 6,
+              "enseignantsCM": "Cheikh/Sidi Med",
+              "enseignantsTD": "Cheikh/Sidi Med/Meya"
+            },
+            {
+              "code": "DEV111",
+              "libelle": "B. de données 1",
+              "enseignants": "Moussa",
+              "credit": 4,
+              "enseignantsCM": "Moussa/Med Lemine",
+              "enseignantsTD": "Moussa/Med Lemine/Massra/Aicha"
+            },
+            {
+              "code": "DEV112",
+              "libelle": "Tech. web",
+              "enseignants": "Sidi Med",
+              "credit": 4,
+              "enseignantsCM": "Sidi Med/Esseyssah",
+              "enseignantsTD": "Sidi Med/Aicha/Cheikhane/Esseyssah"
+            },
+            {
+              "code": "SYR110",
+              "libelle": "Bases info.",
+              "enseignants": "Sass",
+              "credit": 3,
+              "enseignantsCM": "Sass",
+              "enseignantsTD": "Sass"
+            },
+            {
+              "code": "SYR111",
+              "libelle": "C.B. de Réseaux",
+              "enseignants": "Tourad",
+              "credit": 3,
+              "enseignantsCM": "Tourad",
+              "enseignantsTD": "Tourad"
+            },
+            {
+              "code": "MAI110",
+              "libelle": "Algèbre",
+              "enseignants": "Habeb",
+              "credit": 4,
+              "enseignantsCM": "Habeb",
+              "enseignantsTD": "Habeb"
+            },
+            {
+              "code": "MAI111",
+              "libelle": "Analyse",
+              "enseignants": "Habeb",
+              "credit": 4,
+              "enseignantsCM": "Habeb",
+              "enseignantsTD": "Habeb"
+            },
+            {
+              "code": "MAI112",
+              "libelle": "PIX 1",
+              "enseignants": "Equipe",
+              "credit": 2,
+              "enseignantsCM": "Equipe",
+              "enseignantsTD": "Equipe"
+            },
+            {
+              "code": "DPR110",
+              "libelle": "Communication",
+              "enseignants": "Djeinaba",
+              "credit": 3,
+              "enseignantsCM": "Djeinaba",
+              "enseignantsTD": "Djeinaba"
+            },
+            {
+              "code": "DPR111",
+              "libelle": "Alglais",
+              "enseignants": "Blake",
+              "credit": 3,
+              "enseignantsCM": "Blake",
+              "enseignantsTD": "Blake"
+            },
+            {
+              "code": "DPR1012",
+              "libelle": "PPP1",
+              "enseignants": "Soueina",
+              "credit": 1,
+              "enseignantsCM": "Soueina",
+              "enseignantsTD": "Soueina"
+            },
+            {
+              "code": "OME110",
+              "libelle": "Intro. Économie Gén.",
+              "enseignants": "Sadvi",
+              "credit": 2,
+              "enseignantsCM": "Sadvi",
+              "enseignantsTD": "Sadvi"
+            },
+            {
+              "code": "OME110",
+              "libelle": "Proba. & Statistique",
+              "enseignants": "Bakar",
+              "credit": 2,
+              "enseignantsCM": "Bakar",
+              "enseignantsTD": "Bakar"
+            }
+          ]
+        },
+        {
+          "semestre": "S2",
+          "matieres": [
+            {
+              "code": "DEV210",
+              "libelle": "Prog. Python",
+              "enseignants": "Hafedh",
+              "credit": 5,
+              "enseignantsCM": "Hafedh",
+              "enseignantsTD": "Hafedh"
+            },
+            {
+              "code": "DEV211",
+              "libelle": "Langages web",
+              "enseignants": "SidiMed",
+              "credit": 4,
+              "enseignantsCM": "SidiMed",
+              "enseignantsTD": "SidiMed"
+            },
+            {
+              "code": "SPE210",
+              "libelle": "BD2/CMS-PAOI /Syst. Réseaux",
+              "enseignants": "Moussa/Haithem/Tourad",
+              "credit": 6,
+              "enseignantsCM": "Moussa/Haithem/Tourad",
+              "enseignantsTD": "Moussa/Haithem/Tourad"
+            },
+            {
+              "code": "DSI210",
+              "libelle": "SGBD I",
+              "enseignants": "Moussa",
+              "credit": 4,
+              "enseignantsCM": "Moussa",
+              "enseignantsTD": "Moussa"
+            },
+            {
+              "code": "RSS210",
+              "libelle": "LAN",
+              "enseignants": "Tourad",
+              "credit": 3,
+              "enseignantsCM": "Tourad",
+              "enseignantsTD": "Tourad"
+            },
+            {
+              "code": "CNM210",
+              "libelle": "CMS et PAOI",
+              "enseignants": "Sidati",
+              "credit": 3,
+              "enseignantsCM": "Sidati",
+              "enseignantsTD": "Sidati"
+            },
+            {
+              "code": "SYR210",
+              "libelle": "Système logique",
+              "enseignants": "Sass",
+              "credit": 3,
+              "enseignantsCM": "Sass",
+              "enseignantsTD": "Sass"
+            },
+            {
+              "code": "SYR211",
+              "libelle": "Systeme d'Exploitation I",
+              "enseignants": "Meya",
+              "credit": 4,
+              "enseignantsCM": "Meya",
+              "enseignantsTD": "Meya"
+            },
+            {
+              "code": "MAI210",
+              "libelle": "Algèbre 2",
+              "enseignants": "Habeb",
+              "credit": 3,
+              "enseignantsCM": "Habeb",
+              "enseignantsTD": "Habeb"
+            },
+            {
+              "code": "MAI211",
+              "libelle": "Proba. & statistiques",
+              "enseignants": "S.Maouloud",
+              "credit": 3,
+              "enseignantsCM": "S.Maouloud",
+              "enseignantsTD": "S.Maouloud"
+            },
+            {
+              "code": "MAI212",
+              "libelle": "Certification PIX 2",
+              "enseignants": "Aicha/Nagi/Lamine",
+              "credit": 2,
+              "enseignantsCM": "Aicha/Nagi/Lamine",
+              "enseignantsTD": "Aicha/Nagi/Lamine"
+            },
+            {
+              "code": "DPR210",
+              "libelle": "Communication",
+              "enseignants": "Lam/Abdi/Saghir",
+              "credit": 2,
+              "enseignantsCM": "Lam/Abdi/Saghir",
+              "enseignantsTD": "Lam/Abdi/Saghir"
+            },
+            {
+              "code": "DPR211",
+              "libelle": "Anglais",
+              "enseignants": "Bouha",
+              "credit": 2,
+              "enseignantsCM": "Bouha",
+              "enseignantsTD": "Bouha"
+            }
+          ]
+        },
+        {
+          "semestre": "S3",
+          "matieres": [
+            {
+              "code": "PAV310",
+              "libelle": "POO JAVA",
+              "enseignants": "Debagh",
+              "credit": 5,
+              "enseignantsCM": "Debagh",
+              "enseignantsTD": "Debagh"
+            },
+            {
+              "code": "PAV311",
+              "libelle": "SD & Comp. Algo",
+              "enseignants": "Cheikh",
+              "credit": 4,
+              "enseignantsCM": "Cheikh",
+              "enseignantsTD": "Cheikh"
+            },
+            {
+              "code": "DAS310",
+              "libelle": "Machine learning",
+              "enseignants": "Louly/Autres",
+              "credit": 4,
+              "enseignantsCM": "Louly/Autres",
+              "enseignantsTD": "Louly/Autres"
+            },
+            {
+              "code": "DAS311",
+              "libelle": "RO",
+              "enseignants": "Meya",
+              "credit": 3,
+              "enseignantsCM": "Meya",
+              "enseignantsTD": "Meya"
+            },
+            {
+              "code": "RSS321",
+              "libelle": "BD & CSI",
+              "enseignants": "Med Lemine",
+              "credit": 4,
+              "enseignantsCM": "Med Lemine",
+              "enseignantsTD": "Med Lemine"
+            },
+            {
+              "code": "DPR310",
+              "libelle": "Communication (GI,G2,G3)/Anglais(G4,G5,G6)",
+              "enseignants": "Dieynaba/Blake",
+              "credit": 2,
+              "enseignantsCM": "Dieynaba/Blake",
+              "enseignantsTD": "Dieynaba/Blake"
+            },
+            {
+              "code": "DPR311",
+              "libelle": "Communication (G4,G5,G6)/Anglais(GI,G2,G3)",
+              "enseignants": "Dieynaba/Blake",
+              "credit": 2,
+              "enseignantsCM": "Dieynaba/Blake",
+              "enseignantsTD": "Dieynaba/Blake"
+            },
+            {
+              "code": "DPR313",
+              "libelle": "Gestion d'entreprise (En ligne)",
+              "enseignants": "Hamadi",
+              "credit": 2,
+              "enseignantsCM": "Hamadi",
+              "enseignantsTD": "Hamadi"
+            },
+            {
+              "code": "DSI310",
+              "libelle": "Génie logiciel",
+              "enseignants": "Moussa",
+              "credit": 4,
+              "enseignantsCM": "Moussa",
+              "enseignantsTD": "Moussa"
+            },
+            {
+              "code": "DSI311",
+              "libelle": "Bases de données avancées",
+              "enseignants": "Kaber",
+              "credit": 4,
+              "enseignantsCM": "Kaber",
+              "enseignantsTD": "Kaber"
+            },
+            {
+              "code": "DSI320",
+              "libelle": "Dev. Web avec Python",
+              "enseignants": "Sidi Med",
+              "credit": 5,
+              "enseignantsCM": "Sidi Med",
+              "enseignantsTD": "Sidi Med"
+            },
+            {
+              "code": "DSI321",
+              "libelle": "DevOps",
+              "enseignants": "Vatimetou",
+              "credit": 3,
+              "enseignantsCM": "Vatimetou",
+              "enseignantsTD": "Vatimetou"
+            },
+            {
+              "code": "DSI330",
+              "libelle": "Projet Intégrateur",
+              "enseignants": "Encadreur",
+              "credit": 6,
+              "enseignantsCM": "Encadreur",
+              "enseignantsTD": "Encadreur"
+            },
+            {
+              "code": "CNM310",
+              "libelle": "Numérisation et codage",
+              "enseignants": "El Bennany",
+              "credit": 3,
+              "enseignantsCM": "El Bennany",
+              "enseignantsTD": "El Bennany"
+            },
+            {
+              "code": "RSS310",
+              "libelle": "Réseaux Mobiles",
+              "enseignants": "El Aoun",
+              "credit": 3,
+              "enseignantsCM": "El Aoun",
+              "enseignantsTD": "El Aoun"
+            },
+            {
+              "code": "RSS320",
+              "libelle": "Intro Sécurité info.",
+              "enseignants": "Mohamed Said",
+              "credit": 3,
+              "enseignantsCM": "Mohamed Said",
+              "enseignantsTD": "Mohamed Said"
+            }
+          ]
+        },
+        {
+          "semestre": "S4",
+          "matieres": [
+            {
+              "code": "PAV411",
+              "libelle": "J2E",
+              "enseignants": "Yehdih",
+              "credit": 5,
+              "enseignantsCM": "Yehdih",
+              "enseignantsTD": "Yehdih"
+            },
+            {
+              "code": "PAV412",
+              "libelle": "Dév Mobile",
+              "enseignants": "Salem/Lemine",
+              "credit": 4,
+              "enseignantsCM": "Salem/Lemine",
+              "enseignantsTD": "Salem/Lemine"
+            },
+            {
+              "code": "DPR410",
+              "libelle": "Communication",
+              "enseignants": "Dieynaba",
+              "credit": 2,
+              "enseignantsCM": "Dieynaba",
+              "enseignantsTD": "Dieynaba"
+            },
+            {
+              "code": "DPR411",
+              "libelle": "Anglais",
+              "enseignants": "Blake",
+              "credit": 2,
+              "enseignantsCM": "Blake",
+              "enseignantsTD": "Blake"
+            },
+            {
+              "code": "DPR412",
+              "libelle": "Droit informatique",
+              "enseignants": "Mamadou Sow",
+              "credit": 2,
+              "enseignantsCM": "Mamadou Sow",
+              "enseignantsTD": "Mamadou Sow"
+            },
+            {
+              "code": "DSI410",
+              "libelle": "Réseaux avancés et sécu",
+              "enseignants": "Biha/Said",
+              "credit": 4,
+              "enseignantsCM": "Biha/Said",
+              "enseignantsTD": "Biha/Said"
+            },
+            {
+              "code": "DSI411",
+              "libelle": "Bases de données NOSQL",
+              "enseignants": "Moussa",
+              "credit": 3,
+              "enseignantsCM": "Moussa",
+              "enseignantsTD": "Moussa"
+            },
+            {
+              "code": "CNM411",
+              "libelle": "Infographie 2D/3D",
+              "enseignants": "Nadra",
+              "credit": 4,
+              "enseignantsCM": "Nadra",
+              "enseignantsTD": "Nadra"
+            },
+            {
+              "code": "RSS411",
+              "libelle": "Voix et ToIP",
+              "enseignants": "El Aoun",
+              "credit": 3,
+              "enseignantsCM": "El Aoun",
+              "enseignantsTD": "El Aoun"
+            }
+          ]
+        },
+        {
+          "semestre": "S5",
+          "matieres": [
+            {
+              "code": "BWC510",
+              "libelle": "A. SOA et Web services",
+              "enseignants": "Sidi Mahmoud",
+              "credit": 4,
+              "enseignantsCM": "Sidi Mahmoud",
+              "enseignantsTD": "Sidi Mahmoud"
+            },
+            {
+              "code": "BWC511",
+              "libelle": "Big Data",
+              "enseignants": "Sidi Mohamed RHIL",
+              "credit": 5,
+              "enseignantsCM": "Sidi Mohamed RHIL",
+              "enseignantsTD": "Sidi Mohamed RHIL"
+            },
+            {
+              "code": "BWC512",
+              "libelle": "Virtualisation et cloud",
+              "enseignants": "Tourad",
+              "credit": 4,
+              "enseignantsCM": "Tourad",
+              "enseignantsTD": "Tourad"
+            },
+            {
+              "code": "DPR510",
+              "libelle": "Communication",
+              "enseignants": "Dieynaba",
+              "credit": 2,
+              "enseignantsCM": "Dieynaba",
+              "enseignantsTD": "Dieynaba"
+            },
+            {
+              "code": "DPR512",
+              "libelle": "Entreprenariat",
+              "enseignants": "Kébé",
+              "credit": 2,
+              "enseignantsCM": "Kébé",
+              "enseignantsTD": "Kébé"
+            },
+            {
+              "code": "DSI520",
+              "libelle": "Prep. Certif. Oracle",
+              "enseignants": "Kaber",
+              "credit": 3,
+              "enseignantsCM": "Kaber",
+              "enseignantsTD": "Kaber"
+            },
+            {
+              "code": "DSI510",
+              "libelle": "J2E avancé",
+              "enseignants": "Abderrahmane",
+              "credit": 5,
+              "enseignantsCM": "Abderrahmane",
+              "enseignantsTD": "Abderrahmane"
+            },
+            {
+              "code": "DSI511",
+              "libelle": "Projet fin cursus",
+              "enseignants": "Encadrants",
+              "credit": 8,
+              "enseignantsCM": "Encadrants",
+              "enseignantsTD": "Encadrants"
+            },
+            {
+              "code": "RSS520",
+              "libelle": "Prep. Certif. CCNA",
+              "enseignants": "Sow",
+              "credit": 3,
+              "enseignantsCM": "Sow",
+              "enseignantsTD": "Sow"
+            }
+          ]
+        }
+      ],
+      "updated_at": "2026-02-06T22:29:04.759Z"
+    }
   }
 }

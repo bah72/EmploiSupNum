@@ -42,10 +42,27 @@ const ROLE_PERMISSIONS: RolePermissions = {
 export class RoleManager {
   // Vérifier si un utilisateur a une permission spécifique
   static hasPermission(user: User, permission: Permission): boolean {
-    if (!user || !user.isActive) return false;
+    console.log('=== ROLE MANAGER CHECK ===');
+    console.log('User:', user);
+    console.log('Permission requested:', permission);
+    console.log('User exists:', !!user);
+    console.log('User isActive:', user?.isActive);
+    console.log('User role:', user?.role);
+    
+    if (!user || !user.isActive) {
+      console.log('Permission denied: user null or inactive');
+      return false;
+    }
     
     const userPermissions = ROLE_PERMISSIONS[user.role] || [];
-    return userPermissions.includes(permission);
+    console.log('User permissions:', userPermissions);
+    console.log('Permission in user permissions:', userPermissions.includes(permission));
+    
+    const result = userPermissions.includes(permission);
+    console.log('Final result:', result);
+    console.log('=== END ROLE MANAGER CHECK ===');
+    
+    return result;
   }
 
   // Obtenir toutes les permissions d'un utilisateur

@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
 import { User } from '../types';
-import { Lock, User as UserIcon } from 'lucide-react';
+import { Lock, User as UserIcon, Mail } from 'lucide-react';
 
 interface LoginScreenProps {
     onLogin: (user: User) => void;
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -18,22 +18,64 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
         setError('');
         setLoading(true);
 
+        console.log('=== LOGIN ATTEMPT (COMPONENTS) ===');
+        console.log('Email:', email);
+        console.log('Password:', password ? '***' : 'none');
+
         try {
-            const res = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                throw new Error(data.error || 'Erreur de connexion');
+            // Validation simple de l'email @supnum.mr
+            if (!email.endsWith('@supnum.mr')) {
+                setError('Seuls les emails @supnum.mr sont autorisés');
+                setLoading(false);
+                return;
             }
 
-            onLogin(data.user);
+            // Validation du mot de passe selon l'utilisateur
+            const username = email.split('@')[0];
+            let isValidPassword = false;
+            let role: 'admin' | 'prof' | 'student' = 'student';
+
+            if (email === 'moussa.ba@supnum.mr') {
+                isValidPassword = password === 'moussa.ba';
+                role = 'admin';
+            } else if (email === 'cheikh.dhib@supnum.mr') {
+                isValidPassword = password === 'cheikh.dhib';
+                role = 'prof';
+            } else if (email === '25064@supnum.mr') {
+                isValidPassword = password === '12345678';
+                role = 'student';
+            } else if (/^\d{6,}$/.test(username)) {
+                // Matricule : 6 chiffres ou plus
+                isValidPassword = password === '12345678';
+                role = 'student';
+            } else {
+                // Pour les autres utilisateurs
+                isValidPassword = password === '12345678';
+                role = 'student';
+            }
+
+            if (!isValidPassword) {
+                setError('Mot de passe incorrect');
+                setLoading(false);
+                return;
+            }
+
+            // Créer l'utilisateur
+            const user = {
+                id: username,
+                username,
+                email,
+                role,
+                isActive: true
+            };
+
+            console.log('=== LOGIN SUCCESS (COMPONENTS) ===');
+            console.log('User created:', user);
+            onLogin(user);
         } catch (err: any) {
-            setError(err.message);
+            console.error('=== LOGIN ERROR (COMPONENTS) ===');
+            console.error('Exception:', err);
+            setError('Une erreur est survenue');
         } finally {
             setLoading(false);
         }
@@ -58,17 +100,17 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">Nom d'utilisateur</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">Email institutionnel</label>
                         <div className="relative">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-                                <UserIcon size={18} />
+                                <Mail size={18} />
                             </div>
                             <input
-                                type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 className="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                                placeholder="Ex: admin"
+                                placeholder="votre.nom@supnum.mr"
                                 required
                             />
                         </div>
@@ -101,6 +143,24 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                         {loading ? 'Connexion en cours...' : 'Se connecter'}
                     </button>
                 </form>
+
+                <div className="mt-6 p-4 bg-slate-50 rounded-lg">
+                    <h3 className="font-semibold text-slate-700 mb-2 text-sm">Comptes disponibles :</h3>
+                    <div className="space-y-1 text-xs">
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span className="text-slate-600">Admin : moussa.ba@supnum.mr (mot de passe: moussa.ba)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                            <span className="text-slate-600">Prof : cheikh.dhib@supnum.mr (mot de passe: cheikh.dhib)</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                            <span className="text-slate-600">Étudiant : 25064@supnum.mr (mot de passe: 12345678)</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );
