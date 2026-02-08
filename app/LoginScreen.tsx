@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Users, LogIn, Mail, AlertCircle } from 'lucide-react';
-import { AuthService } from '../lib/auth';
+import { supabase } from '../lib/supabase';
 
 interface LoginScreenProps {
   onLogin: (user: any) => void;
@@ -19,77 +19,56 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setIsLoading(true);
     setError('');
 
-    console.log('=== LOGIN ATTEMPT ===');
+    console.log('=== LOGIN ATTEMPT (MAIN) ===');
     console.log('Email:', email);
     console.log('Password:', password ? '***' : 'none');
-    console.log('Email ends with @supnum.mr:', email.endsWith('@supnum.mr'));
 
     try {
       // Validation simple de l'email @supnum.mr
       if (!email.endsWith('@supnum.mr')) {
-        console.log('Email validation failed');
         setError('Seuls les emails @supnum.mr sont autorisés');
         setIsLoading(false);
         return;
       }
 
-      // Validation du mot de passe selon l'utilisateur
-      const username = email.split('@')[0];
-      console.log('Username extracted:', username);
-      
-      let isValidPassword = false;
-      let role: 'admin' | 'prof' | 'student' = 'student';
+      // TENTATIVE DE CONNEXION RÉELLE avec Supabase
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-      if (email === 'moussa.ba@supnum.mr') {
-        console.log('Checking admin password');
-        isValidPassword = password === 'moussa.ba';
-        role = 'admin';
-        console.log('Admin password valid:', isValidPassword);
-      } else if (email === 'cheikh.dhib@supnum.mr') {
-        console.log('Checking prof password');
-        isValidPassword = password === 'cheikh.dhib';
-        role = 'prof';
-        console.log('Prof password valid:', isValidPassword);
-      } else if (email === '25064@supnum.mr') {
-        console.log('Checking student password');
-        isValidPassword = password === '12345678';
-        role = 'student';
-        console.log('Student password valid:', isValidPassword);
-      } else if (/^\d{6,}$/.test(username)) {
-        // Matricule : 6 chiffres ou plus
-        console.log('Checking matricule password');
-        isValidPassword = password === '12345678';
-        role = 'student';
-        console.log('Matricule password valid:', isValidPassword);
-      } else {
-        // Pour les autres utilisateurs
-        console.log('Checking default password');
-        isValidPassword = password === '12345678';
-        role = 'student';
-        console.log('Default password valid:', isValidPassword);
-      }
-
-      if (!isValidPassword) {
-        console.log('Password validation failed');
-        setError('Mot de passe incorrect');
+      if (authError) {
+        console.error('Supabase auth error:', authError);
+        setError('Identifiants invalides dans la base Supabase');
         setIsLoading(false);
         return;
       }
 
-      // Créer l'utilisateur
+      console.log('Supabase auth success:', data);
+
+      // RÉCUPÉRATION DU RÔLE (déduction par email pour l'instant)
+      let role: 'admin' | 'prof' | 'student' = 'student';
+      if (email === 'moussa.ba@supnum.mr') {
+        role = 'admin';
+      } else if (email === 'cheikh.dhib@supnum.mr') {
+        role = 'prof';
+      } else if (/^\d{6,}$/.test(email.split('@')[0])) {
+        role = 'student';
+      }
+
       const user = {
-        id: username,
-        username,
-        email,
+        id: data.user!.id,
+        username: email.split('@')[0],
+        email: data.user!.email!,
         role,
         isActive: true
       };
 
-      console.log('=== LOGIN SUCCESS ===');
+      console.log('=== LOGIN SUCCESS (MAIN) ===');
       console.log('User created:', user);
       onLogin(user);
     } catch (error) {
-      console.error('=== LOGIN ERROR ===');
+      console.error('=== LOGIN ERROR (MAIN) ===');
       console.error('Exception:', error);
       setError('Une erreur est survenue');
     } finally {
@@ -165,11 +144,11 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-              <span className="text-slate-600">Admin : moussa.ba@supnum.mr (mot de passe: moussa.ba)</span>
+              <span className="text-slate-600">Admin : moussa.ba@supnum.mr (mot de passe: 12345678)</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-              <span className="text-slate-600">Prof : cheikh.dhib@supnum.mr (mot de passe: cheikh.dhib)</span>
+              <span className="text-slate-600">Prof : cheikh.dhib@supnum.mr (mot de passe: 12345678)</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
@@ -178,8 +157,8 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
           </div>
           <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
             <p className="font-medium">Note :</p>
-            <p>• Les étudiants utilisent leur matricule comme login</p>
-            <p>• Mot de passe par défaut pour les étudiants : 12345678</p>
+            <p>• Ces comptes doivent être créés dans Supabase Auth</p>
+            <p>• Mot de passe uniforme : 12345678</p>
           </div>
         </div>
       </div>

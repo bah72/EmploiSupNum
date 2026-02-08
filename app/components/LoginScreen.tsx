@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { User } from '../types';
 import { Lock, User as UserIcon, Mail } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 interface LoginScreenProps {
     onLogin: (user: User) => void;
@@ -34,41 +34,35 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                 return;
             }
 
-            // Validation du mot de passe selon l'utilisateur
-            const username = email.split('@')[0];
-            let isValidPassword = false;
-            let role: 'admin' | 'prof' | 'student' = 'student';
+            // TENTATIVE DE CONNEXION RÉELLE avec Supabase
+            const { data, error: authError } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
 
-            if (email === 'moussa.ba@supnum.mr') {
-                isValidPassword = password === 'moussa.ba';
-                role = 'admin';
-            } else if (email === 'cheikh.dhib@supnum.mr') {
-                isValidPassword = password === 'cheikh.dhib';
-                role = 'prof';
-            } else if (email === '25064@supnum.mr') {
-                isValidPassword = password === '12345678';
-                role = 'student';
-            } else if (/^\d{6,}$/.test(username)) {
-                // Matricule : 6 chiffres ou plus
-                isValidPassword = password === '12345678';
-                role = 'student';
-            } else {
-                // Pour les autres utilisateurs
-                isValidPassword = password === '12345678';
-                role = 'student';
-            }
-
-            if (!isValidPassword) {
-                setError('Mot de passe incorrect');
+            if (authError) {
+                console.error('Supabase auth error:', authError);
+                setError('Identifiants invalides dans la base Supabase');
                 setLoading(false);
                 return;
             }
 
-            // Créer l'utilisateur
+            console.log('Supabase auth success:', data);
+
+            // RÉCUPÉRATION DU RÔLE (déduction par email pour l'instant)
+            let role: 'admin' | 'prof' | 'student' = 'student';
+            if (email === 'moussa.ba@supnum.mr') {
+                role = 'admin';
+            } else if (email === 'cheikh.dhib@supnum.mr') {
+                role = 'prof';
+            } else if (/^\d{6,}$/.test(email.split('@')[0])) {
+                role = 'student';
+            }
+
             const user = {
-                id: username,
-                username,
-                email,
+                id: data.user!.id,
+                username: email.split('@')[0],
+                email: data.user!.email!,
                 role,
                 isActive: true
             };
@@ -153,16 +147,21 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
                     <div className="space-y-1 text-xs">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span className="text-slate-600">Admin : moussa.ba@supnum.mr (mot de passe: moussa.ba)</span>
+                            <span className="text-slate-600">Admin : moussa.ba@supnum.mr (mot de passe: 12345678)</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                            <span className="text-slate-600">Prof : cheikh.dhib@supnum.mr (mot de passe: cheikh.dhib)</span>
+                            <span className="text-slate-600">Prof : cheikh.dhib@supnum.mr (mot de passe: 12345678)</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                             <span className="text-slate-600">Étudiant : 25064@supnum.mr (mot de passe: 12345678)</span>
                         </div>
+                    </div>
+                    <div className="mt-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                        <p className="font-medium">Note :</p>
+                        <p>• Ces comptes doivent être créés dans Supabase Auth</p>
+                        <p>• Mot de passe uniforme : 12345678</p>
                     </div>
                 </div>
             </div>
