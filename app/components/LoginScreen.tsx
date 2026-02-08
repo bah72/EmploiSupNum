@@ -7,6 +7,9 @@ interface LoginScreenProps {
     onLogin: (user: User) => void;
 }
 
+console.log('=== COMPONENTS LOGINSCREEN MOUNTED ===');
+console.log('This is the components/LoginScreen.tsx');
+
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
