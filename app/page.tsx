@@ -102,29 +102,6 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
             <Save size={16} />
           </button>
 
-          {currentUser?.role === 'admin' && (
-            <div className="hidden md:flex flex-col items-end mr-2 no-print">
-              <div className="flex items-center gap-1.5 min-w-[120px] justify-end">
-                {isSaving ? (
-                  <>
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
-                  </>
-                ) : lastSaved ? (
-                  <>
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sauvegardé à {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
-                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">Non sauvegardé</span>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-
           <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
             <Printer size={16} />
           </button>
@@ -141,12 +118,6 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
               <button onClick={refreshCardsOnly} className="flex items-center justify-center bg-cyan-50 hover:bg-cyan-100 text-cyan-600 border border-cyan-200 rounded p-1.5 shadow-sm transition-all no-print" title="Rafraîchir seulement les cartes">🔄</button>
 
               <button onClick={clearScheduleOnly} className="flex items-center justify-center bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded p-1.5 shadow-sm transition-all no-print" title="Vider seulement le planning">🗑️</button>
-
-              <button onClick={migrateToNewSystem} className="flex items-center justify-center bg-purple-50 hover:bg-purple-100 text-purple-600 border border-purple-200 rounded p-1.5 shadow-sm transition-all no-print" title="Migrer vers TD1/TD2/TP1/TP2 (conserve les affectations)">MC</button>
-
-              <button onClick={diagnoseCourses} className="flex items-center justify-center bg-yellow-50 hover:bg-yellow-100 text-yellow-600 border border-yellow-200 rounded p-1.5 shadow-sm transition-all no-print" title="Diagnostiquer les problèmes">🔍</button>
-
-              <button onClick={fixSubGroups} className="flex items-center justify-center bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 rounded p-1.5 shadow-sm transition-all no-print" title="Corriger les sous-groupes">🔧</button>
             </>
           )}
         </div>
