@@ -129,24 +129,12 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
             <Printer size={16} />
           </button>
           
-          {/* Bouton de test visible pour TOUS */}
-          <button onClick={() => {
-            console.log('🔥 BOUTON CLIQUÉ - TEST SIMPLE');
-            alert('🔥 Bouton cliqué - test simple !');
-          }} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Test simple">🔥</button>
-          
           <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
             <LogOut size={16} />
           </button>
           {currentUser?.role === 'admin' && (
             <>
               <button onClick={() => {
-                console.log('🔥 BOUTON CLIQUÉ - TEST SIMPLE');
-                alert('🔥 Bouton cliqué - test simple !');
-              }} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-1.5 shadow-sm transition-all no-print" title="Test simple">🔥 TEST</button>
-
-              <button onClick={() => {
-                alert('Bouton cliqué directement !');
                 loadFullDataset(false);
               }} className="flex items-center justify-center bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 rounded p-1.5 shadow-sm transition-all no-print" title="Debug (Réinitialise tout)">🐛</button>
 
@@ -168,9 +156,6 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
 });
 
 export default function App() {
-  // Test immédiat pour voir si le composant se charge
-  console.log('🚀 COMPOSANT APP CHARGÉ !');
-  
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [semester, setSemester] = useState<string>('S1');
@@ -758,13 +743,8 @@ export default function App() {
     if (confirmAction && !confirm("Réinitialiser ?")) return;
     const newRows: AssignmentRow[] = [];
 
-    alert('🔄 loadFullDataset appelé !');
-    console.log('🔄 Début de loadFullDataset');
-    console.log('📚 MASTER_DB avant mise à jour:', MASTER_DB);
-
     // IMPORTANT: Utiliser MASTER_DB au lieu de customSubjects pour avoir les nouveaux noms abrégés
     MASTER_DB.forEach((semData: any) => {
-      console.log(`📖 Traitement du semestre: ${semData.semestre} avec ${semData.matieres.length} matières`);
       semData.matieres.forEach((matiere: any) => {
         // Utiliser les enseignants CM pour les cours CM
         const teachersCM = matiere.enseignantsCM || matiere.enseignants || '';
@@ -846,12 +826,6 @@ export default function App() {
         enseignantsTD: matiere.enseignantsTD || matiere.enseignants
       }))
     }));
-
-    console.log('📋 updatedCustomSubjects:', updatedCustomSubjects);
-    console.log('📊 Nombre de semestres:', updatedCustomSubjects.length);
-    updatedCustomSubjects.forEach((sem: any) => {
-      console.log(`📚 ${sem.semestre}: ${sem.matieres.length} matières`);
-    });
 
     setCustomSubjects(updatedCustomSubjects);
     setAssignmentRows(newRows);
@@ -1800,23 +1774,6 @@ export default function App() {
         />
 
         <div className="flex flex-1 overflow-hidden">
-          {/* TEST VISIBLE - Si vous voyez ça, la page se charge */}
-          <div style={{
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'red',
-            color: 'white',
-            padding: '20px',
-            fontSize: '24px',
-            fontWeight: 'bold',
-            zIndex: 9999,
-            borderRadius: '10px'
-          }}>
-            🚀 PAGE CHARGÉE ! 🚀
-          </div>
-          
           <aside className="w-12 bg-slate-900 text-slate-400 flex flex-col items-center py-4 gap-6 shrink-0 z-30 no-export">
             <button onClick={() => {
               if (activeTab === 'planning') {
