@@ -11,17 +11,27 @@ console.log('Initialisation lib/database.ts...');
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
-if (SUPABASE_URL) console.log('SUPABASE_URL détectée');
+if (SUPABASE_URL) console.log('SUPABASE_URL détectée:', SUPABASE_URL);
 if (SUPABASE_KEY) console.log('SUPABASE_KEY détectée');
 
-const supabase = (SUPABASE_URL && SUPABASE_KEY)
+// Validation de l'URL Supabase
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return url.startsWith('http://') || url.startsWith('https://');
+  } catch {
+    return false;
+  }
+};
+
+const supabase = (SUPABASE_URL && SUPABASE_KEY && isValidUrl(SUPABASE_URL))
   ? createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
 if (supabase) {
   console.log('Client Supabase initialisé avec succès.');
 } else {
-  console.warn('ATTENTION: Client Supabase NON initialisé (variables manquantes).');
+  console.warn('ATTENTION: Client Supabase NON initialisé (variables manquantes ou invalides).');
 }
 
 // S'assurer que le dossier local existe en mode dev (non-Vercel)
