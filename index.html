@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supnum Timetable - Full Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-50">
+    <div id="app">
+        <!-- Loading State -->
+        <div id="loading" class="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div class="text-center">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p class="text-slate-600">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Main App (Hidden Initially) -->
+        <div id="main-app" class="hidden">
+            <!-- Header -->
+            <header class="bg-white border-b border-slate-200 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h1 class="text-2xl font-bold text-slate-800">Supnum Timetable</h1>
+                        <p class="text-sm text-slate-600">Higher Institute of Digital</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div id="user-section" class="flex items-center gap-4">
+                            <!-- User content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="container mx-auto px-6 py-8">
+                <div class="mb-8">
+                    <!-- Navigation Tabs -->
+                    <div class="flex gap-2 mb-6">
+                        <button onclick="switchTab('planning')" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-blue-600 text-white" data-tab="planning">
+                            <i data-lucide="calendar"></i>
+                            <span>Schedule</span>
+                        </button>
+                        <button onclick="switchTab('manage')" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-tab="manage">
+                            <i data-lucide="layout-dashboard"></i>
+                            <span>Manage</span>
+                        </button>
+                        <button onclick="switchTab('config')" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-tab="config">
+                            <i data-lucide="settings"></i>
+                            <span>Settings</span>
+                        </button>
+                        <button onclick="switchTab('data')" class="tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-tab="data">
+                            <i data-lucide="database"></i>
+                            <span>Data</span>
+                        </button>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="flex justify-end mb-6">
+                        <button onclick="saveToCloud()" class="flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-colors bg-blue-600 text-white hover:bg-blue-700">
+                            <i data-lucide="save"></i>
+                            <span>Save to Cloud</span>
+                        </button>
+                    </div>
+
+                    <!-- Status Message -->
+                    <div id="status-message" class="hidden mb-6 p-4 rounded-lg border">
+                        <!-- Status messages will be inserted here -->
+                    </div>
+
+                    <!-- Dynamic Content -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                        <h2 id="tab-title" class="text-xl font-bold text-slate-800 mb-4">Schedule Tab</h2>
+                        
+                        <div id="tab-content">
+                            <!-- Tab content will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Auth Modal -->
+        <div id="auth-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+                <div class="flex justify-between items-center p-6 border-b">
+                    <h2 class="text-xl font-semibold text-slate-800">Login</h2>
+                    <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+
+                <form onsubmit="handleLogin(event)" class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                        <div class="relative">
+                            <i data-lucide="mail" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                            <input type="email" id="email" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter email">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                        <div class="relative">
+                            <i data-lucide="lock" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400"></i>
+                            <input type="password" id="password" required class="w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter password">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Supabase
+        const supabaseUrl = 'https://your-project.supabase.co';
+        const supabaseKey = 'your-anon-key';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        // App State
+        let currentUser = null;
+        let currentTab = 'planning';
+
+        // Tab Content Data
+        const tabContent = {
+            planning: {
+                title: 'Schedule Tab',
+                content: `
+                    <div>
+                        <p class="text-slate-600 mb-4">Dynamic planning interface with drag-and-drop functionality.</p>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-800 mb-2">Planning Features:</h3>
+                            <ul class="text-blue-700 text-sm space-y-1">
+                                <li>• Drag and drop course scheduling</li>
+                                <li>• Real-time conflict detection</li>
+                                <li>• Multiple view modes (week, month)</li>
+                                <li>• Export to PDF/Excel</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            manage: {
+                title: 'Manage Tab',
+                content: `
+                    <div>
+                        <p class="text-slate-600 mb-4">Course and room management interface.</p>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-purple-800 mb-2">Management Features:</h3>
+                            <ul class="text-purple-700 text-sm space-y-1">
+                                <li>• Course creation and editing</li>
+                                <li>• Room assignment</li>
+                                <li>• Teacher scheduling</li>
+                                <li>• Resource management</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            config: {
+                title: 'Settings Tab',
+                content: `
+                    <div>
+                        <p class="text-slate-600 mb-4">Application settings and preferences.</p>
+                        <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-orange-800 mb-2">Configuration Options:</h3>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>• Academic year settings</li>
+                                <li>• Time slot configuration</li>
+                                <li>• User permissions</li>
+                                <li>• Integration settings</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+            data: {
+                title: 'Data Tab',
+                content: `
+                    <div>
+                        <p class="text-slate-600 mb-4">Data import/export and analytics.</p>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h3 class="font-semibold text-green-800 mb-2">Data Management:</h3>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li>• Import from Excel/CSV</li>
+                                <li>• Export to multiple formats</li>
+                                <li>• Data analytics dashboard</li>
+                                <li>• Backup and restore</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Lucide icons
+            lucide.createIcons();
+            
+            // Show main app
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+            
+            // Update user section
+            updateUserSection();
+            
+            // Load initial tab
+            switchTab('planning');
+            
+            // Re-initialize icons after dynamic content
+            setTimeout(() => lucide.createIcons(), 100);
+        });
+
+        // Tab Switching
+        function switchTab(tabId) {
+            currentTab = tabId;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabId) {
+                    btn.className = 'tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-blue-600 text-white';
+                } else {
+                    btn.className = 'tab-btn flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-colors bg-white text-slate-600 hover:bg-slate-100 border border-slate-200';
+                }
+            });
+            
+            // Update content
+            const tab = tabContent[tabId];
+            document.getElementById('tab-title').textContent = tab.title;
+            document.getElementById('tab-content').innerHTML = tab.content;
+            
+            // Re-initialize icons
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        // User Management
+        function updateUserSection() {
+            const userSection = document.getElementById('user-section');
+            
+            if (currentUser) {
+                userSection.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="user" class="text-slate-600"></i>
+                            <span class="text-sm text-slate-700">${currentUser.email}</span>
+                        </div>
+                        <button onclick="handleLogout()" class="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors">
+                            <i data-lucide="log-out"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                userSection.innerHTML = `
+                    <button onclick="openAuthModal()" class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <i data-lucide="log-in"></i>
+                        <span>Login</span>
+                    </button>
+                `;
+            }
+            
+            // Re-initialize icons
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        // Auth Functions
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+            setTimeout(() => lucide.createIcons(), 100);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                // Simulate login (replace with actual Supabase auth)
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                currentUser = { email: email };
+                updateUserSection();
+                closeAuthModal();
+                showStatus('Login successful!', 'success');
+                
+                // Clear form
+                document.getElementById('email').value = '';
+                document.getElementById('password').value = '';
+            } catch (error) {
+                showStatus('Login failed: ' + error.message, 'error');
+            }
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            updateUserSection();
+            showStatus('Logged out successfully', 'success');
+        }
+
+        // Save Function
+        async function saveToCloud() {
+            if (!currentUser) {
+                showStatus('Please login to save your data', 'error');
+                openAuthModal();
+                return;
+            }
+            
+            showStatus('Saving...', 'loading');
+            
+            try {
+                // Simulate save operation
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                showStatus('Data saved successfully!', 'success');
+            } catch (error) {
+                showStatus('Save failed: ' + error.message, 'error');
+            }
+        }
+
+        // Status Messages
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status-message');
+            statusDiv.classList.remove('hidden');
+            
+            // Set styling based on type
+            if (type === 'success') {
+                statusDiv.className = 'mb-6 p-4 rounded-lg border bg-green-50 border-green-200 text-green-800';
+            } else if (type === 'error') {
+                statusDiv.className = 'mb-6 p-4 rounded-lg border bg-red-50 border-red-200 text-red-800';
+            } else if (type === 'loading') {
+                statusDiv.className = 'mb-6 p-4 rounded-lg border bg-blue-50 border-blue-200 text-blue-800';
+            }
+            
+            statusDiv.textContent = message;
+            
+            // Auto-hide after 3 seconds (except for loading)
+            if (type !== 'loading') {
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

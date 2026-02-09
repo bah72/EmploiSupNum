@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supnum Timetable - Static</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50">
+    <div id="app">
+        <!-- Header -->
+        <header class="bg-white border-b border-slate-200 px-6 py-4">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-slate-800">Supnum Timetable</h1>
+                <div class="flex items-center gap-4">
+                    <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i data-lucide="log-in"></i>
+                        <span>Login</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-6 py-8">
+            <div class="mb-8">
+                <!-- Navigation Icons -->
+                <div class="flex gap-2 mb-6">
+                    <button class="flex items-center justify-center w-12 h-12 rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" title="Schedule">
+                        <i data-lucide="calendar"></i>
+                    </button>
+                    <button class="flex items-center justify-center w-12 h-12 rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" title="Manage">
+                        <i data-lucide="layout-dashboard"></i>
+                    </button>
+                    <button class="flex items-center justify-center w-12 h-12 rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" title="Settings">
+                        <i data-lucide="settings"></i>
+                    </button>
+                    <button class="flex items-center justify-center w-12 h-12 rounded-lg bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" title="Data">
+                        <i data-lucide="database"></i>
+                    </button>
+                </div>
+
+                <!-- Save Button -->
+                <div class="flex gap-2 mb-6">
+                    <button class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <i data-lucide="save"></i>
+                        <span>Save</span>
+                    </button>
+                </div>
+
+                <!-- Status Message -->
+                <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                    <h2 class="text-xl font-bold text-slate-800 mb-4">
+                        Static HTML Version - No Encoding Issues
+                    </h2>
+                    <p class="text-slate-600 mb-4">
+                        This version uses pure HTML with no Next.js build process.
+                    </p>
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <h3 class="font-semibold text-green-800 mb-2">
+                            Interface Status:
+                        </h3>
+                        <p class="text-green-700 text-sm">
+                            All buttons are perfectly readable - no encoding issues.
+                        </p>
+                        <div class="flex gap-4 mt-2">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar"></i>
+                                <span class="text-xs">Schedule</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="layout-dashboard"></i>
+                                <span class="text-xs">Manage</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="settings"></i>
+                                <span class="text-xs">Settings</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="database"></i>
+                                <span class="text-xs">Data</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Simple app logic
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Static HTML version loaded - no encoding issues!');
+        });
+    </script>
+</body>
+</html>

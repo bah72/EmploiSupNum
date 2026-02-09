@@ -47,7 +47,7 @@ const AssignmentRowService = {
 };
 
 // --- HEADER BANNER (en dehors du composant App pour éviter les re-rendus) ---
-const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups }: any) => {
+const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups, isSaving, lastSaved }: any) => {
   return (
     <div className="flex flex-col bg-white shrink-0 shadow-sm z-40 print-header" style={{ fontFamily: '"Comic Sans MS", cursive, sans-serif' }}>
       <div className="flex items-center justify-between w-full h-10 md:h-12 px-3 md:px-6 overflow-hidden" style={{ backgroundColor: '#c4d79b' }}>
@@ -101,6 +101,30 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           <button onClick={() => handleSaveToDatabase()} className={`flex items-center justify-center bg-green-500 hover:bg-green-600 text-white border border-green-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print ${currentUser?.role !== 'admin' ? 'hidden' : ''}`} title="Sauvegarder en base de données">
             <Save size={16} />
           </button>
+
+          {currentUser?.role === 'admin' && (
+            <div className="hidden md:flex flex-col items-end mr-2 no-print">
+              <div className="flex items-center gap-1.5 min-w-[120px] justify-end">
+                {isSaving ? (
+                  <>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <span className="text-[10px] font-bold text-blue-600 uppercase tracking-tighter">Auto-sauvegarde...</span>
+                  </>
+                ) : lastSaved ? (
+                  <>
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Sauvegardé à {lastSaved.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 bg-slate-300 rounded-full"></div>
+                    <span className="text-[10px] font-bold text-slate-300 uppercase tracking-tighter">Non sauvegardé</span>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
             <Printer size={16} />
           </button>
@@ -162,6 +186,8 @@ export default function App() {
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
   const [compact, setCompact] = useState(true);
   const [cardsSidebarVisible, setCardsSidebarVisible] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
 
   // États pour la gestion des données
   const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
@@ -260,6 +286,17 @@ export default function App() {
   // Initialisation côté client
   useEffect(() => {
     setIsClient(true);
+
+    // Charger l'utilisateur depuis localStorage
+    const savedUser = localStorage.getItem('supnum_user');
+    if (savedUser) {
+      try {
+        setCurrentUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Erreur lors du chargement de l\'utilisateur:', e);
+      }
+    }
+
     // Charger la configuration depuis localStorage
     const savedConfig = localStorage.getItem('supnum_config_v67');
     if (savedConfig) {
@@ -1216,6 +1253,31 @@ export default function App() {
     }
   }, [toastMessage]);
 
+  // Sauvegarde persistante de l'utilisateur
+  useEffect(() => {
+    if (isClient) {
+      if (currentUser) {
+        localStorage.setItem('supnum_user', JSON.stringify(currentUser));
+      } else {
+        localStorage.removeItem('supnum_user');
+      }
+    }
+  }, [currentUser, isClient]);
+
+  // Sauvegarde automatique Cloud avec debounce
+  useEffect(() => {
+    if (!currentUser || !isClient || currentUser.role !== 'admin') return;
+
+    // Ne pas auto-sauvegarder si rien n'a été chargé encore
+    if (assignmentRows.length === 0 && Object.keys(schedule).length === 0) return;
+
+    const timer = setTimeout(() => {
+      handleSaveToDatabase(true);
+    }, 5000); // 5 secondes de debounce pour le cloud
+
+    return () => clearTimeout(timer);
+  }, [assignmentRows, schedule, config, customRooms, customSubjects, currentUser, isClient]);
+
   // Charger les données depuis la base quand l'utilisateur se connecte
   useEffect(() => {
     if (currentUser && isClient) {
@@ -1248,11 +1310,13 @@ export default function App() {
 
   // Fonction pour sauvegarder en base de données
   // Fonction pour sauvegarder en base de données (Complète)
-  const handleSaveToDatabase = async () => {
+  const handleSaveToDatabase = async (isAutoSave = false) => {
     if (!currentUser) {
-      setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
+      if (!isAutoSave) setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
       return;
     }
+
+    if (isAutoSave) setIsSaving(true);
 
     try {
       const allData = {
@@ -1276,19 +1340,26 @@ export default function App() {
       const data = await response.json();
 
       if (data.success) {
-        setToastMessage({
-          msg: data.message || 'Sauvegarde Cloud réussie !',
-          type: 'success'
-        });
+        if (!isAutoSave) {
+          setToastMessage({
+            msg: data.message || 'Sauvegarde Cloud réussie !',
+            type: 'success'
+          });
+        }
+        setLastSaved(new Date());
       } else {
-        setToastMessage({
-          msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
-          type: 'error'
-        });
+        if (!isAutoSave) {
+          setToastMessage({
+            msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
+            type: 'error'
+          });
+        }
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
-      setToastMessage({ msg: 'Erreur de connexion lors de la sauvegarde', type: 'error' });
+      if (!isAutoSave) setToastMessage({ msg: 'Erreur de connexion lors de la sauvegarde', type: 'error' });
+    } finally {
+      if (isAutoSave) setIsSaving(false);
     }
   };
 
@@ -1704,6 +1775,8 @@ export default function App() {
           refreshCardsOnly={refreshCardsOnly}
           clearScheduleOnly={clearScheduleOnly}
           fixSubGroups={fixSubGroups}
+          isSaving={isSaving}
+          lastSaved={lastSaved}
         />
 
         <div className="flex flex-1 overflow-hidden">
@@ -2271,6 +2344,99 @@ export default function App() {
                           ))}
                         </select>
 
+                        {/* Bouton Ajouter matière - toujours visible */}
+                        <button 
+                          onClick={() => {
+                            const targetSemester = dataFilterSemester || 'S1'; // Utiliser le semestre filtré ou S1 par défaut
+                            const newSubjects = [...customSubjects];
+                            const newMatiere = {
+                              code: `NEW${Date.now()}`,
+                              libelle: 'Nouvelle Matière',
+                              enseignants: 'Nouvel Enseignant',
+                              enseignantsCM: 'Nouvel Enseignant',
+                              enseignantsTD: 'Nouvel Enseignant',
+                              credit: 3
+                            };
+                            
+                            // Trouver l'index réel du semestre
+                            const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === targetSemester);
+                            console.log('Ajout matière - Semestre cible:', targetSemester, 'Index trouvé:', realSemIdx);
+                            
+                            if (realSemIdx !== -1) {
+                              newSubjects[realSemIdx].matieres.push(newMatiere);
+                              setCustomSubjects(newSubjects);
+                              console.log('Matière ajoutée dans:', newSubjects[realSemIdx].semestre);
+
+                              // Créer automatiquement les cartes pour tous les groupes (CM, TD1, TD2, TP1, TP2)
+                              const newCourses: AssignmentRow[] = [];
+                              dynamicGroups.forEach(group => {
+                                // Cours CM
+                                newCourses.push({
+                                  id: Math.random().toString(36).substr(2, 9),
+                                  subject: newMatiere.code,
+                                  subjectLabel: newMatiere.libelle,
+                                  type: 'CM',
+                                  mainGroup: group,
+                                  sharedGroups: [group],
+                                  subLabel: 'CM',
+                                  teacher: newMatiere.enseignantsCM.split('/')[0]?.trim() || '',
+                                  room: 'Khawarizmi',
+                                  semester: targetSemester
+                                });
+
+                                const groupNum = group.replace('Groupe ', '');
+
+                                // Lignes TD (1 et 2)
+                                [1, 2].forEach(num => {
+                                  const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
+                                  newCourses.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    subject: newMatiere.code,
+                                    subjectLabel: newMatiere.libelle,
+                                    type: `TD${num}` as CourseType,
+                                    mainGroup: group,
+                                    sharedGroups: [group],
+                                    subLabel: `TD${groupNum}${num}`,
+                                    teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
+                                    room: defaultRoom,
+                                    semester: targetSemester
+                                  });
+                                });
+
+                                // Lignes TP (1 et 2)
+                                [1, 2].forEach(num => {
+                                  const tpRoom = group === "Groupe 1" ? "Lab 1" : group === "Groupe 2" ? "Lab 2" : group === "Groupe 3" ? "Lab 3" : "Lab 4";
+                                  newCourses.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    subject: newMatiere.code,
+                                    subjectLabel: newMatiere.libelle,
+                                    type: `TP${num}` as CourseType,
+                                    mainGroup: group,
+                                    sharedGroups: [group],
+                                    subLabel: `TP${groupNum}${num}`,
+                                    teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
+                                    room: tpRoom,
+                                    semester: targetSemester
+                                  });
+                                });
+                              });
+
+                              // Ajouter les nouveaux cours aux assignmentRows
+                              setAssignmentRows(prev => [...prev, ...newCourses]);
+
+                              setToastMessage({ msg: `Matière "${newMatiere.libelle}" ajoutée dans ${targetSemester} avec ${newCourses.length} cours créés`, type: 'success' });
+                            } else {
+                              console.error('Semestre non trouvé:', targetSemester);
+                              setToastMessage({ msg: 'Erreur: Semestre non trouvé', type: 'error' });
+                            }
+                          }} 
+                          className="flex items-center gap-1 bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded transition-colors" 
+                          title="Ajouter une matière"
+                        >
+                          <Plus size={14} />
+                          Ajouter matière
+                        </button>
+
                         {/* Filtre par matière */}
                         <input
                           type="text"
@@ -2289,81 +2455,6 @@ export default function App() {
                           <div key={semIdx} className="border border-slate-100 rounded-lg p-4 bg-slate-50">
                             <div className="flex justify-between items-center mb-3">
                               <h4 className="font-bold text-lg text-blue-700">{semestre.semestre}</h4>
-                              <button onClick={() => {
-                                const newSubjects = [...customSubjects];
-                                const newMatiere = {
-                                  code: `NEW${Date.now()}`,
-                                  libelle: 'Nouvelle Matière',
-                                  enseignants: 'Nouvel Enseignant',
-                                  enseignantsCM: 'Nouvel Enseignant',
-                                  enseignantsTD: 'Nouvel Enseignant',
-                                  credit: 3
-                                };
-                                newSubjects[semIdx].matieres.push(newMatiere);
-                                setCustomSubjects(newSubjects);
-
-                                // Créer automatiquement les cartes pour tous les groupes (CM, TD1, TD2, TP1, TP2)
-                                const newCourses: AssignmentRow[] = [];
-                                dynamicGroups.forEach(group => {
-                                  // Cours CM
-                                  newCourses.push({
-                                    id: Math.random().toString(36).substr(2, 9),
-                                    subject: newMatiere.code,
-                                    subjectLabel: newMatiere.libelle,
-                                    type: 'CM',
-                                    mainGroup: group,
-                                    sharedGroups: [group],
-                                    subLabel: 'CM',
-                                    teacher: newMatiere.enseignantsCM.split('/')[0]?.trim() || '',
-                                    room: 'Khawarizmi',
-                                    semester: semestre.semestre
-                                  });
-
-                                  const groupNum = group.replace('Groupe ', '');
-
-                                  // Lignes TD (1 et 2)
-                                  [1, 2].forEach(num => {
-                                    const defaultRoom = group === "Groupe 1" ? "101" : group === "Groupe 2" ? "201" : group === "Groupe 3" ? "202" : "203";
-                                    newCourses.push({
-                                      id: Math.random().toString(36).substr(2, 9),
-                                      subject: newMatiere.code,
-                                      subjectLabel: newMatiere.libelle,
-                                      type: `TD${num}` as CourseType,
-                                      mainGroup: group,
-                                      sharedGroups: [group],
-                                      subLabel: `TD${groupNum}${num}`,
-                                      teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
-                                      room: defaultRoom,
-                                      semester: semestre.semestre
-                                    });
-                                  });
-
-                                  // Lignes TP (1 et 2)
-                                  [1, 2].forEach(num => {
-                                    const tpRoom = group === "Groupe 1" ? "Lab 1" : group === "Groupe 2" ? "Lab 2" : group === "Groupe 3" ? "Lab 3" : "Lab 4";
-                                    newCourses.push({
-                                      id: Math.random().toString(36).substr(2, 9),
-                                      subject: newMatiere.code,
-                                      subjectLabel: newMatiere.libelle,
-                                      type: `TP${num}` as CourseType,
-                                      mainGroup: group,
-                                      sharedGroups: [group],
-                                      subLabel: `TP${groupNum}${num}`,
-                                      teacher: newMatiere.enseignantsTD.split('/')[0]?.trim() || '',
-                                      room: tpRoom,
-                                      semester: semestre.semestre
-                                    });
-                                  });
-                                });
-
-                                // Ajouter les nouveaux cours aux assignmentRows
-                                setAssignmentRows(prev => [...prev, ...newCourses]);
-
-                                setToastMessage({ msg: `Matière "${newMatiere.libelle}" ajoutée avec ${newCourses.length} cours créés`, type: 'success' });
-                              }} className="flex items-center gap-1 text-blue-600 hover:bg-blue-100 px-3 py-1 rounded transition-colors" title="Ajouter une matière">
-                                <Plus size={14} />
-                                Ajouter matière
-                              </button>
                             </div>
 
                             <div className="space-y-3">

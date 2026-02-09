@@ -64,20 +64,6 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             Se connecter
           </button>
         </form>
-
-        <div className="mt-8 p-4 bg-slate-50 rounded-lg">
-          <h3 className="font-semibold text-slate-700 mb-2">Comptes par défaut :</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-slate-600">Admin :</span>
-              <span className="font-mono text-slate-800">admin / admin123</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-slate-600">Étudiant :</span>
-              <span className="font-mono text-slate-800">etudiant / etudiant123</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

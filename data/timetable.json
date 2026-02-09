@@ -38,9 +38,7 @@
           "new-1769859146388",
           "new-1769858980917"
         ],
-        "S1|w1|Groupe 1|LUN|09:50-11:15": [
-          "new-1769862953035"
-        ],
+        "S1|w1|Groupe 1|LUN|09:50-11:15": null,
         "S1|w1|Groupe 2|LUN|08:30-09:45": [
           "itkgf3csx"
         ],
@@ -71,9 +69,15 @@
         ],
         "S1|w1|Groupe 1|LUN|15:00-16:30": [
           "new-1769862949656"
+        ],
+        "S1|w1|Groupe 1|MAR|09:50-11:15": [
+          "new-1769858967882"
+        ],
+        "S1|w1|Groupe 1|LUN|11:30-13:00": [
+          "new-1769862953035"
         ]
       },
-      "updated_at": "2026-01-31T19:44:01.084Z"
+      "updated_at": "2026-02-01T22:19:30.321Z"
     },
     "assignment_rows": {
       "data_content": [
@@ -3774,7 +3778,7 @@
           "semester": "S5"
         }
       ],
-      "updated_at": "2026-01-31T19:44:01.084Z"
+      "updated_at": "2026-02-01T22:19:30.321Z"
     },
     "config": {
       "data_content": {
@@ -3790,7 +3794,7 @@
           "17:00-18:30"
         ]
       },
-      "updated_at": "2026-01-31T19:44:01.084Z"
+      "updated_at": "2026-02-01T22:19:30.321Z"
     },
     "custom_rooms": {
       "data_content": [
@@ -3816,7 +3820,7 @@
         "Salle Visio",
         "Atelier"
       ],
-      "updated_at": "2026-01-31T19:44:01.084Z"
+      "updated_at": "2026-02-01T22:19:30.321Z"
     },
     "custom_subjects": {
       "data_content": [
@@ -4326,7 +4330,7 @@
           ]
         }
       ],
-      "updated_at": "2026-01-31T19:44:01.084Z"
+      "updated_at": "2026-02-01T22:19:30.321Z"
     }
   }
 }

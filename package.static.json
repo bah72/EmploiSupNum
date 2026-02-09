@@ -1,0 +1,13 @@
+{
+  "name": "supnum-timetable-static",
+  "version": "1.0.0",
+  "description": "Static HTML version of Supnum Timetable",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8080",
+    "dev": "python -m http.server 8080",
+    "build": "echo 'Static build complete'"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

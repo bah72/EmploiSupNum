@@ -55,7 +55,12 @@ export const MASTER_DB = [
       { "code": "MAI211", "libelle": "Proba. & statistiques", "enseignants": "S.Maouloud", "credit": 3 },
       { "code": "MAI212", "libelle": "Certification PIX 2", "enseignants": "Aicha/Nagi/Lamine", "credit": 2 },
       { "code": "DPR210", "libelle": "Communication", "enseignants": "Lam/Abdi/Saghir", "credit": 2 },
-      { "code": "DPR211", "libelle": "Anglais", "enseignants": "Bouha", "credit": 2 }
+      { "code": "DPR211", "libelle": "Anglais", "enseignants": "Bouha", "credit": 4 },
+      { "code": "ATE210", "libelle": "Composants Electroniques", "enseignants": "Senad", "credit": 2 },
+      { "code": "MAE210", "libelle": "Macro et Microeconomie", "enseignants": "xxx", "credit": 3 },
+      { "code": "MAE211", "libelle": "Statistiques 2", "enseignants": "Bakar", "credit": 2 },
+      { "code": "MAE212", "libelle": "Statistiques Descriptives", "enseignants": "Bakar", "credit": 2 },
+      { "code": "MAE213", "libelle": "Certification PIX 1", "enseignants": "Yahjebouha", "credit": 2 }
     ]
   },
   {
