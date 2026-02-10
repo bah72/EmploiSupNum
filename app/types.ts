@@ -1,14 +1,16 @@
 export type CourseType = 'CM' | 'TD1' | 'TD2' | 'TD3' | 'TD4' | 'TP1' | 'TP2' | 'TP3' | 'TP4';
 
-export type UserRole = 'admin' | 'student';
+export type UserRole = 'admin' | 'prof' | 'student';
 
 export type User = {
   id: string;
   username: string;
-  password: string;
   role: UserRole;
   name?: string;
-  isActive?: boolean;
+  email?: string;
+  created_at?: string;
+  last_login?: string;
+  is_active?: boolean;
 };
 
 export type AssignmentRow = {

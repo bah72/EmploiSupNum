@@ -6,22 +6,10 @@ import {
   LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut, Printer
 } from 'lucide-react';
 import { AssignmentRow, CourseType, User } from './types';
-import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS, DEFAULT_USERS } from './constants';
+import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
+import { secureAuthenticate, SecureUser, AuthResult } from './lib/auth-secure';
 import LoginScreen from './components/LoginScreen';
 import UserManagement from './components/UserManagement';
-
-// Fonction d'authentification
-const authenticateUser = (username: string, password: string): User | null => {
-  // Vérifier que l'email se termine par @supnum.mr
-  if (!username.endsWith('@supnum.mr')) {
-    return null;
-  }
-  
-  // Chercher l'utilisateur dans DEFAULT_USERS
-  const user = DEFAULT_USERS.find(u => u.username === username && u.password === password);
-  
-  return user || null;
-};
 
 // Helper pour les statistiques
 const AssignmentRowService = {
@@ -140,7 +128,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
 });
 
 export default function App() {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<SecureUser | null>(null);
   const [isClient, setIsClient] = useState(false);
   const [semester, setSemester] = useState<string>('S1');
   const [activeTab, setActiveTab] = useState<'manage' | 'planning' | 'config' | 'data' | 'users'>('planning');
@@ -1678,13 +1666,15 @@ export default function App() {
 
   // Show login screen if not authenticated
   if (!currentUser) {
-    const handleLogin = (username: string, password: string) => {
-      const authenticatedUser = authenticateUser(username, password);
-      if (authenticatedUser) {
-        setCurrentUser(authenticatedUser);
-        localStorage.setItem('supnum_user', JSON.stringify(authenticatedUser));
+    const handleLogin = async (username: string, password: string) => {
+      const authResult: AuthResult = await secureAuthenticate(username, password);
+      
+      if (authResult.success && authResult.user && authResult.token) {
+        setCurrentUser(authResult.user);
+        localStorage.setItem('supnum_user', JSON.stringify(authResult.user));
+        localStorage.setItem('supnum_token', authResult.token);
       } else {
-        alert('Identifiants incorrects. Seuls les comptes @supnum.mr sont autorisés.');
+        alert(authResult.error || 'Erreur lors de l\'authentification');
       }
     };
     
