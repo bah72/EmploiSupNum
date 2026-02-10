@@ -8,7 +8,7 @@ Assurez-vous que ces variables sont configurées dans votre dashboard Vercel :
 ```
 NEXT_PUBLIC_SUPABASE_URL=votre_url_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=votre_cle_anon_supabase
-SUPABASE_SERVICE_ROLE_KEY=votre_cle_service_role_supabase (Optionnel: requis pour créer des utilisateurs via l'API)
+SUPABASE_SERVICE_ROLE_KEY=votre_cle_service_role_supabase (REQUIS pour la connexion et la création d'utilisateurs)
 ```
 
 ### 2. **Options de Redéploiement**

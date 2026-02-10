@@ -165,11 +165,11 @@ export const validatePasswordStrength = (password: string): { isValid: boolean; 
   };
 };
 
-// Authentification sécurisée avec Supabase UNIQUEMENT
+// Authentification sécurisée via API (bypasse RLS)
 export const secureAuthenticate = async (username: string, password: string): Promise<AuthResult> => {
   try {
-    // Vérifier si Supabase est configuré
-    if (!supabase) {
+    // Vérifier si Supabase est configuré (si non, fallback local)
+    if (!supabaseUrl || !supabaseKey) {
       console.warn('Supabase non configuré, tentative de connexion locale...');
       return await authenticateLocally(username, password);
     }
@@ -182,76 +182,35 @@ export const secureAuthenticate = async (username: string, password: string): Pr
       };
     }
 
-    // Validation du mot de passe
-    const passwordValidation = validatePasswordStrength(password);
-    if (!passwordValidation.isValid && password.length > 0) {
-      // Ne pas révéler les exigences de mot de passe lors de la connexion
-      console.warn('Tentative de connexion avec mot de passe faible:', username);
-    }
+    // Appel à l'API de login
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-    // Rechercher l'utilisateur dans Supabase
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('username', username)
-      .eq('is_active', true)
-      .single();
+    const data = await response.json();
 
-    if (error || !user) {
-      // Attendre 1 seconde pour prévenir les attaques par force brute
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
+    if (!response.ok) {
       return {
         success: false,
-        error: 'Identifiants incorrects'
+        error: data.error || 'Erreur lors de la connexion'
       };
     }
-
-    // Vérifier le mot de passe
-    const isPasswordValid = await verifyPassword(password, user.password_hash);
-
-    if (!isPasswordValid) {
-      // Attendre 1 seconde pour prévenir les attaques par force brute
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Mettre à jour la tentative de connexion échouée
-      await supabase
-        .from('users')
-        .update({
-          last_failed_login: new Date().toISOString(),
-          failed_login_count: (user.failed_login_count || 0) + 1
-        })
-        .eq('id', user.id);
-
-      return {
-        success: false,
-        error: 'Identifiants incorrects'
-      };
-    }
-
-    // Mettre à jour la dernière connexion réussie
-    await supabase
-      .from('users')
-      .update({
-        last_login: new Date().toISOString(),
-        failed_login_count: 0
-      })
-      .eq('id', user.id);
-
-    // Générer le token JWT
-    const token = generateToken(user);
-
-    // Retourner l'utilisateur sans le mot de passe hashé
-    const { password_hash, ...secureUser } = user;
 
     return {
       success: true,
-      user: secureUser as SecureUser,
-      token
+      user: data.user,
+      token: data.token
     };
 
   } catch (error) {
     console.error('Erreur lors de l\'authentification:', error);
+    // Si fetch échoue (ex: hors ligne), on peut tenter le local si configuré, sinon erreur
+    if (!supabaseUrl) return await authenticateLocally(username, password);
+
     return {
       success: false,
       error: 'Erreur serveur lors de l\'authentification'
