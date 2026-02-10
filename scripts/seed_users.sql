@@ -6,11 +6,11 @@
 
 INSERT INTO public.users (username, email, password_hash, role, name, is_active)
 VALUES 
-  ('moussa.ba@supnum.mr', 'moussa.ba@supnum.mr', '$2b$12$L9JvS70J8qZvRMKuRFWk7.MDJqLL.5Z.e4WLl9.z1TTlrJopMsEtI', 'admin', 'Moussa Ba', true),
-  ('prof@supnum.mr', 'prof@supnum.mr', '$2b$12$L9JvS70J8qZvRMKuRFWk7.MDJqLL.5Z.e4WLl9.z1TTlrJopMsEtI', 'prof', 'Professeur', true),
-  ('student@supnum.mr', 'student@supnum.mr', '$2b$12$L9JvS70J8qZvRMKuRFWk7.MDJqLL.5Z.e4WLl9.z1TTlrJopMsEtI', 'etudiant', 'Étudiant Test', true),
-  ('meya.haroune@supnum.mr', 'meya.haroune@supnum.mr', '$2b$12$L9JvS70J8qZvRMKuRFWk7.MDJqLL.5Z.e4WLl9.z1TTlrJopMsEtI', 'prof', 'Meya Haroune', true),
-  ('25064@supnum.mr', '25064@supnum.mr', '$2b$12$L9JvS70J8qZvRMKuRFWk7.MDJqLL.5Z.e4WLl9.z1TTlrJopMsEtI', 'etudiant', 'Étudiant 25064', true)
+  ('moussa.ba@supnum.mr', 'moussa.ba@supnum.mr', '$2b$12$drCiZCoZ/wgxkFQoZQToMe8ey4QYa55qtY1LQUExgSegsCoqnLYQi', 'admin', 'Moussa Ba', true),
+  ('prof@supnum.mr', 'prof@supnum.mr', '$2b$12$drCiZCoZ/wgxkFQoZQToMe8ey4QYa55qtY1LQUExgSegsCoqnLYQi', 'prof', 'Professeur', true),
+  ('student@supnum.mr', 'student@supnum.mr', '$2b$12$drCiZCoZ/wgxkFQoZQToMe8ey4QYa55qtY1LQUExgSegsCoqnLYQi', 'etudiant', 'Étudiant Test', true),
+  ('meya.haroune@supnum.mr', 'meya.haroune@supnum.mr', '$2b$12$drCiZCoZ/wgxkFQoZQToMe8ey4QYa55qtY1LQUExgSegsCoqnLYQi', 'prof', 'Meya Haroune', true),
+  ('25064@supnum.mr', '25064@supnum.mr', '$2b$12$drCiZCoZ/wgxkFQoZQToMe8ey4QYa55qtY1LQUExgSegsCoqnLYQi', 'etudiant', 'Étudiant 25064', true)
 ON CONFLICT (username) DO UPDATE 
 SET 
   password_hash = EXCLUDED.password_hash,

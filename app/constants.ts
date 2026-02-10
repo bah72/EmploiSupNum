@@ -3,30 +3,30 @@ export const MAIN_GROUPS = ["Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4"];
 export const DAYS = ['LUN', 'MAR', 'MER', 'JEU', 'VEN', 'SAM', 'DIM'];
 export const SEMESTERS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
 
-// Utilisateurs par défaut
-export const DEFAULT_USERS = [
-  {
-    id: "1",
-    username: "moussa.ba@supnum.mr",
-    password: "12345678",
-    role: "admin" as const,
-    name: "Moussa Ba (Admin)"
-  },
-  {
-    id: "2",
-    username: "prof@supnum.mr",
-    password: "12345678",
-    role: "prof" as const,
-    name: "Professeur"
-  },
-  {
-    id: "3",
-    username: "student@supnum.mr",
-    password: "12345678",
-    role: "etudiant" as const,
-    name: "Étudiant"
-  }
-];
+// Utilisateurs par défaut - SUPPRIMÉ pour utiliser Supabase
+// export const DEFAULT_USERS = [
+//   {
+//     id: "1",
+//     username: "moussa.ba@supnum.mr",
+//     password: "12345678",
+//     role: "admin" as const,
+//     name: "Moussa Ba (Admin)"
+//   },
+//   {
+//     id: "2",
+//     username: "prof@supnum.mr",
+//     password: "12345678",
+//     role: "prof" as const,
+//     name: "Professeur"
+//   },
+//   {
+//     id: "3",
+//     username: "student@supnum.mr",
+//     password: "12345678",
+//     role: "student" as const,
+//     name: "Étudiant"
+//   }
+// ];
 
 export const MASTER_DB = [
   {

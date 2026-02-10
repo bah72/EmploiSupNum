@@ -2,51 +2,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 
-import { DEFAULT_USERS } from '../constants';
-
 // Configuration Supabase - OBLIGATOIRE
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-// Fonction de secours pour l\'authentification locale
-const authenticateLocally = async (username: string, password: string): Promise<AuthResult> => {
-  // Simuler un délai réseau
-  await new Promise(resolve => setTimeout(resolve, 500));
-
-  const user = DEFAULT_USERS.find(u => u.username === username);
-
-  if (!user) {
-    return {
-      success: false,
-      error: 'Identifiants incorrects (Local)'
-    };
-  }
-
-  // Comparaison simple pour les utilisateurs par défaut (mots de passe en clair dans constants.ts)
-  if (user.password !== password) {
-    return {
-      success: false,
-      error: 'Identifiants incorrects (Local)'
-    };
-  }
-
-  // Simuler un token JWT pour le mode local
-  const token = Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2);
-
-  return {
-    success: true,
-    user: {
-      id: user.id,
-      username: user.username,
-      email: user.username,
-      role: user.role,
-      name: user.name,
-      created_at: new Date().toISOString(),
-      is_active: true
-    },
-    token
-  };
-};
 
 // Validation de l'URL Supabase
 const isValidUrl = (url: string) => {
@@ -168,10 +126,12 @@ export const validatePasswordStrength = (password: string): { isValid: boolean; 
 // Authentification sécurisée via API (bypasse RLS)
 export const secureAuthenticate = async (username: string, password: string): Promise<AuthResult> => {
   try {
-    // Vérifier si Supabase est configuré (si non, fallback local)
+    // Vérifier si Supabase est configuré
     if (!supabaseUrl || !supabaseKey) {
-      console.warn('Supabase non configuré, tentative de connexion locale...');
-      return await authenticateLocally(username, password);
+      return {
+        success: false,
+        error: 'Supabase non configuré. Veuillez configurer les variables d\'environnement NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY'
+      };
     }
 
     // Validation de l'email
@@ -208,9 +168,6 @@ export const secureAuthenticate = async (username: string, password: string): Pr
 
   } catch (error) {
     console.error('Erreur lors de l\'authentification:', error);
-    // Si fetch échoue (ex: hors ligne), on peut tenter le local si configuré, sinon erreur
-    if (!supabaseUrl) return await authenticateLocally(username, password);
-
     return {
       success: false,
       error: 'Erreur serveur lors de l\'authentification'
