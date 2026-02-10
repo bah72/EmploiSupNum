@@ -1,6 +1,6 @@
 export type CourseType = 'CM' | 'TD1' | 'TD2' | 'TD3' | 'TD4' | 'TP1' | 'TP2' | 'TP3' | 'TP4';
 
-export type UserRole = 'admin' | 'prof' | 'student';
+export type UserRole = 'admin' | 'prof' | 'student' | 'etudiant';
 
 export type User = {
   id: string;
