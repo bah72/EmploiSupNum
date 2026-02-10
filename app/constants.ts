@@ -8,22 +8,22 @@ export const DEFAULT_USERS = [
   {
     id: "1",
     username: "moussa.ba@supnum.mr",
-    password: "admin123",
+    password: "12345678",
     role: "admin" as const,
     name: "Moussa Ba (Admin)"
   },
   {
     id: "2",
     username: "prof@supnum.mr",
-    password: "prof123",
+    password: "12345678",
     role: "prof" as const,
     name: "Professeur"
   },
   {
     id: "3",
     username: "student@supnum.mr",
-    password: "student123",
-    role: "student" as const,
+    password: "12345678",
+    role: "etudiant" as const,
     name: "Étudiant"
   }
 ];
@@ -59,7 +59,7 @@ export const MASTER_DB = [
       { "code": "SYR210", "libelle": "Système logique", "enseignants": "Sass", "credit": 3 },
       { "code": "SYR211", "libelle": "Systeme d'Exploitation I", "enseignants": "Meya", "credit": 4 },
       { "code": "MAI210", "libelle": "Algèbre 2", "enseignants": "Habeb", "credit": 3 },
-      { "code": "MAI211", "libelle": "Proba. & statistiques", "enseignants": "S.Maouloud", "credit": 3 },
+      { "code": "MAI211", "libelle": "Proba. & statistiques", "enseignants": "Bakar", "credit": 3 },
       { "code": "MAI212", "libelle": "Certification PIX 2", "enseignants": "Aicha/Nagi/Lamine", "credit": 2 },
       { "code": "DPR210", "libelle": "Communication", "enseignants": "Lam/Abdi/Saghir", "credit": 2 },
       { "code": "DPR211", "libelle": "Anglais", "enseignants": "Bouha", "credit": 4 },
