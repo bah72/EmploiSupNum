@@ -21,21 +21,14 @@ async function initializeDatabase() {
       {
         username: 'moussa.ba@supnum.mr',
         email: 'moussa.ba@supnum.mr',
-        password: 'admin12345678',
+        password: '12345678',
         role: 'admin',
         name: 'Moussa Ba (Admin)'
       },
       {
-        username: 'prof@supnum.mr',
-        email: 'prof@supnum.mr',
-        password: 'prof12345678',
-        role: 'prof',
-        name: 'Professeur'
-      },
-      {
         username: 'student@supnum.mr',
         email: 'student@supnum.mr',
-        password: 'student12345678',
+        password: '12345678',
         role: 'student',
         name: 'Étudiant'
       }
@@ -72,9 +65,8 @@ async function initializeDatabase() {
     
     console.log('🎉 Initialisation terminée avec succès !');
     console.log('\n📋 Comptes créés:');
-    console.log('🔑 moussa.ba@supnum.mr / admin12345678 (admin)');
-    console.log('🔑 prof@supnum.mr / prof12345678 (prof)');
-    console.log('🔑 student@supnum.mr / student12345678 (student)');
+    console.log('🔑 moussa.ba@supnum.mr / 12345678 (admin)');
+    console.log('🔑 student@supnum.mr / 12345678 (student)');
     
   } catch (error) {
     console.error('❌ Erreur lors de l\'initialisation:', error);

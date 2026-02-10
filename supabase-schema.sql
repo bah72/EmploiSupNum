@@ -74,12 +74,10 @@ CREATE POLICY "Users can update own profile" ON users
 
 -- Insertion des utilisateurs initiaux
 INSERT INTO users (username, email, password_hash, role, name) VALUES
-('moussa.ba@supnum.mr', 'moussa.ba@supnum.mr', '$2b$12$U/cKA5eXfTFXoBErWIPBy.A9RriGCeDcUbP34K4L/wKgFSgUOXJAC', 'admin', 'Moussa Ba (Admin)'),
-('prof@supnum.mr', 'prof@supnum.mr', '$2b$12$7tzaDJlpyc7Hh.uUS3Adne1NxvNCdbNg/XIwN2AhfyIqV7HNndpeu', 'prof', 'Professeur'),
-('student@supnum.mr', 'student@supnum.mr', '$2b$12$iNCZ00dfFJg7yYOz1o1SUuO007huKt2VCFLafsWRgic0L/dPRCiZa', 'student', 'Étudiant')
+('moussa.ba@supnum.mr', 'moussa.ba@supnum.mr', '$2b$12$szLXW4Zy/sH4uz7IhQm.u.LqhcksAFZYpItEDoP31JXn915FDRFz6', 'admin', 'Moussa Ba (Admin)'),
+('student@supnum.mr', 'student@supnum.mr', '$2b$12$szLXW4Zy/sH4uz7IhQm.u.LqhcksAFZYpItEDoP31JXn915FDRFz6', 'student', 'Étudiant')
 ON CONFLICT (username) DO NOTHING;
 
 -- Note : Les mots de passe hashés ci-dessus sont pour 12345678
--- admin12345678 -> $2b$12$U/cKA5eXfTFXoBErWIPBy.A9RriGCeDcUbP34K4L/wKgFSgUOXJAC
--- prof12345678 -> $2b$12$7tzaDJlpyc7Hh.uUS3Adne1NxvNCdbNg/XIwN2AhfyIqV7HNndpeu
--- student12345678 -> $2b$12$iNCZ00dfFJg7yYOz1o1SUuO007huKt2VCFLafsWRgic0L/dPRCiZa
+-- moussa.ba@supnum.mr (admin) -> $2b$12$szLXW4Zy/sH4uz7IhQm.u.LqhcksAFZYpItEDoP31JXn915FDRFz6
+-- student@supnum.mr (student) -> $2b$12$szLXW4Zy/sH4uz7IhQm.u.LqhcksAFZYpItEDoP31JXn915FDRFz6

@@ -1,0 +1,16 @@
+# Copiez ce fichier en .env.local et remplissez avec vos valeurs Supabase
+
+# URL de votre projet Supabase (ex: https://abcdefgh.supabase.co)
+NEXT_PUBLIC_SUPABASE_URL=https://votre-projet.supabase.co
+
+# Clé anon publique de votre projet Supabase (commence par eyJ...)
+NEXT_PUBLIC_SUPABASE_ANON_KEY=votre-cle-anon-publique
+
+# Clé secrète pour les tokens JWT (générez une clé forte)
+JWT_SECRET=votre-cle-jwt-tres-secrete-pour-la-production
+
+# Instructions:
+# 1. Créez un projet sur https://supabase.com
+# 2. Allez dans Settings > API pour récupérer l'URL et la clé anon
+# 3. Exécutez le schéma SQL dans supabase-schema.sql
+# 4. Redémarrez l'application

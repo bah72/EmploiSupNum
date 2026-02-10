@@ -47,9 +47,8 @@ node scripts/init-supabase.js
 
 | Email | Mot de passe | Rôle | Accès |
 |-------|-------------|-------|--------|
-| moussa.ba@supnum.mr | admin12345678 | admin | Complet |
-| prof@supnum.mr | prof12345678 | prof | Consultation, impression |
-| student@supnum.mr | student12345678 | student | Consultation, impression |
+| moussa.ba@supnum.mr | 12345678 | admin | Complet |
+| student@supnum.mr | 12345678 | student | Consultation, impression |
 
 ## 🛡️ Mesures de sécurité
 

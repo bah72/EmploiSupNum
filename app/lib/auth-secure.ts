@@ -2,10 +2,31 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { createClient } from '@supabase/supabase-js';
 
-// Configuration Supabase
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Configuration Supabase - OBLIGATOIRE
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+// Validation de l'URL Supabase
+const isValidUrl = (url: string) => {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// Ne créer le client Supabase qu'avec une URL valide
+const supabase = supabaseUrl && supabaseKey && isValidUrl(supabaseUrl) 
+  ? createClient(supabaseUrl, supabaseKey) 
+  : null;
+
+if (!supabase && typeof window === 'undefined') {
+  // En environnement serveur, on peut être plus strict
+  if (supabaseUrl || supabaseKey) {
+    console.warn('Variables Supabase invalides. Veuillez vérifier NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  }
+}
 
 // Clé secrète JWT (en production, utiliser une variable d'environnement)
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-in-production';
@@ -102,9 +123,17 @@ export const validatePasswordStrength = (password: string): { isValid: boolean; 
   };
 };
 
-// Authentification sécurisée
+// Authentification sécurisée avec Supabase UNIQUEMENT
 export const secureAuthenticate = async (username: string, password: string): Promise<AuthResult> => {
   try {
+    // Vérifier si Supabase est configuré
+    if (!supabase) {
+      return {
+        success: false,
+        error: 'Supabase non configuré. Veuillez configurer les variables d\'environnement NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY'
+      };
+    }
+    
     // Validation de l'email
     if (!validateSupnumEmail(username)) {
       return {
@@ -198,6 +227,14 @@ export const createSecureUser = async (
   name: string
 ): Promise<AuthResult> => {
   try {
+    // Vérifier si Supabase est configuré
+    if (!supabase) {
+      return {
+        success: false,
+        error: 'Supabase non configuré. Veuillez configurer les variables d\'environnement'
+      };
+    }
+    
     // Validation de l'email
     if (!validateSupnumEmail(username)) {
       return {

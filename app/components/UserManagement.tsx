@@ -92,7 +92,7 @@ export default function UserManagement() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     id: user.id,
-                    isActive: !user.isActive
+                    is_active: !user.is_active
                 })
             });
 
@@ -224,10 +224,10 @@ export default function UserManagement() {
                                     <button
                                         onClick={() => toggleUserStatus(user)}
                                         disabled={user.username === 'admin'}
-                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${user.isActive ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
+                                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-colors ${user.is_active ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
                                     >
-                                        {user.isActive ? <Check size={12} /> : <Power size={12} />}
-                                        {user.isActive ? 'Actif' : 'Désactivé'}
+                                        {user.is_active ? <Check size={12} /> : <Power size={12} />}
+                                        {user.is_active ? 'Actif' : 'Désactivé'}
                                     </button>
                                 </td>
                                 <td className="py-3 px-4 text-right">

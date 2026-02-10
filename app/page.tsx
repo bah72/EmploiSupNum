@@ -8,7 +8,7 @@ import {
 import { AssignmentRow, CourseType, User } from './types';
 import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
 import { secureAuthenticate, SecureUser, AuthResult } from './lib/auth-secure';
-import LoginScreen from './components/LoginScreen';
+import LoginScreen from './LoginScreen';
 import UserManagement from './components/UserManagement';
 
 // Helper pour les statistiques
