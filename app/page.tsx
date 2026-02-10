@@ -6,9 +6,22 @@ import {
   LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut, Printer
 } from 'lucide-react';
 import { AssignmentRow, CourseType, User } from './types';
-import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
+import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS, DEFAULT_USERS } from './constants';
 import LoginScreen from './components/LoginScreen';
 import UserManagement from './components/UserManagement';
+
+// Fonction d'authentification
+const authenticateUser = (username: string, password: string): User | null => {
+  // Vérifier que l'email se termine par @supnum.mr
+  if (!username.endsWith('@supnum.mr')) {
+    return null;
+  }
+  
+  // Chercher l'utilisateur dans DEFAULT_USERS
+  const user = DEFAULT_USERS.find(u => u.username === username && u.password === password);
+  
+  return user || null;
+};
 
 // Helper pour les statistiques
 const AssignmentRowService = {
@@ -1665,7 +1678,17 @@ export default function App() {
 
   // Show login screen if not authenticated
   if (!currentUser) {
-    return <LoginScreen onLogin={setCurrentUser} />;
+    const handleLogin = (username: string, password: string) => {
+      const authenticatedUser = authenticateUser(username, password);
+      if (authenticatedUser) {
+        setCurrentUser(authenticatedUser);
+        localStorage.setItem('supnum_user', JSON.stringify(authenticatedUser));
+      } else {
+        alert('Identifiants incorrects. Seuls les comptes @supnum.mr sont autorisés.');
+      }
+    };
+    
+    return <LoginScreen onLogin={handleLogin} />;
   }
 
   return (

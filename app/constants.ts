@@ -7,15 +7,22 @@ export const SEMESTERS = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6'];
 export const DEFAULT_USERS = [
   {
     id: "1",
-    username: "admin",
+    username: "moussa.ba@supnum.mr",
     password: "admin123",
     role: "admin" as const,
-    name: "Administrateur"
+    name: "Moussa Ba (Admin)"
   },
   {
     id: "2",
-    username: "etudiant",
-    password: "etudiant123",
+    username: "prof@supnum.mr",
+    password: "prof123",
+    role: "prof" as const,
+    name: "Professeur"
+  },
+  {
+    id: "3",
+    username: "student@supnum.mr",
+    password: "student123",
     role: "student" as const,
     name: "Étudiant"
   }
