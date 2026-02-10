@@ -77,7 +77,7 @@ export interface SecureUser {
   id: string;
   username: string;
   email: string;
-  role: 'admin' | 'prof' | 'student' | 'etudiant';
+  role: 'admin' | 'prof' | 'etudiant';
   name: string;
   created_at: string;
   last_login?: string;
@@ -263,7 +263,7 @@ export const secureAuthenticate = async (username: string, password: string): Pr
 export const createSecureUser = async (
   username: string,
   password: string,
-  role: 'admin' | 'prof' | 'student',
+  role: 'admin' | 'prof' | 'etudiant',
   name: string
 ): Promise<AuthResult> => {
   try {

@@ -12,7 +12,7 @@ export default function UserManagement() {
     // Form states
     const [newUserUsername, setNewUserUsername] = useState('');
     const [newUserPassword, setNewUserPassword] = useState('');
-    const [newUserRole, setNewUserRole] = useState<UserRole>('student');
+    const [newUserRole, setNewUserRole] = useState<UserRole>('etudiant');
     const [newUserName, setNewUserName] = useState('');
 
     useEffect(() => {
@@ -55,7 +55,7 @@ export default function UserManagement() {
                 setNewUserUsername('');
                 setNewUserPassword('');
                 setNewUserName('');
-                setNewUserRole('student');
+                setNewUserRole('etudiant');
                 setShowAddForm(false);
                 fetchUsers();
             } else {
@@ -181,8 +181,8 @@ export default function UserManagement() {
                                 <div className="w-px bg-slate-300"></div>
                                 <button
                                     type="button"
-                                    onClick={() => setNewUserRole('student')}
-                                    className={`flex-1 py-2 flex items-center justify-center gap-2 text-sm font-medium transition-colors ${newUserRole === 'student' ? 'bg-blue-100 text-blue-700' : 'hover:bg-slate-50'}`}
+                                    onClick={() => setNewUserRole('etudiant')}
+                                    className={`flex-1 py-2 flex items-center justify-center gap-2 text-sm font-medium transition-colors ${newUserRole === 'etudiant' ? 'bg-blue-100 text-blue-700' : 'hover:bg-slate-50'}`}
                                 >
                                     <GraduationCap size={16} /> Étudiant
                                 </button>

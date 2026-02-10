@@ -106,7 +106,7 @@ const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week,
           <button onClick={() => handlePrint()} className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white border border-blue-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Imprimer le planning">
             <Printer size={16} />
           </button>
-          
+
           <button onClick={() => setCurrentUser(null)} className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white border border-red-600 rounded p-2 shadow-sm transition-all font-bold text-sm no-print" title="Se déconnecter">
             <LogOut size={16} />
           </button>
@@ -1354,7 +1354,7 @@ export default function App() {
         });
       } else {
         // Si aucune donnée n'est trouvée, charger le dataset par défaut pour les étudiants
-        if (user.role === 'student' && assignmentRows.length === 0) {
+        if (user.role === 'etudiant' && assignmentRows.length === 0) {
           loadFullDataset(false);
         }
       }
@@ -1668,7 +1668,7 @@ export default function App() {
   if (!currentUser) {
     const handleLogin = async (username: string, password: string) => {
       const authResult: AuthResult = await secureAuthenticate(username, password);
-      
+
       if (authResult.success && authResult.user && authResult.token) {
         setCurrentUser(authResult.user);
         localStorage.setItem('supnum_user', JSON.stringify(authResult.user));
@@ -1677,7 +1677,7 @@ export default function App() {
         alert(authResult.error || 'Erreur lors de l\'authentification');
       }
     };
-    
+
     return <LoginScreen onLogin={handleLogin} />;
   }
 
@@ -2323,7 +2323,7 @@ export default function App() {
                         </select>
 
                         {/* Bouton Ajouter matière - toujours visible */}
-                        <button 
+                        <button
                           onClick={() => {
                             const targetSemester = dataFilterSemester || 'S1'; // Utiliser le semestre filtré ou S1 par défaut
                             const newSubjects = [...customSubjects];
@@ -2335,11 +2335,11 @@ export default function App() {
                               enseignantsTD: 'Nouvel Enseignant',
                               credit: 3
                             };
-                            
+
                             // Trouver l'index réel du semestre
                             const realSemIdx = newSubjects.findIndex((s: any) => s.semestre === targetSemester);
                             console.log('Ajout matière - Semestre cible:', targetSemester, 'Index trouvé:', realSemIdx);
-                            
+
                             if (realSemIdx !== -1) {
                               newSubjects[realSemIdx].matieres.push(newMatiere);
                               setCustomSubjects(newSubjects);
@@ -2407,8 +2407,8 @@ export default function App() {
                               console.error('Semestre non trouvé:', targetSemester);
                               setToastMessage({ msg: 'Erreur: Semestre non trouvé', type: 'error' });
                             }
-                          }} 
-                          className="flex items-center gap-1 bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded transition-colors" 
+                          }}
+                          className="flex items-center gap-1 bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded transition-colors"
                           title="Ajouter une matière"
                         >
                           <Plus size={14} />
