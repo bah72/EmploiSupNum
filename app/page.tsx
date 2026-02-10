@@ -1361,7 +1361,7 @@ export default function App() {
     } catch (error) {
       console.error('Erreur lors du chargement depuis la base:', error);
       // Si erreur et étudiant sans données, charger le dataset par défaut
-      if (user.role === 'student' && assignmentRows.length === 0) {
+      if (user.role === 'etudiant' && assignmentRows.length === 0) {
         loadFullDataset(false);
       }
     }
