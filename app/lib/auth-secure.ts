@@ -87,8 +87,9 @@ export const verifyToken = (token: string): any => {
   }
 };
 
-// Valider le format de l'email @supnum.mr
+// Valider le format de l'email @supnum.mr ou comptes locaux
 export const validateSupnumEmail = (email: string): boolean => {
+  // Accepter les emails @supnum.mr
   const emailRegex = /^[a-zA-Z0-9._%+-]+@supnum\.mr$/;
   return emailRegex.test(email.toLowerCase());
 };
@@ -123,7 +124,7 @@ export const validatePasswordStrength = (password: string): { isValid: boolean; 
   };
 };
 
-// Authentification sécurisée via API (bypasse RLS)
+// Authentification sécurisée via Supabase uniquement
 export const secureAuthenticate = async (username: string, password: string): Promise<AuthResult> => {
   try {
     // Vérifier si Supabase est configuré
@@ -195,7 +196,7 @@ export const createSecureUser = async (
     if (!validateSupnumEmail(username)) {
       return {
         success: false,
-        error: 'L\'email doit se terminer par @supnum.mr'
+        error: 'Compte non autorisé'
       };
     }
 

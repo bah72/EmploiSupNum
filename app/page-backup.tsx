@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { DndContext, DragEndEvent, useDraggable, useDroppable, DragOverlay } from '@dnd-kit/core';
 import {
-  LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut, Printer, Copy
+  LayoutDashboard, Calendar, Settings, X, AlertTriangle, Search, Trash2, Split, Users, Filter, MapPin, Plus, Minus, Database, Download, Upload, Save, LogOut, Printer
 } from 'lucide-react';
 import { AssignmentRow, CourseType, User } from './types';
 import { MASTER_DB, ALL_ROOMS, MAIN_GROUPS, DAYS, SEMESTERS } from './constants';
@@ -46,29 +46,6 @@ const AssignmentRowService = {
     return stats;
   }
 };
-
-// Variable globale pour suivre l'état Ctrl (plus fiable que les événements de drag)
-let isCtrlGloballyPressed = false;
-
-// Event listeners globaux pour suivre l'état Ctrl
-if (typeof window !== 'undefined') {
-  const handleGlobalKeyDown = (e: KeyboardEvent) => {
-    if (e.key === 'Control' || e.key === 'Meta') {
-      isCtrlGloballyPressed = true;
-      console.log('🌐 Ctrl pressé globalement');
-    }
-  };
-  
-  const handleGlobalKeyUp = (e: KeyboardEvent) => {
-    if (e.key === 'Control' || e.key === 'Meta') {
-      isCtrlGloballyPressed = false;
-      console.log('🌐 Ctrl relâché globalement');
-    }
-  };
-  
-  window.addEventListener('keydown', handleGlobalKeyDown);
-  window.addEventListener('keyup', handleGlobalKeyUp);
-}
 
 // --- HEADER BANNER (en dehors du composant App pour éviter les re-rendus) ---
 const HeaderBanner = React.memo(({ semester, setSemester, group, setGroup, week, setWeek, totalWeeks, startStr, endStr, searchQuery, handleSearchChange, searchInputRef, dynamicGroups, config, handleSaveToDatabase, handlePrint, setCurrentUser, currentUser, loadFullDataset, assignmentRows, isClient, activeMainGroup, diagnoseCourses, migrateToNewSystem, refreshCardsOnly, clearScheduleOnly, fixSubGroups, isSaving, lastSaved }: any) => {
@@ -171,16 +148,12 @@ export default function App() {
   const handleSemesterChange = useCallback((value: string) => setSemester(value), []);
   const handleGroupChange = useCallback((value: string) => setActiveMainGroup(value), []);
   const handleWeekChange = useCallback((value: number) => setCurrentWeek(value), []);
-
   const [toastMessage, setToastMessage] = useState<{ msg: string, type: 'error' | 'success' } | null>(null);
   const [manageFilterCode, setManageFilterCode] = useState<string>("");
   const [compact, setCompact] = useState(true);
   const [cardsSidebarVisible, setCardsSidebarVisible] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
-
-  // États pour la multi-sélection
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
 
   // États pour la gestion des données
   const [dataSubTab, setDataSubTab] = useState<'rooms' | 'subjects' | 'progress'>('subjects');
@@ -190,61 +163,6 @@ export default function App() {
 
   // État principal pour les cours et le planning
   const [assignmentRows, setAssignmentRows] = useState<AssignmentRow[]>([]);
-
-  // Fonctions pour la multi-sélection
-  const handleRowSelect = useCallback((rowId: string, isSelected: boolean) => {
-    setSelectedRows(prev => {
-      const newSet = new Set(prev);
-      if (isSelected) {
-        newSet.add(rowId);
-      } else {
-        newSet.delete(rowId);
-      }
-      return newSet;
-    });
-  }, []);
-
-  const handleSelectAll = useCallback(() => {
-    // Récupérer toutes les lignes visibles après filtrage
-    const filteredByGroup = assignmentRows.filter(r => {
-      return r.semester === semester &&
-      r.mainGroup === activeMainGroup &&
-      (
-        r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-        r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-        (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-        (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
-      )
-    });
-
-    // Ne prendre que la première ligne de chaque matière
-    const seenSubjects = new Set<string>();
-    const visibleRows = filteredByGroup.filter(row => {
-      if (seenSubjects.has(row.subject)) {
-        return false;
-      }
-      seenSubjects.add(row.subject);
-      return true;
-    });
-
-    const allRowIds = new Set(visibleRows.map(row => row.id));
-    setSelectedRows(allRowIds);
-  }, [assignmentRows, semester, activeMainGroup, manageFilterCode]);
-
-  const handleDeleteSelected = useCallback(() => {
-    if (selectedRows.size === 0) return;
-    
-    if (confirm(`Supprimer les ${selectedRows.size} cours sélectionnés ?`)) {
-      setAssignmentRows(prev => prev.filter(row => !selectedRows.has(row.id)));
-      setSelectedRows(new Set());
-      setToastMessage({ msg: `${selectedRows.size} cours supprimés`, type: 'success' });
-    }
-  }, [selectedRows]);
-
-  // Réinitialiser la sélection quand le groupe change
-  useEffect(() => {
-    setSelectedRows(new Set());
-  }, [activeMainGroup]);
 
   // Fonction pour combiner les cours dans un même créneau
   const getCombinedCourseInfo = (courseIds: string[]) => {
@@ -258,10 +176,6 @@ export default function App() {
     // Plusieurs cours - créer une carte combinée avec meilleur formatage
     const courses = courseIds.map(id => assignmentRows.find(r => r.id === id)).filter(c => c !== undefined);
     if (courses.length === 0) return null;
-
-    // Créer un ID unique pour cette carte combinée basé sur les IDs des cours
-    // Utiliser ___ comme séparateur pour éviter les conflits avec les tirets dans les IDs
-    const combinedCardId = `combined___${courseIds.sort().join('___')}`;
 
     // Améliorer l'affichage des cours combinés - éliminer les doublons
     const subjects = [...new Set(courses.map(c => c.subject))].join('/');
@@ -285,8 +199,7 @@ export default function App() {
     const primaryType = courses[0].type;
 
     return {
-      id: combinedCardId, // ID unique pour la carte combinée
-      courseIds: courseIds, // IDs des cours originaux
+      id: courseIds.join('_'),
       subject: subjects,
       subjectLabel: subjectLabels,
       type: primaryType, // Utiliser le type principal pour la couleur
@@ -307,10 +220,6 @@ export default function App() {
     };
   };
   const [schedule, setSchedule] = useState<Record<string, string | null | string[]>>({});
-  
-  // Map pour stocker les cartes combinées : combinedCardId -> courseIds[]
-  const [combinedCardsMap, setCombinedCardsMap] = useState<Record<string, string[]>>({});
-  
   const [activeDragItem, setActiveDragItem] = useState<AssignmentRow | null>(null);
   const [refreshKey, setRefreshKey] = useState(0); // Pour forcer le re-rendu des listes
   const [dataProgressViewMode, setDataProgressViewMode] = useState<'subjects' | 'teachers'>('subjects');
@@ -337,8 +246,7 @@ export default function App() {
     numberOfGroups: 4,
     subGroupsPerGroup: 2, // Nombre de sous-groupes TD/TP par groupe principal
     vacationPeriods: [] as Array<{ startDate: string, endDate: string }>, // Périodes de vacances
-    timeSlots: ['08:00-09:30', '09:45-11:15', '11:30-13:00', '14:00-15:30', '15:45-17:15'],
-    inactivityTimeout: 5 // Délai d'inactivité en minutes avant déconnexion automatique
+    timeSlots: ['08:00-09:30', '09:45-11:15', '11:30-13:00', '14:00-15:30', '15:45-17:15']
   });
 
   // Initialisation côté client
@@ -507,49 +415,6 @@ export default function App() {
       setSchedule({});
     }
   }, []);
-
-  // Gestion de la déconnexion automatique après inactivité
-  useEffect(() => {
-    if (!currentUser || !config.inactivityTimeout) return;
-
-    let inactivityTimer: NodeJS.Timeout;
-
-    const resetTimer = () => {
-      if (inactivityTimer) clearTimeout(inactivityTimer);
-      
-      // Convertir les minutes en millisecondes
-      const timeoutMs = config.inactivityTimeout * 60 * 1000;
-      
-      inactivityTimer = setTimeout(() => {
-        console.log('⏱️ Déconnexion automatique après', config.inactivityTimeout, 'minutes d\'inactivité');
-        setCurrentUser(null);
-        localStorage.removeItem('supnum_user');
-        setToastMessage({ 
-          msg: `Déconnexion automatique après ${config.inactivityTimeout} minutes d'inactivité`, 
-          type: 'error' 
-        });
-      }, timeoutMs);
-    };
-
-    // Événements qui réinitialisent le timer
-    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    
-    events.forEach(event => {
-      document.addEventListener(event, resetTimer);
-    });
-
-    // Démarrer le timer initial
-    resetTimer();
-
-    // Nettoyage
-    return () => {
-      if (inactivityTimer) clearTimeout(inactivityTimer);
-      events.forEach(event => {
-        document.removeEventListener(event, resetTimer);
-      });
-    };
-  }, [currentUser, config.inactivityTimeout]);
-
 
   const UNIQUE_TEACHERS = useMemo(() => {
     const set = new Set<string>();
@@ -1365,7 +1230,8 @@ export default function App() {
     }
   }, [currentUser, isClient]);
 
-  // Sauvegarde automatique Cloud avec debounce
+  // Sauvegarde automatique Cloud avec debounce (désactivé temporairement pour éviter les boucles)
+  /*
   useEffect(() => {
     if (!currentUser || !isClient || currentUser.role !== 'admin') return;
 
@@ -1378,13 +1244,68 @@ export default function App() {
 
     return () => clearTimeout(timer);
   }, [assignmentRows, schedule, config, customRooms, customSubjects, currentUser, isClient]);
+  */
 
   // Charger les données depuis la base quand l'utilisateur se connecte
   useEffect(() => {
     if (currentUser && isClient) {
       loadFromDatabase(currentUser);
+      // Désactivé temporairement - le chargement Supabase cause des problèmes
+      // setTimeout(() => {
+      //   loadFromSupabase(); // Nouvelle fonction pour charger depuis Supabase
+      // }, 1000);
     }
   }, [currentUser, isClient]);
+
+  // Fonction pour charger TOUTES les données depuis Supabase
+  const loadFromSupabase = async () => {
+    if (!currentUser || currentUser.role !== 'admin') return;
+
+    try {
+      const response = await fetch('/api/app-data');
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        const { schedule, assignment_rows, config, custom_rooms, custom_subjects, current_semester, current_week } = data.data;
+        
+        // Ne charger que si les données ne sont pas vides pour éviter les boucles
+        if (schedule && Object.keys(schedule).length > 0) {
+          setSchedule(schedule);
+        }
+        
+        if (assignment_rows && assignment_rows.length > 0) {
+          setAssignmentRows(assignment_rows);
+        }
+        
+        if (config && Object.keys(config).length > 0) {
+          setConfig(config);
+        }
+        
+        if (custom_rooms && custom_rooms.length > 0) {
+          setCustomRooms(custom_rooms);
+        }
+        
+        if (custom_subjects && custom_subjects.length > 0) {
+          setCustomSubjects(custom_subjects);
+        }
+        
+        if (current_semester && current_semester !== semester) {
+          setSemester(current_semester);
+        }
+        
+        if (current_week !== undefined && current_week !== currentWeek) {
+          handleWeekChange(current_week);
+        }
+
+        setToastMessage({
+          msg: 'Toutes les données chargées depuis la base de données',
+          type: 'success'
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement depuis Supabase:', error);
+    }
+  };
 
   // --- SOUND UTILS ---
   const playConflictSound = () => {
@@ -1409,32 +1330,45 @@ export default function App() {
   // --- HEADER BANNER (déplacé en dehors du composant App) ---
 
 
-  // Fonction pour sauvegarder en base de données
-  // Fonction pour sauvegarder en base de données (Complète)
+  // Fonction pour sauvegarder TOUTES les données en base de données
   const handleSaveToDatabase = async (isAutoSave = false) => {
     if (!currentUser) {
       if (!isAutoSave) setToastMessage({ msg: 'Vous devez être connecté pour sauvegarder', type: 'error' });
       return;
     }
 
+    if (currentUser.role !== 'admin') {
+      if (!isAutoSave) setToastMessage({ msg: 'Seuls les administrateurs peuvent sauvegarder', type: 'error' });
+      return;
+    }
+
     if (isAutoSave) setIsSaving(true);
 
     try {
-      const allData = {
-        assignment_rows: assignmentRows,
-        schedule: schedule,
-        config: config,
-        custom_rooms: customRooms,
-        custom_subjects: customSubjects
-      };
+      // Vérifier si Supabase est configuré
+      if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        if (!isAutoSave) {
+          setToastMessage({
+            msg: 'Supabase n\'est pas configuré. Utilisation du localStorage.',
+            type: 'error'
+          });
+        }
+        return;
+      }
 
-      // Sauvegarder tout en une fois
-      const response = await fetch('/api/timetable/save', {
-        method: 'PUT',
+      // Sauvegarder TOUTES les données avec la nouvelle API
+      const response = await fetch('/api/app-data', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId: currentUser.username,
-          allData: allData
+          schedule: schedule,
+          assignmentRows: assignmentRows,
+          config: config,
+          customRooms: customRooms,
+          customSubjects: customSubjects,
+          users: [], // Les utilisateurs sont gérés séparément
+          semester: semester,
+          week: currentWeek
         }),
       });
 
@@ -1443,7 +1377,7 @@ export default function App() {
       if (data.success) {
         if (!isAutoSave) {
           setToastMessage({
-            msg: data.message || 'Sauvegarde Cloud réussie !',
+            msg: data.message || 'Toutes les données sauvegardées avec succès !',
             type: 'success'
           });
         }
@@ -1451,7 +1385,7 @@ export default function App() {
       } else {
         if (!isAutoSave) {
           setToastMessage({
-            msg: 'Erreur: ' + (data.message || 'Échec de sauvegarde'),
+            msg: 'Erreur: ' + (data.error || 'Échec de sauvegarde'),
             type: 'error'
           });
         }
@@ -1542,102 +1476,6 @@ export default function App() {
     const { active, over } = e;
     if (!over) return;
     const sourceId = active.id as string;
-    
-    // Vérifier si c'est une carte combinée
-    if (sourceId.startsWith('combined___')) {
-      console.log('🎯 Carte combinée détectée:', sourceId);
-      
-      // Extraire les IDs des cours depuis l'ID de la carte combinée
-      // Format: combined___id1___id2___id3
-      const originalCourseIds = sourceId.replace('combined___', '').split('___');
-      console.log('📋 IDs des cours extraits:', originalCourseIds);
-      
-      // Retrouver les cours dans assignmentRows
-      const originalCourses = originalCourseIds
-        .map(id => assignmentRows.find((r: AssignmentRow) => r.id === id))
-        .filter(c => c !== undefined);
-      
-      console.log('📚 Cours trouvés:', originalCourses.length, '/', originalCourseIds.length);
-      
-      if (originalCourses.length === 0) {
-        console.error('❌ Aucun cours original trouvé pour la carte combinée');
-        return;
-      }
-      
-      const targetTimeSlot = over.id as string;
-      const [tDay, tTime] = targetTimeSlot.split('|');
-      console.log('🎯 Créneau cible:', tDay, tTime);
-      
-      // Vérifier si Ctrl est pressé pour copier au lieu de déplacer
-      // Utiliser TOUTES les méthodes de détection pour plus de fiabilité
-      const isCtrlPressed = isCtrlGloballyPressed || 
-                           (e as any).activatorEvent?.ctrlKey || 
-                           (e as any).activatorEvent?.metaKey;
-      
-      console.log('⌨️ Détection Ctrl - global:', isCtrlGloballyPressed, 'event:', (e as any).activatorEvent?.ctrlKey, 'final:', isCtrlPressed);
-      
-      if (isCtrlPressed) {
-        console.log('📋 Mode copie activé pour la carte combinée');
-        
-        // Créer des copies de tous les cours de la carte combinée
-        const newCourses = originalCourses.map(course => ({
-          ...course,
-          id: Math.random().toString(36).substr(2, 9), // Nouvel ID unique
-        }));
-        
-        console.log('🆕 Nouveaux cours créés:', newCourses.map(c => ({ id: c.id, subject: c.subject })));
-        
-        // Ajouter les nouvelles cartes aux assignmentRows
-        setAssignmentRows((prev: AssignmentRow[]) => {
-          console.log('📝 Ajout des nouveaux cours à assignmentRows. Avant:', prev.length, 'Après:', prev.length + newCourses.length);
-          return [...prev, ...newCourses];
-        });
-        
-        // Placer les copies dans le planning
-        setSchedule(prev => {
-          const next = { ...prev as Record<string, string | null | string[]> };
-          const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${tDay}|${tTime}`;
-          console.log('📍 Placement dans le créneau:', slotKey, 'avec les IDs:', newCourses.map(c => c.id));
-          next[slotKey] = newCourses.map(c => c.id);
-          return next;
-        });
-        
-        setToastMessage({ msg: `Carte combinée copiée avec ${newCourses.length} matières`, type: 'success' });
-        console.log('✅ Carte combinée copiée avec succès');
-        return;
-      }
-      
-      console.log('🚚 Mode déplacement normal pour la carte combinée');
-      
-      // Pour une carte combinée, on utilise le premier cours comme référence
-      const firstCourse = originalCourses[0];
-      
-      // Vérifier les conflits pour tous les cours de la carte combinée
-      for (const course of originalCourses) {
-        const conflictMsg = checkInstantConflict(course.id, tDay, tTime);
-        if (conflictMsg) {
-          playConflictSound();
-          setToastMessage({ msg: `Conflit pour ${course.subject}: ${conflictMsg}`, type: 'error' });
-          console.log('⚠️ Conflit détecté pour', course.subject, ':', conflictMsg);
-          return;
-        }
-      }
-      
-      // Placer tous les cours de la carte combinée
-      setSchedule(prev => {
-        const next = { ...prev as Record<string, string | null | string[]> };
-        const slotKey = `${semester}|w${currentWeek}|${activeMainGroup}|${tDay}|${tTime}`;
-        console.log('📍 Placement des cours originaux dans:', slotKey);
-        next[slotKey] = originalCourses.map(c => c.id);
-        return next;
-      });
-      
-      setToastMessage({ msg: `Carte combinée placée avec ${originalCourses.length} matières`, type: 'success' });
-      console.log('✅ Carte combinée déplacée avec succès');
-      return;
-    }
-    
-    // Cas normal : cours simple
     const originalCourse = assignmentRows.find(r => r.id === sourceId);
     if (!originalCourse) return;
     const targetTimeSlot = over.id as string;
@@ -1674,24 +1512,54 @@ export default function App() {
     }
 
     // Vérifier si Ctrl est pressé pour copier au lieu de déplacer
-    // Utiliser TOUTES les méthodes de détection pour plus de fiabilité
-    const isCtrlPressed = isCtrlGloballyPressed || 
-                         (e as any).activatorEvent?.ctrlKey || 
-                         (e as any).activatorEvent?.metaKey;
-
-    console.log('⌨️ Détection Ctrl (carte simple) - global:', isCtrlGloballyPressed, 'event:', (e as any).activatorEvent?.ctrlKey, 'final:', isCtrlPressed);
+    const isCtrlPressed = (e as any).activatorEvent?.ctrlKey || (e as any).activatorEvent?.metaKey;
 
     if (isCtrlPressed) {
-      // Créer une copie du cours
-      const newCourse: AssignmentRow = {
-        ...originalCourse,
-        id: Math.random().toString(36).substr(2, 9), // Nouvel ID unique
-      };
+      // COPIER TOUTE LA CARTE : trouver toutes les matières qui sont dans le même créneau horaire
+      // Les cours parallèles sont ceux qui sont placés au même endroit dans le planning
+      
+      // D'abord, trouver où le cours original est placé dans le planning actuel
+      let originalSlotKey = null;
+      for (const key in schedule) {
+        const value = schedule[key];
+        const courseIds = Array.isArray(value) ? value : (value ? [value] : []);
+        if (courseIds.includes(sourceId)) {
+          originalSlotKey = key;
+          break;
+        }
+      }
 
-      // Ajouter la nouvelle carte aux assignmentRows
-      setAssignmentRows((prev: AssignmentRow[]) => [...prev, newCourse]);
+      let originalCardCourses = [];
+      
+      if (originalSlotKey) {
+        // Trouver tous les cours qui sont dans le même créneau horaire
+        const value = schedule[originalSlotKey];
+        const courseIds = Array.isArray(value) ? value : (value ? [value] : []);
+        
+        originalCardCourses = assignmentRows.filter(r => courseIds.includes(r.id));
+      } else {
+        // Si le cours n'est pas encore placé, chercher les cours similaires par d'autres critères
+        originalCardCourses = assignmentRows.filter(r =>
+          r.subject === originalCourse.subject &&
+          r.type === originalCourse.type &&
+          r.semester === originalCourse.semester
+        );
+      }
 
-      // Placer la copie dans tous les groupes concernés
+      console.log('🔍 Carte originale:', originalCourse.subject, originalCourse.type);
+      console.log('📍 Créneau original:', originalSlotKey);
+      console.log('📋 Matières trouvées:', originalCardCourses.length, originalCardCourses.map(c => `${c.subject} (${c.teacher})`));
+
+      // Créer une copie de chaque cours de la carte (y compris l'original)
+      const newCourses = originalCardCourses.map(course => ({
+        ...course,
+        id: Math.random().toString(36).substr(2, 9), // Nouvel ID unique pour chaque copie
+      }));
+
+      // Ajouter toutes les nouvelles cartes aux assignmentRows
+      setAssignmentRows(prev => [...prev, ...newCourses]);
+
+      // Placer toutes les copies dans tous les groupes concernés
       setSchedule(prev => {
         const next = { ...prev as Record<string, string | null | string[]> };
         groupsToPlace.forEach(group => {
@@ -1699,15 +1567,17 @@ export default function App() {
           const existingValue = next[targetSlotKey];
           // Normaliser la valeur existante en tableau
           const existingIds = Array.isArray(existingValue) ? existingValue : (existingValue ? [existingValue] : []);
-          // Ajouter le nouveau cours au tableau s'il n'est pas déjà présent
-          if (!existingIds.includes(newCourse.id)) {
-            next[targetSlotKey] = [...existingIds, newCourse.id];
-          }
+          // Ajouter tous les nouveaux cours au tableau s'ils ne sont pas déjà présents
+          const newCourseIds = newCourses.map(course => course.id).filter(id => !existingIds.includes(id));
+          next[targetSlotKey] = [...existingIds, ...newCourseIds];
         });
         return next;
       });
 
-      setToastMessage({ msg: `Copie de ${originalCourse.subject} créée`, type: 'success' });
+      setToastMessage({ 
+        msg: `Carte "${originalCourse.subject}" copiée avec ${newCourses.length} matière(s)`, 
+        type: 'success' 
+      });
     } else {
       // Comportement normal : déplacer la carte et tous les cours similaires
       const allSimilarCourseIds = [sourceId, ...similarCourses.map(c => c.id)];
@@ -2100,7 +1970,7 @@ export default function App() {
                       </div>
 
                       <div className="flex-1 overflow-y-auto p-3 space-y-3">
-                        {sidebarCourses.map((c, idx) => <DraggableCard key={`${c.id}-${refreshKey}-${idx}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} setAssignmentRows={setAssignmentRows} setToastMessage={setToastMessage} />)}
+                        {sidebarCourses.map((c, idx) => <DraggableCard key={`${c.id}-${refreshKey}-${idx}`} course={c} searchQuery={searchQuery} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} />)}
                       </div>
                     </div>
                   )}
@@ -2134,7 +2004,7 @@ export default function App() {
                                     <DroppableSlot id={`${day}|${time}`}>
                                       {combinedCourse && (
                                         <CourseBadge
-                                          course={combinedCourse}
+                                          course={{ ...combinedCourse, id: courseIds[0] }}
                                           onUnassign={() => handleUnassignBatch(courseIds)}
                                           isMatch={isCourseMatch(combinedCourse)}
                                           hasConflict={hasConflict(day, time, courseIds)}
@@ -2158,7 +2028,7 @@ export default function App() {
                   </div>
                 </div>
                 <DragOverlay>
-                  {activeDragItem ? <div className="opacity-90 w-36 shadow-2xl rotate-1"><DraggableCard course={activeDragItem} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} setAssignmentRows={setAssignmentRows} setToastMessage={setToastMessage} /></div> : null}
+                  {activeDragItem ? <div className="opacity-90 w-36 shadow-2xl rotate-1"><DraggableCard course={activeDragItem} compact customSubjects={customSubjects} schedule={schedule} assignmentRows={assignmentRows} /></div> : null}
                 </DragOverlay>
               </DndContext>
             )}
@@ -2168,45 +2038,6 @@ export default function App() {
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-lg font-black uppercase text-slate-800 tracking-tight">Gestion des cours</h2>
                   <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        // Compter d'abord les doublons
-                        const seen = new Set<string>();
-                        let duplicateCount = 0;
-                        assignmentRows.forEach(row => {
-                          const key = `${row.subject}-${row.type}-${row.mainGroup}-${row.semester}`;
-                          if (seen.has(key)) {
-                            duplicateCount++;
-                          } else {
-                            seen.add(key);
-                          }
-                        });
-
-                        if (duplicateCount === 0) {
-                          setToastMessage({ msg: 'Aucun doublon trouvé', type: 'success' });
-                          return;
-                        }
-
-                        if (!confirm(`${duplicateCount} cours en double trouvés. Supprimer les doublons (même matière, type, groupe et semestre) ?`)) return;
-                        
-                        const seenUnique = new Set<string>();
-                        const uniqueCourses = assignmentRows.filter(row => {
-                          const key = `${row.subject}-${row.type}-${row.mainGroup}-${row.semester}`;
-                          if (seenUnique.has(key)) {
-                            return false; // Doublon, supprimer
-                          }
-                          seenUnique.add(key);
-                          return true; // Garder
-                        });
-                        
-                        setAssignmentRows(uniqueCourses);
-                        setToastMessage({ msg: `${duplicateCount} cours en double supprimés`, type: 'success' });
-                      }}
-                      className="text-xs bg-orange-500 text-white px-3 py-1 rounded hover:bg-orange-600 transition-colors font-bold"
-                      title="Nettoyer les doublons"
-                    >
-                      🧹 Nettoyer
-                    </button>
                     <input
                       type="text"
                       placeholder="Filtrer..."
@@ -2214,74 +2045,14 @@ export default function App() {
                       onChange={(e) => setManageFilterCode(e.target.value)}
                       className="text-xs border border-slate-200 rounded-md px-2 py-1 outline-none font-bold shadow-sm focus:ring-2 ring-blue-100 w-36"
                     />
+                    {/* Buttons removed as requested */}
                   </div>
                 </div>
-
-                {/* Boutons de suppression multiple */}
-                {selectedRows.size > 0 && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
-                    <span className="text-sm font-medium text-red-700">
-                      {selectedRows.size} cours sélectionné{selectedRows.size > 1 ? 's' : ''}
-                    </span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setSelectedRows(new Set())}
-                        className="px-3 py-1 text-sm bg-slate-500 text-white rounded hover:bg-slate-600 transition-colors"
-                      >
-                        Désélectionner tout
-                      </button>
-                      <button
-                        onClick={handleDeleteSelected}
-                        className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700 transition-colors flex items-center gap-1"
-                      >
-                        <Trash2 size={14} />
-                        Supprimer la sélection
-                      </button>
-                    </div>
-                  </div>
-                )}
 
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
                   <table className="w-full text-xs text-left border-collapse table-fixed">
                     <thead className="bg-green-700 font-bold text-xs uppercase text-white tracking-wider sticky top-0 z-10">
                       <tr>
-                        <th className="p-1 border-r border-green-600 w-10 text-center">
-                          <input
-                            type="checkbox"
-                            checked={(() => {
-                              const filteredByGroup = assignmentRows.filter(r => 
-                                r.semester === semester &&
-                                r.mainGroup === activeMainGroup &&
-                                (
-                                  r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
-                                )
-                              );
-                              return filteredByGroup.length > 0 && filteredByGroup.every(row => selectedRows.has(row.id));
-                            })()}
-                            onChange={(e) => {
-                              const isChecked = e.target.checked;
-                              const filteredByGroup = assignmentRows.filter(r => 
-                                r.semester === semester &&
-                                r.mainGroup === activeMainGroup &&
-                                (
-                                  r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                                  (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
-                                )
-                              );
-                              if (isChecked) {
-                                setSelectedRows(new Set(filteredByGroup.map(row => row.id)));
-                              } else {
-                                setSelectedRows(new Set());
-                              }
-                            }}
-                            className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                          />
-                        </th>
                         <th className="p-1 border-r border-green-600 w-10 text-center">Sem</th>
                         <th className="p-1 border-r border-green-600 w-12 text-center">Groupe</th>
                         <th className="p-1 border-r border-green-600 w-28">Matière</th>
@@ -2291,43 +2062,21 @@ export default function App() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {(() => {
-                        // Filtrer par groupe et semestre
-                        const filteredByGroup = assignmentRows.filter(r => {
-                          return r.semester === semester &&
-                          r.mainGroup === activeMainGroup &&
-                          (
-                            r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                            r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                            (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
-                            (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
-                          )
-                        });
-
-                        // Garder UN SEUL cours par matière (le premier trouvé)
-                        const uniqueBySubject = new Map<string, AssignmentRow>();
-                        filteredByGroup.forEach(row => {
-                          const key = row.subject;
-                          if (!uniqueBySubject.has(key)) {
-                            uniqueBySubject.set(key, row);
-                          }
-                        });
-
-                        // Convertir en tableau et trier par matière
-                        const uniqueCourses = Array.from(uniqueBySubject.values()).sort((a, b) => 
-                          a.subject.localeCompare(b.subject)
-                        );
-
-                        return uniqueCourses.map((row, rowIdx) => (
-                          <tr key={`${row.id}-${rowIdx}`} className={`hover:bg-slate-50 transition-colors group ${selectedRows.has(row.id) ? 'bg-blue-50' : ''}`}>
-                            <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">
-                              <input
-                                type="checkbox"
-                                checked={selectedRows.has(row.id)}
-                                onChange={(e) => handleRowSelect(row.id, e.target.checked)}
-                                className="w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500"
-                              />
-                            </td>
+                      {assignmentRows.filter(r =>
+                        r.semester === semester &&
+                        (
+                          r.subject.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          r.mainGroup.toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          (SUBJECT_NAMES[r.subject] || r.subjectLabel || '').toLowerCase().includes(manageFilterCode.toLowerCase()) ||
+                          (r.teacher || '').toLowerCase().includes(manageFilterCode.toLowerCase())
+                        )
+                      ).sort((a, b) => {
+                        // Trier par groupe puis par matière
+                        if (a.mainGroup !== b.mainGroup) return a.mainGroup.localeCompare(b.mainGroup);
+                        return a.subject.localeCompare(b.subject);
+                      }).map((row, rowIdx) => {
+                        return (
+                          <tr key={`${row.id}-${rowIdx}`} className="hover:bg-slate-50 transition-colors group">
                             <td className="p-1 font-bold text-slate-500 border-r border-slate-50 text-center text-xs">{row.semester}</td>
                             <td className="p-1 border-r border-slate-50 font-black text-slate-700 text-center text-xs">
                               <span className="text-[11px] uppercase tracking-wide whitespace-nowrap">{row.mainGroup.replace("Groupe ", "G")}</span>
@@ -2476,24 +2225,45 @@ export default function App() {
                               <div className="flex gap-1 justify-center">
                                 <button
                                   onClick={() => {
-                                    // Garder le MÊME type de cours
-                                    const newType: CourseType = row.type;
+                                    // Déterminer le type de la nouvelle ligne selon le nouveau système
+                                    let newType: CourseType = 'CM';
+
+                                    if (row.type === 'CM') {
+                                      newType = 'TD1'; // CM → TD1
+                                    } else if (row.type.startsWith('TD')) {
+                                      // TD1 → TP1, TD2 → TP2, etc.
+                                      const subGroupNumber = row.type.slice(2);
+                                      const tpType = `TP${subGroupNumber}`;
+                                      // Ensure it's a valid CourseType
+                                      if (['TP1', 'TP2', 'TP3', 'TP4'].includes(tpType)) {
+                                        newType = tpType as CourseType;
+                                      } else {
+                                        newType = 'TP1';
+                                      }
+                                    } else if (row.type.startsWith('TP')) {
+                                      // TP1 → TD1, TP2 → TD2, etc. (cycle)
+                                      const subGroupNumber = row.type.slice(2);
+                                      const tdType = `TD${subGroupNumber}`;
+                                      // Ensure it's a valid CourseType
+                                      if (['TD1', 'TD2', 'TD3', 'TD4'].includes(tdType)) {
+                                        newType = tdType as CourseType;
+                                      } else {
+                                        newType = 'TD1';
+                                      }
+                                    }
 
                                     // Générer le subLabel approprié
                                     let newSubLabel: string = newType;
                                     let defaultRoom = '101';
 
-                                    if (newType === 'CM') {
-                                      newSubLabel = 'CM';
-                                      defaultRoom = 'Khawarizmi';
-                                    } else if (newType.startsWith('TD') || newType.startsWith('TP')) {
+                                    if (newType.startsWith('TD') || newType.startsWith('TP')) {
                                       const baseType = newType.startsWith('TD') ? 'TD' : 'TP';
                                       const subGroupNumber = newType.slice(2);
                                       const groupNumber = row.mainGroup.replace('Groupe ', '');
                                       newSubLabel = `${baseType}${groupNumber}${subGroupNumber}`;
 
                                       // Définir une salle par défaut selon le groupe et le type
-                                      if (baseType === 'TP') {
+                                      if (baseType.startsWith('TP')) {
                                         defaultRoom = row.mainGroup === "Groupe 1" ? "Lab 1" :
                                           row.mainGroup === "Groupe 2" ? "Lab 2" :
                                             row.mainGroup === "Groupe 3" ? "Lab 3" : "Lab 4";
@@ -2513,7 +2283,7 @@ export default function App() {
                                       sharedGroups: [row.mainGroup],
                                       subLabel: newSubLabel,
                                       teacher: row.teacher || 'Non assigné',
-                                      room: row.room || defaultRoom,
+                                      room: newType === 'CM' ? 'Khawarizmi' : defaultRoom,
                                       semester: row.semester
                                     };
 
@@ -2530,7 +2300,7 @@ export default function App() {
                                     setToastMessage({ msg: `Nouvelle ligne ${newSubLabel} ajoutée pour ${row.subject}`, type: 'success' });
                                   }}
                                   className="p-2 text-green-600 hover:bg-green-50 rounded-full transition-all shadow-sm"
-                                  title="Ajouter une ligne avec le même type"
+                                  title="Ajouter une ligne"
                                 >
                                   +
                                 </button>
@@ -2540,7 +2310,8 @@ export default function App() {
                               </div>
                             </td>
                           </tr>
-                        ))})()}
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>
@@ -3219,18 +2990,6 @@ export default function App() {
                         <p className="text-xs text-slate-500 mt-1">Ex: 2 → TD11, TD12, TP11, TP12 pour le Groupe 1</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Déconnexion automatique (minutes)</label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="120"
-                          value={config.inactivityTimeout || 5}
-                          onChange={(e) => setConfig({ ...config, inactivityTimeout: parseInt(e.target.value) || 5 })}
-                          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 ring-blue-100"
-                        />
-                        <p className="text-xs text-slate-500 mt-1">Déconnexion automatique après inactivité (1-120 minutes)</p>
-                      </div>
-                      <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase mb-1">Périodes de vacances</label>
                         <div className="space-y-2">
                           {(config.vacationPeriods || []).map((period, idx) => (
@@ -3419,7 +3178,7 @@ export default function App() {
 
 // --- SOUS-COMPOSANTS ---
 
-function DraggableCard({ course, compact, searchQuery, customSubjects, schedule, assignmentRows, setAssignmentRows, setToastMessage }: any) {
+function DraggableCard({ course, compact, searchQuery, customSubjects, schedule, assignmentRows }: any) {
   if (searchQuery && !course.subject.toLowerCase().includes(searchQuery.toLowerCase())) return null;
 
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
@@ -3477,102 +3236,6 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
         <div className="absolute top-2 right-2 flex gap-1">
           <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           <span className={`text-[9px] font-black px-2 py-0.5 rounded-full text-white ${colors.badge}`}>{course.subLabel || course.type}</span>
-          <button
-            onClick={(e) => {
-              console.log('🔄 Bouton de duplication cliqué pour:', course.subject);
-              e.stopPropagation();
-              try {
-                // Dupliquer la carte
-                console.log('🔄 Duplication de la carte:', course.subject, 'Type:', course.type, 'SubLabel:', course.subLabel);
-                console.log('🔍 Carte combinée?', course.isCombined, 'Cours originaux:', course.originalCourses?.length);
-                
-                let newCourse;
-                
-                if (course.isCombined && course.originalCourses) {
-                  // Cas spécial : carte combinée avec plusieurs matières
-                  console.log('📦 Duplication d\'une carte combinée avec', course.originalCourses.length, 'matières');
-                  
-                  // Créer de nouveaux IDs pour tous les cours originaux
-                  const newOriginalCourses = course.originalCourses.map((origCourse: any) => ({
-                    ...origCourse,
-                    id: `${origCourse.id}-copy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-                  }));
-                  
-                  newCourse = {
-                    ...course,
-                    id: `${course.id}-copy-${Date.now()}`,
-                    // Conserver tous les champs exactement comme ils sont
-                    subject: course.subject,
-                    subjectLabel: course.subjectLabel,
-                    type: course.type,
-                    mainGroup: course.mainGroup,
-                    sharedGroups: course.sharedGroups ? [...course.sharedGroups] : [],
-                    subLabel: course.subLabel,
-                    teacher: course.teacher, // Conserver la chaîne complète avec les /
-                    room: course.room, // Conserver la chaîne complète avec les /
-                    semester: course.semester,
-                    // Propriétés spécifiques aux cartes combinées
-                    isCombined: true,
-                    originalCourses: newOriginalCourses,
-                    combinedCount: course.combinedCount
-                  };
-                  
-                  console.log('📦 Carte combinée dupliquée avec', newOriginalCourses.length, 'matières');
-                } else {
-                  // Cas normal : carte simple
-                  console.log('📝 Duplication d\'une carte simple');
-                  
-                  newCourse = {
-                    ...course,
-                    id: `${course.id}-copy-${Date.now()}`,
-                    // Conserver tous les champs exactement comme ils sont
-                    subject: course.subject,
-                    subjectLabel: course.subjectLabel,
-                    type: course.type,
-                    mainGroup: course.mainGroup,
-                    sharedGroups: course.sharedGroups ? [...course.sharedGroups] : [],
-                    subLabel: course.subLabel,
-                    teacher: course.teacher, // Conserver la chaîne complète avec les /
-                    room: course.room, // Conserver la chaîne complète avec les /
-                    semester: course.semester
-                  };
-                }
-                
-                console.log('📝 Nouvelle carte créée:', newCourse);
-                console.log('🔍 Structure de la carte originale:', {
-                  subject: course.subject,
-                  type: course.type,
-                  subLabel: course.subLabel,
-                  teacher: course.teacher,
-                  room: course.room,
-                  sharedGroups: course.sharedGroups,
-                  isCombined: course.isCombined,
-                  originalCoursesCount: course.originalCourses?.length
-                });
-                
-                setAssignmentRows((prev: AssignmentRow[]) => {
-                  console.log('📋 Anciennes cartes:', prev.length);
-                  const newRows = [...prev, newCourse];
-                  console.log('✨ Nouvelles cartes:', newRows.length);
-                  return newRows;
-                });
-                
-                const message = course.isCombined 
-                  ? `Carte combinée "${course.subject}" dupliquée avec ${course.originalCourses?.length} matières`
-                  : `Carte "${course.subject}" dupliquée avec toutes ses propriétés`;
-                
-                setToastMessage({ msg: message, type: 'success' });
-                console.log('✅ Carte dupliquée avec succès');
-              } catch (error) {
-                console.error('❌ Erreur lors de la duplication:', error);
-                setToastMessage({ msg: 'Erreur lors de la duplication', type: 'error' });
-              }
-            }}
-            className="p-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-            title="Dupliquer cette carte"
-          >
-            <Copy size={10} />
-          </button>
         </div>
         <div className="flex justify-between items-start mb-1">
           <div className="flex flex-col">
@@ -3601,105 +3264,7 @@ function DraggableCard({ course, compact, searchQuery, customSubjects, schedule,
             <span className="text-[9px] font-medium text-slate-900 truncate" style={{ maxWidth: '7rem' }}>{course.subject}</span>
             <span className={`text-[7px] font-black px-1 py-0.5 rounded ${sessionsInfo.realized >= sessionsInfo.total ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>{sessionsInfo.realized}/{sessionsInfo.total}</span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.subLabel || course.type}</span>
-            <button
-              onClick={(e) => {
-                console.log('🔄 Bouton de duplication cliqué pour:', course.subject);
-                e.stopPropagation();
-                try {
-                  // Dupliquer la carte
-                  console.log('🔄 Duplication de la carte:', course.subject, 'Type:', course.type, 'SubLabel:', course.subLabel);
-                  console.log('🔍 Carte combinée?', course.isCombined, 'Cours originaux:', course.originalCourses?.length);
-                  
-                  let newCourse;
-                  
-                  if (course.isCombined && course.originalCourses) {
-                    // Cas spécial : carte combinée avec plusieurs matières
-                    console.log('📦 Duplication d\'une carte combinée avec', course.originalCourses.length, 'matières');
-                    
-                    // Créer de nouveaux IDs pour tous les cours originaux
-                    const newOriginalCourses = course.originalCourses.map((origCourse: any) => ({
-                      ...origCourse,
-                      id: `${origCourse.id}-copy-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-                    }));
-                    
-                    newCourse = {
-                      ...course,
-                      id: `${course.id}-copy-${Date.now()}`,
-                      // Conserver tous les champs exactement comme ils sont
-                      subject: course.subject,
-                      subjectLabel: course.subjectLabel,
-                      type: course.type,
-                      mainGroup: course.mainGroup,
-                      sharedGroups: course.sharedGroups ? [...course.sharedGroups] : [],
-                      subLabel: course.subLabel,
-                      teacher: course.teacher, // Conserver la chaîne complète avec les /
-                      room: course.room, // Conserver la chaîne complète avec les /
-                      semester: course.semester,
-                      // Propriétés spécifiques aux cartes combinées
-                      isCombined: true,
-                      originalCourses: newOriginalCourses,
-                      combinedCount: course.combinedCount
-                    };
-                    
-                    console.log('📦 Carte combinée dupliquée avec', newOriginalCourses.length, 'matières');
-                  } else {
-                    // Cas normal : carte simple
-                    console.log('📝 Duplication d\'une carte simple');
-                    
-                    newCourse = {
-                      ...course,
-                      id: `${course.id}-copy-${Date.now()}`,
-                      // Conserver tous les champs exactement comme ils sont
-                      subject: course.subject,
-                      subjectLabel: course.subjectLabel,
-                      type: course.type,
-                      mainGroup: course.mainGroup,
-                      sharedGroups: course.sharedGroups ? [...course.sharedGroups] : [],
-                      subLabel: course.subLabel,
-                      teacher: course.teacher, // Conserver la chaîne complète avec les /
-                      room: course.room, // Conserver la chaîne complète avec les /
-                      semester: course.semester
-                    };
-                  }
-                  
-                  console.log('📝 Nouvelle carte créée:', newCourse);
-                  console.log('🔍 Structure de la carte originale:', {
-                    subject: course.subject,
-                    type: course.type,
-                    subLabel: course.subLabel,
-                    teacher: course.teacher,
-                    room: course.room,
-                    sharedGroups: course.sharedGroups,
-                    isCombined: course.isCombined,
-                    originalCoursesCount: course.originalCourses?.length
-                  });
-                  
-                  setAssignmentRows((prev: AssignmentRow[]) => {
-                    console.log('📋 Anciennes cartes:', prev.length);
-                    const newRows = [...prev, newCourse];
-                    console.log('✨ Nouvelles cartes:', newRows.length);
-                    return newRows;
-                  });
-                  
-                  const message = course.isCombined 
-                    ? `Carte combinée "${course.subject}" dupliquée avec ${course.originalCourses?.length} matières`
-                    : `Carte "${course.subject}" dupliquée avec toutes ses propriétés`;
-                  
-                  setToastMessage({ msg: message, type: 'success' });
-                  console.log('✅ Carte dupliquée avec succès');
-                } catch (error) {
-                  console.error('❌ Erreur lors de la duplication:', error);
-                  setToastMessage({ msg: 'Erreur lors de la duplication', type: 'error' });
-                }
-              }}
-              className="p-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-              title="Dupliquer cette carte"
-            >
-              <Copy size={8} />
-            </button>
-          </div>
+          <span className={`text-[8px] font-black px-1 rounded text-white ${colors.badge}`}>{course.subLabel || course.type}</span>
         </div>
         <div className="text-[8px] font-normal text-slate-700 truncate whitespace-nowrap overflow-hidden" style={{ maxWidth: '10rem' }}>
           {(() => {
@@ -3767,18 +3332,12 @@ function DroppableSlot({ id, children }: any) {
 
 
 const CourseBadge = ({ course, onUnassign, isMatch, hasConflict, compact, customSubjects, schedule, assignmentRows, currentUser, className = "" }: any) => {
-  // Pour les cartes combinées, utiliser l'ID unique créé par getCombinedCourseInfo
-  // Pour les cartes simples, utiliser l'ID du cours
-  const draggableId = course.isCombined ? course.id : course.id;
-    
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: draggableId });
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: course.id });
   const style = { opacity: isDragging ? 0.4 : 1 };
 
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}
-      className={`relative w-full h-full border border-black bg-white flex flex-col group hover:shadow-lg transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}
-    >
-      {isDragging && isCtrlGloballyPressed && <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-bold z-10">COPIE</div>}
+      className={`relative w-full h-full border border-black bg-white flex flex-col group hover:shadow-lg transition-all ${hasConflict ? 'bg-red-50 border-red-500 animate-pulse' : ''} ${isMatch ? 'ring-2 ring-pink-500' : ''} ${className}`}>
 
       <button onPointerDown={(e) => { e.stopPropagation(); onUnassign(); }} className={`absolute top-1 right-1 text-slate-400 hover:text-red-600 opacity-0 group-hover:opacity-100 no-print z-10 bg-white rounded-full p-0.5 ${currentUser?.role !== 'admin' ? 'hidden' : ''}`}><X size={10} /></button>
 

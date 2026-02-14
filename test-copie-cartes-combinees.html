@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Copie des cartes combinées</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-case {
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f9f9f9;
+        }
+        .success {
+            border-left-color: #4CAF50;
+            background: #e8f5e9;
+        }
+        .warning {
+            border-left-color: #FF9800;
+            background: #fff3e0;
+        }
+        .code {
+            background: #263238;
+            color: #aed581;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 0 4px;
+        }
+        .badge-blue {
+            background: #2196F3;
+            color: white;
+        }
+        .badge-green {
+            background: #4CAF50;
+            color: white;
+        }
+        .steps {
+            counter-reset: step-counter;
+            list-style: none;
+            padding-left: 0;
+        }
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #2196F3;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .key {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #333;
+            color: white;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✅ Test - Copie des cartes combinées</h1>
+        <p>Vérification de la fonctionnalité de copie/duplication des cartes combinées</p>
+    </div>
+
+    <div class="section">
+        <h2>🎯 Objectif</h2>
+        <p>Permettre aux utilisateurs de copier des cartes combinées (plusieurs matières dans un même créneau) en maintenant la touche <span class="key">Ctrl</span> pendant le glissement.</p>
+    </div>
+
+    <div class="section">
+        <h2>🔧 Modifications apportées</h2>
+        
+        <div class="test-case success">
+            <h3>1. Détection Ctrl améliorée</h3>
+            <p>Utilisation de plusieurs méthodes de détection pour plus de fiabilité :</p>
+            <div class="code">
+const isCtrlPressed = isCtrlGloballyPressed || 
+                     (e as any).activatorEvent?.ctrlKey || 
+                     (e as any).activatorEvent?.metaKey;
+            </div>
+            <p><span class="badge badge-green">✓</span> Variable globale</p>
+            <p><span class="badge badge-green">✓</span> Événement activatorEvent</p>
+            <p><span class="badge badge-green">✓</span> Support Mac (metaKey)</p>
+        </div>
+
+        <div class="test-case success">
+            <h3>2. Copie des cartes combinées</h3>
+            <p>Logique de copie dans <code>handleDragEnd</code> :</p>
+            <ul>
+                <li>Détection des cartes combinées via l'ID <code>combined-*</code></li>
+                <li>Extraction des cours originaux</li>
+                <li>Création de copies avec nouveaux IDs uniques</li>
+                <li>Placement automatique dans le créneau cible</li>
+            </ul>
+        </div>
+
+        <div class="test-case success">
+            <h3>3. Badge visuel "COPIE"</h3>
+            <p>Indicateur visuel pendant le glissement :</p>
+            <div class="code">
+{isDragging && isCtrlGloballyPressed && 
+  &lt;div className="badge-copie"&gt;COPIE&lt;/div&gt;
+}
+            </div>
+            <p><span class="badge badge-blue">COPIE</span> Badge bleu affiché pendant le drag avec Ctrl</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📋 Procédure de test</h2>
+        
+        <ol class="steps">
+            <li>
+                <strong>Créer une carte combinée</strong>
+                <p>Placez plusieurs cours dans le même créneau pour créer une carte combinée</p>
+            </li>
+            <li>
+                <strong>Maintenir Ctrl</strong>
+                <p>Appuyez et maintenez la touche <span class="key">Ctrl</span> (ou <span class="key">Cmd</span> sur Mac)</p>
+            </li>
+            <li>
+                <strong>Glisser la carte</strong>
+                <p>Cliquez et faites glisser la carte combinée depuis le planning</p>
+            </li>
+            <li>
+                <strong>Vérifier le badge</strong>
+                <p>Un badge bleu <span class="badge badge-blue">COPIE</span> doit apparaître sur la carte</p>
+            </li>
+            <li>
+                <strong>Déposer dans un nouveau créneau</strong>
+                <p>Relâchez la souris dans le créneau cible</p>
+            </li>
+            <li>
+                <strong>Vérifier la copie</strong>
+                <p>Une nouvelle carte combinée doit apparaître avec tous les cours copiés</p>
+            </li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>✅ Critères de validation</h2>
+        
+        <div class="test-case">
+            <h3>Comportement attendu</h3>
+            <ul>
+                <li>✓ Le badge "COPIE" s'affiche quand Ctrl est maintenu</li>
+                <li>✓ Tous les cours de la carte combinée sont copiés</li>
+                <li>✓ Chaque copie a un nouvel ID unique</li>
+                <li>✓ La carte originale reste en place</li>
+                <li>✓ La copie est placée dans le nouveau créneau</li>
+                <li>✓ Un message de succès s'affiche</li>
+            </ul>
+        </div>
+
+        <div class="test-case warning">
+            <h3>Cas limites à tester</h3>
+            <ul>
+                <li>Copier une carte combinée avec 2 matières</li>
+                <li>Copier une carte combinée avec 3+ matières</li>
+                <li>Copier plusieurs fois la même carte</li>
+                <li>Copier depuis le planning vers un autre créneau</li>
+                <li>Vérifier que sans Ctrl, la carte est déplacée (pas copiée)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>🐛 Débogage</h2>
+        <p>Si la copie ne fonctionne pas, vérifiez dans la console du navigateur :</p>
+        <div class="code">
+🎯 Carte combinée détectée: combined-abc123-def456
+📋 IDs des cours originaux: ['abc123', 'def456']
+⌨️ Détection Ctrl - global: true event: true final: true
+📋 Mode copie activé pour la carte combinée
+🆕 Nouveaux cours créés: [{id: 'xyz789', subject: 'MATH'}, ...]
+✅ Carte combinée copiée avec succès
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>📝 Notes</h2>
+        <ul>
+            <li>Les cartes combinées sont identifiées par un ID commençant par <code>combined-</code></li>
+            <li>La détection Ctrl utilise 3 méthodes pour maximiser la compatibilité</li>
+            <li>Chaque copie crée de nouveaux cours indépendants</li>
+            <li>Les copies peuvent être re-copiées ou déplacées normalement</li>
+        </ul>
+    </div>
+
+    <div class="section" style="background: #e3f2fd; border: 2px solid #2196F3;">
+        <h2>🚀 Prêt à tester !</h2>
+        <p>Lancez l'application avec <code>npm run dev</code> et testez la fonctionnalité de copie des cartes combinées.</p>
+        <p><strong>Rappel :</strong> Maintenez <span class="key">Ctrl</span> pendant le glissement pour copier au lieu de déplacer.</p>
+    </div>
+</body>
+</html>

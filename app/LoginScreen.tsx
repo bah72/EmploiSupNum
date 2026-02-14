@@ -17,7 +17,9 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     setIsLoading(true);
     
     try {
-      await onLogin(username, password);
+      // Ajouter automatiquement @supnum.mr si pas présent
+      const fullUsername = username.includes('@') ? username : `${username}@supnum.mr`;
+      await onLogin(fullUsername, password);
     } catch (error) {
       console.error('Login error:', error);
     } finally {
@@ -26,63 +28,73 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-slate-100">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <div className="flex flex-col items-center mb-8">
-          <div className="bg-blue-600 text-white p-3 rounded-full mb-4">
-            <Users size={32} />
+    <div className="min-h-screen flex items-center justify-center bg-white p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden border border-slate-200">
+        {/* Header avec logo */}
+        <div className="p-8 text-center" style={{ backgroundColor: '#c4d79b' }}>
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-white rounded-full mb-4 p-2 shadow-lg">
+            <img src="/supnum.png" alt="SupNum" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">Supnum Timetable</h1>
-          <p className="text-slate-600 text-center">Connectez-vous pour accéder à l'application</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2 leading-tight">Institut Supérieur du Numérique</h1>
+          <p className="text-gray-700 text-base font-semibold">Gestion des emplois du temps</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Nom d'utilisateur
-            </label>
-            <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              placeholder="Entrez votre nom d'utilisateur"
-              required
-            />
-          </div>
+        {/* Formulaire */}
+        <div className="p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Nom d'utilisateur
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="w-full px-4 py-3 pr-32 border-2 border-slate-200 rounded-xl outline-none transition-all text-slate-900 placeholder-slate-400 focus:border-[#a8c070] focus:ring-2 focus:ring-[#a8c070]/30"
+                  placeholder="admin"
+                  required
+                />
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm select-none pointer-events-none">
+                  @supnum.mr
+                </span>
+              </div>
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2">
-              Mot de passe
-            </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-              placeholder="Entrez votre mot de passe"
-              required
-            />
-          </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-2">
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border-2 border-slate-200 rounded-xl outline-none transition-all text-slate-900 focus:border-[#a8c070] focus:ring-2 focus:ring-[#a8c070]/30"
+                placeholder="••••••••"
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                Connexion en cours...
-              </>
-            ) : (
-              <>
-                <LogIn size={20} />
-                Se connecter
-              </>
-            )}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full text-slate-900 py-3.5 rounded-xl font-semibold hover:opacity-90 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              style={{ backgroundColor: '#c4d79b' }}
+            >
+              {isLoading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Connexion en cours...
+                </>
+              ) : (
+                <>
+                  <LogIn size={20} />
+                  Se connecter
+                </>
+              )}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
